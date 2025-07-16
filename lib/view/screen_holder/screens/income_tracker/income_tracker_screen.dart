@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../res/colors/app_color.dart';
@@ -92,14 +93,17 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                )
+                ),
               ],
             ),
             Column(
               children: [
                 buildInputField("Name", nameController),
-                buildInputField("Payment amount", amountController,
-                    isNumber: true),
+                buildInputField(
+                  "Payment amount",
+                  amountController,
+                  isNumber: true,
+                ),
                 buildDatePickerField("Date", dateController),
                 buildStatusDropdown(),
                 const SizedBox(height: 10),
@@ -118,7 +122,9 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                       child: Text(
                         "Add Payment",
                         style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -136,11 +142,17 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: paymentList.length,
                       itemBuilder: (context, index) {
+                        if (kDebugMode) {
+                          print("");
+                        }
+                        print("");
                         final payment = paymentList[index];
                         return Card(
-                          color: Colors.grey.shade900.withOpacity(0.6),
-                          margin:
-                              EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                          color: Colors.grey.shade900.withValues(alpha: 0.6),
+                          margin: EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 16,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -152,12 +164,18 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Amount: ${payment['amount']}",
-                                    style: TextStyle(color: Colors.white70)),
-                                Text("Date: ${payment['date']}",
-                                    style: TextStyle(color: Colors.white70)),
-                                Text("Status: ${payment['status']}",
-                                    style: TextStyle(color: Colors.white70)),
+                                Text(
+                                  "Amount: ${payment['amount']}",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                                Text(
+                                  "Date: ${payment['date']}",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                                Text(
+                                  "Status: ${payment['status']}",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
                               ],
                             ),
                             trailing: IconButton(
@@ -178,14 +196,14 @@ class _IncomeTrackerState extends State<IncomeTracker> {
     );
   }
 
-  Widget buildInputField(String hint, TextEditingController controller,
-      {bool isNumber = false}) {
+  Widget buildInputField(
+    String hint,
+    TextEditingController controller, {
+    bool isNumber = false,
+  }) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: EdgeInsets.symmetric(
-        vertical: 0,
-        horizontal: 17,
-      ),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white.withOpacity(0.1),
@@ -207,19 +225,14 @@ class _IncomeTrackerState extends State<IncomeTracker> {
   Widget buildDatePickerField(String hint, TextEditingController controller) {
     return GestureDetector(
       onTap: pickDate,
-      child: AbsorbPointer(
-        child: buildInputField(hint, controller),
-      ),
+      child: AbsorbPointer(child: buildInputField(hint, controller)),
     );
   }
 
   Widget buildStatusDropdown() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      padding: EdgeInsets.symmetric(
-        vertical: 0,
-        horizontal: 17,
-      ),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.white.withOpacity(0.1),
@@ -233,10 +246,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
           style: TextStyle(color: Colors.white),
           iconEnabledColor: Colors.white,
           items: ['paid', 'pending'].map((status) {
-            return DropdownMenuItem(
-              value: status,
-              child: Text(status),
-            );
+            return DropdownMenuItem(value: status, child: Text(status));
           }).toList(),
           onChanged: (value) {
             setState(() {

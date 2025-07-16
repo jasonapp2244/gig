@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:gig/udid.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 
@@ -10,13 +9,9 @@ import 'package:gig/res/routes/routes.dart';
  
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  final udid = await getDeviceUDID();
 
-  // Conditional feature toggle
-  if (udid == '00008030-000D70501444802E') {
-    // Enable dev features
-  }
-  Color primeColor = Colors.transparent;
+ 
+  Color primeColor = Colors.transparent; 
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: primeColor,
