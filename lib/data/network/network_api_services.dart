@@ -27,8 +27,8 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> postApi(var data, String url) async {
     dynamic responseJson;
     try {
-      final userData = await UserPreference().getUser();
-      final token = userData.token;
+      // final userData = await UserPreference().getUser();
+      // final token = userData.token;
 
       final response = await http.post(
         Uri.parse(url),
@@ -36,7 +36,7 @@ class NetworkApiServices extends BaseApiServices {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
+          // 'Authorization': 'Bearer $token',
         },
       ).timeout(Duration(seconds: 10));
 
