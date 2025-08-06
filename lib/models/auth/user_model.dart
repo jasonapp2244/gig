@@ -44,7 +44,6 @@
 //   }
 // }
 
-
 import '../../data/user_data.dart';
 
 class UserModel {
@@ -54,13 +53,7 @@ class UserModel {
   String? tokenType;
   String? token;
 
-  UserModel({
-    this.message,
-    this.status,
-    this.user,
-    this.tokenType,
-    this.token,
-  });
+  UserModel({this.message, this.status, this.user, this.tokenType, this.token});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     message = json['message'];
@@ -88,7 +81,3 @@ class UserModel {
     return data;
   }
 }
-
-
-
-

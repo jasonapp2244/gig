@@ -8,6 +8,7 @@ import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view/screen_holder/screens/adds/add_payement_screen.dart';
 import 'package:gig/view/screen_holder/screens/adds/create_adds_screen.dart';
 import 'package:gig/view/screen_holder/screens/employer/employer_detail_screen.dart';
+import 'package:gig/view/screen_holder/screens/home_screen.dart';
 import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_screen.dart';
 import 'package:gig/view/screen_holder/screens/market_place_screen/market_place_screen.dart';
 import 'package:gig/view/screen_holder/screens/notification/notification.dart';
@@ -181,5 +182,6 @@ class AppRoutes {
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),
+    GetPage(name: RoutesName.home, page: () => HomeScreen()),
   ];
 }

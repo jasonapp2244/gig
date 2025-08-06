@@ -1,57 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import '../../../data/app_exceptions.dart';
 import '../../../repository/otp/otp_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
+import '../user_preference/user_preference_view_model.dart';
+import '../../../models/auth/user_model.dart';
 
 class OtpViewModel extends GetxController {
   final _api = OtpRepository();
   final otpVerificationController = TextEditingController().obs;
+  UserPreference userPreference = UserPreference();
 
   RxBool loading = false.obs;
 
+  Future<void> otpApi(String email) async {
+    loading.value = true;
 
+    Map<String, String> data = {
+      'email': email,
+      'otp': otpVerificationController.value.text,
+    };
 
+    _api
+        .otpApi(data)
+        .then((value) async {
+          loading.value = false;
+          print('==========================>>>>>>>RESPONSE $value');
 
-  Future<void> otpApi() async {
-  loading.value = true;
+          if (value['status'] == true) {
+            Utils.snakBar(
+              'OTP Verification',
+              value['message'] ?? 'OTP Verified successfully!',
+            );
 
-  Map<String, String> data = {
-    'otp': otpVerificationController.value.text,
-  };
+            // Store token securely
+            final _storage = FlutterSecureStorage();
 
-  _api.otpApi(data).then((value) {
-    loading.value = false;
-    print('==========================>>>>>>>RESPONSE $value');
+            // Store auth token and user data
+            await _storage.write(key: 'auth_token', value: value['token']);
+            await _storage.write(
+              key: 'user_name',
+              value: value['user']['name'],
+            );
+            await _storage.write(
+              key: 'user_email',
+              value: value['user']['email'],
+            );
+            await _storage.write(
+              key: 'user_id',
+              value: value['user']['id'].toString(),
+            );
+            await _storage.write(
+              key: 'user_phone',
+              value: value['user']['phone_number'],
+            );
+            // Read back and print
+            String? token = await _storage.read(key: 'auth_token');
+            String? name = await _storage.read(key: 'user_name');
+            String? email = await _storage.read(key: 'user_email');
+            String? id = await _storage.read(key: 'user_id');
+            String? phone = await _storage.read(key: 'user_phone');
 
-    if (value['status'] == true) {
+            print('Token: $token');
+            print('Name: $name');
+            print('Email: $email');
+            print('User ID: $id');
+            print('Phone: $phone');
 
-      Utils.snakBar('OTP Verification', value['message'] ?? 'OTP Verified successful!');
+            // Update user preference with verified user data
+            await userPreference.saveUser(UserModel.fromJson(value));
 
-      if (value['user']['role_id'] == 2) {
-        // Get.offAllNamed(RoutesName.waitingForApproval);
-      }
-      else {
-          Get.toNamed(RoutesName.loginScreen);
-      }
-    }
-    else {
-      Utils.snakBar('OTP Error', value['message']);
-    }
-  }).onError((error, stackTrace) {
-    loading.value = false;
-    print("OTP Verification Error: $error");
+            // Navigate to home screen
+            Get.offAllNamed(RoutesName.home);
+          } else {
+            Utils.snakBar(
+              'OTP Error',
+              value['message'] ?? 'OTP verification failed',
+            );
+          }
+        })
+        .onError((error, stackTrace) {
+          loading.value = false;
+          print("OTP Verification Error: $error");
 
-    String errorMessage = 'Something went wrong';
-    if (error is InternetException || error is FetchDataException || error is RequestTimeout) {
-      errorMessage = error.toString();
-    }
+          String errorMessage = 'Something went wrong';
+          if (error is InternetException ||
+              error is FetchDataException ||
+              error is RequestTimeout) {
+            errorMessage = error.toString();
+          }
 
-    Utils.snakBar('Error', errorMessage);
-  });
-}
-
-
-
+          Utils.snakBar('Error', errorMessage);
+        });
+  }
 }

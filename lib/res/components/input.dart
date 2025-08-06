@@ -9,7 +9,8 @@ class CustomInputField extends StatefulWidget {
   final String fieldType;
   final Color? inputColor;
   final Icon? prefixIcon;
-  final bool? requiredField; // <-- Add kiya
+  final bool? requiredField;
+  final String? Function(String?)? validator;
 
   const CustomInputField({
     super.key,
@@ -19,7 +20,7 @@ class CustomInputField extends StatefulWidget {
     this.inputColor,
     this.prefixIcon,
     this.requiredField,
-    required String Function(dynamic value) validator,
+    this.validator,
   });
 
   @override
@@ -58,7 +59,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
       controller: widget.controller,
-      validator: (value) {
+      validator: widget.validator ?? (value) {
         if (widget.requiredField == true) {
           if (value == null || value.isEmpty) {
             return 'This field is required';

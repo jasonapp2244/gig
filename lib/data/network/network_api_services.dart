@@ -75,7 +75,7 @@ class NetworkApiServices extends BaseApiServices {
           throw FetchDataException('Forbidden (403)');
 
         case 404:
-          throw FetchDataException('Not found (404)');
+           throw FetchDataException('Not found (404)');
 
         case 500:
           throw FetchDataException('Internal server error (500)');

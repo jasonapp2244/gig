@@ -28,12 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
           spacing: 15,
           children: [
             SizedBox(height: 20,),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white12,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TableCalendar(
+            Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white12,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: TableCalendar(
                 firstDay: DateTime.utc(2020, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
                 focusedDay: _focusedDay,
@@ -83,99 +85,112 @@ class _HomeScreenState extends State<HomeScreen> {
                   weekdayStyle: TextStyle(color: Colors.white70),
                   weekendStyle: TextStyle(color: Colors.white70),
                 ),
+                ),
               ),
             ),
             SizedBox(height: 10),
-            InkWell(
-              onTap: () {
-                Get.toNamed(RoutesName.taskScreen);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.history400,
-                      color: AppColor.textColor,
-                      size: 25,
-                    ),
-                    Text(
-                      'work history',
-                      style: TextStyle(
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Get.toNamed(RoutesName.taskScreen);
+                },
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.history400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'work history',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Get.toNamed(RoutesName.incomeTracker);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.handCoins400,
-                      color: AppColor.textColor,
-                      size: 25,
-                    ),
-                    Text(
-                      'Track Income',
-                      style: TextStyle(
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Get.toNamed(RoutesName.incomeTracker);
+                },
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.handCoins400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Track Income',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            InkWell(
-              onTap: () {
-                Get.toNamed(RoutesName.marketPlaceScreen);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.store400,
-                      color: AppColor.textColor,
-                      size: 25,
-                    ),
-                    Text(
-                      'Marketplace',
-                      style: TextStyle(
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Get.toNamed(RoutesName.marketPlaceScreen);
+                },
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.store400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Marketplace',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

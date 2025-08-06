@@ -1,5 +1,4 @@
 class RoutesName {
-
   //////////// GENERAL ROUTES
   static const String onBoardingScreen = '/onboarding_screen';
   static const String getStartedScreen = '/get_started_screen';
@@ -51,7 +50,5 @@ class RoutesName {
   static const String employerScreen = '/employer_screen';
   static const String employerDetailScreen = '/employer_detail_screen';
 
-
-
-
+  static const String home = '/home';
 }

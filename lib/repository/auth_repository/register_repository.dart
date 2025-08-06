@@ -4,8 +4,8 @@ import '../../res/app_url/app_url.dart';
 
 class RegisterRepository {
   final _apiServiecs = NetworkApiServices();
-  Future<dynamic> loginApi(var data) async {
-    dynamic responce = _apiServiecs.postApi(data, AppUrl.registerApi);
-    return responce;
+  Future<dynamic> registerApi(var data) async {
+    dynamic response = await _apiServiecs.postApi(data, AppUrl.registerApi);
+    return response;
   }
 }

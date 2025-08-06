@@ -20,14 +20,28 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   RxString userEmail = ''.obs;
 
+  @override
+  void initState() {
+    super.initState();
+    loadEmail();
+  }
+
+  void loadEmail() {
+    // Get email from navigation arguments first
+    final args = Get.arguments;
+    if (args != null && args['email'] != null) {
+      userEmail.value = args['email'];
+    } else {
+      // Fallback to SharedPreferences
+      loadEmailFromPrefs();
+    }
+  }
 
   void loadEmailFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('otp_email') ?? '';
     userEmail.value = email;
   }
-
-
 
   final OtpVM = Get.put(OtpViewModel());
   final ResendOtpVM = Get.put(ResendOtpViewModel());
@@ -48,11 +62,11 @@ class _OtpScreenState extends State<OtpScreen> {
                   // Get.toNamed(RoutesName.loginScreen);
                   Navigator.pop(context);
                 },
-                child: Icon(Icons.arrow_back, color: AppColor.primeColor,)
+                child: Icon(Icons.arrow_back, color: AppColor.primeColor),
               ),
             ),
             Container(
-              padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25,),
+              padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,17 +92,22 @@ class _OtpScreenState extends State<OtpScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  Obx(() => Text(
-                    '$userEmail',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  )),
+                  Obx(
+                    () => Text(
+                      '$userEmail',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 15),
                   Form(
                     key: _formKey,
                     child: PinFieldAutoFill(
                       keyboardType: TextInputType.number,
                       controller: OtpVM.otpVerificationController.value,
-                      codeLength: 4,
+                      codeLength: 6,
                       decoration: UnderlineDecoration(
                         colorBuilder: FixedColorBuilder(Colors.white),
                         textStyle: TextStyle(color: AppColor.whiteColor),
@@ -99,9 +118,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         color: Colors.white,
                         enabled: true,
                       ),
-                    )
-
-
+                    ),
                   ),
                   SizedBox(height: 20),
                   Row(
@@ -117,17 +134,17 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(width: 5,),
-                      Obx(() =>
-                        SimpleButton(
+                      SizedBox(width: 5),
+                      Obx(
+                        () => SimpleButton(
                           title: 'Resend OTP',
                           loading: ResendOtpVM.loading.value,
                           textColor: AppColor.secondColor,
                           onPress: () {
                             ResendOtpVM.resendOtpApi(userEmail);
                           },
-                        )
-                      )
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -137,9 +154,8 @@ class _OtpScreenState extends State<OtpScreen> {
                       title: 'Verify',
                       loading: OtpVM.loading.value,
                       onPress: () {
-                        Get.toNamed(RoutesName.loginScreen);
-                        if(_formKey.currentState!.validate()){
-                          OtpVM.otpApi();
+                        if (_formKey.currentState!.validate()) {
+                          OtpVM.otpApi(userEmail.value);
                         }
                       },
                     ),

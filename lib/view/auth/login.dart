@@ -142,29 +142,29 @@ class _LoginState extends State<Login> {
                             },
                           ),
                           SizedBox(height: 15),
-                          Text(
-                            "Confirm Password",
-                            style: GoogleFonts.poppins(
-                              color: AppColor.textColor,
-                              fontSize: 16,
-                            ),
-                          ),
-                          CustomInputField(
-                            prefixIcon: Icon(
-                              Icons.password,
-                              color: AppColor.textColor,
-                            ),
-                            controller: LoginVM.passwordController.value,
-                            fieldType: 'Confirm password',
-                            hintText: "Confirm Password",
-                            requiredField: true,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Confirm Password is required';
-                              }
-                              return 'Confirm Password is Required';
-                            },
-                          ),
+                          // Text(
+                          //   "Confirm Password",
+                          //   style: GoogleFonts.poppins(
+                          //     color: AppColor.textColor,
+                          //     fontSize: 16,
+                          //   ),
+                          // ),
+                          // CustomInputField(
+                          //   prefixIcon: Icon(
+                          //     Icons.password,
+                          //     color: AppColor.textColor,
+                          //   ),
+                          //   controller: LoginVM.passwordController.value,
+                          //   fieldType: 'Confirm password',
+                          //   hintText: "Confirm Password",
+                          //   requiredField: true,
+                          //   validator: (value) {
+                          //     if (value!.isEmpty) {
+                          //       return 'Confirm Password is required';
+                          //     }
+                          //     return 'Confirm Password is Required';
+                          //   },
+                          // ),
 
                           // Obx(
                           //   () => RoundButton(
@@ -254,9 +254,13 @@ class _LoginState extends State<Login> {
                               children: [
                                 // Image.asset('assets/images/login-icon3.png'),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric( vertical: 7.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7.0,
+                                  ),
                                   child: SvgPicture.asset(
-                                    'assets/images/devicon_google.svg',width: 22,height: 22,
+                                    'assets/images/devicon_google.svg',
+                                    width: 22,
+                                    height: 22,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -323,26 +327,10 @@ class _LoginState extends State<Login> {
                               if (_formKey.currentState!.validate()) {
                                 LoginVM.loginApi();
                               }
-                            }, 
+                            },
                           ),
                           Row(children: []),
                           SizedBox(height: 30),
-
-                          // InkWell(
-                          //   onTap: () {
-                          //     Get.toNamed(RoutesName.forgetPassword);
-                          //   },
-                          //   child: Text(
-                          //     'Forget Password?',
-                          //     style: TextStyle(
-                          //       color: AppColor.primeColor,
-                          //       fontFamily: AppFonts.appFont,
-                          //       fontSize: 16,
-                          //       fontWeight: FontWeight.w900,
-                          //     ),
-                          //   ),
-                          // ),
-                          // SizedBox(height: 15),
                         ],
                       ),
                     ),

@@ -1,20 +1,22 @@
 class AppUrl {
-  static const String baseurl = "http://192.168.100.80/part_synch_mob_app";
+  // static const String baseurl = "http://192.168.100.80/part_synch_mob_app";
+  static const String baseUrl =
+      'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
 
   // AUTH API
-  static const String loginApi = "$baseurl/public/api/signin";
-  static const String registerApi = "$baseurl/public/api/signin";
-  static const String logoutApi = "$baseurl/public/api/logout";
+  static const String loginApi = "$baseUrl/auth/login";
+  static const String registerApi = "$baseUrl/auth/signup";
+  static const String logoutApi = "$baseUrl/public/api/logout";
 
   // PASSWORD API
-  static const String forgetPasswordApi = "$baseurl/public/api/forget_password";
-  static const String resetPasswordApi = "$baseurl/public/api/reset_password";
+  static const String forgetPasswordApi = "$baseUrl/api/forget_password";
+  static const String resetPasswordApi = "$baseUrl/api/reset_password";
 
   // OTP API
-  static const String otpApi = "$baseurl/public/api/otp";
-  static const String resendOtpApi = "$baseurl/public/api/resend_otp";
+  static const String otpApi = "$baseUrl/auth/verify-otp";
+  static const String resendOtpApi = "$baseUrl/api/resend_otp";
 
   // TASK API
-  static const String addTaskAPI = "$baseurl/public/api/addTaskAPI";
-  static const String editTaskAPI = "$baseurl/public/api/editTaskAPI";
+  static const String addTaskAPI = "$baseUrl/api/addTaskAPI";
+  static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
 }

@@ -1,4 +1,3 @@
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../data/user_data.dart';
@@ -14,7 +13,6 @@ class UserPreference {
     sp.setBool('status', responseModel.status ?? false);
     sp.setString('token_type', responseModel.tokenType ?? '');
 
-
     if (responseModel.user != null) {
       sp.setInt('user_id', responseModel.user!.id ?? 0);
       sp.setInt('user_role_id', responseModel.user!.roleId ?? 0);
@@ -29,8 +27,10 @@ class UserPreference {
       // SAVE VANDOR DATA
       sp.setString('user_first_name', responseModel.user!.firstName ?? '');
       sp.setString('user_avatar', responseModel.user!.avatar ?? '');
-      sp.setString('user_profile_image', responseModel.user!.profileImage ?? '');
-
+      sp.setString(
+        'user_profile_image',
+        responseModel.user!.profileImage ?? '',
+      );
     }
 
     return true;
@@ -44,8 +44,6 @@ class UserPreference {
     String? message = sp.getString('message');
     bool? status = sp.getBool('status');
     String? tokenType = sp.getString('token_type');
-
-
 
     UserData? user;
     if (sp.containsKey('user_id')) {
@@ -64,8 +62,6 @@ class UserPreference {
         firstName: sp.getString('user_first_name'),
         avatar: sp.getString('user_avatar'),
         profileImage: sp.getString('user_profile_image'),
-
-
       );
     }
 
