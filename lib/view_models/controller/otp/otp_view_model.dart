@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import '../../../data/app_exceptions.dart';
 import '../../../repository/otp/otp_repository.dart';
 import '../../../res/routes/routes_name.dart';
@@ -73,7 +74,8 @@ class OtpViewModel extends GetxController {
             await userPreference.saveUser(UserModel.fromJson(value));
 
             // Navigate to home screen
-            Get.offAllNamed(RoutesName.home);
+            Get.to(ScreenHolderScreen
+            ());
           } else {
             Utils.snakBar(
               'OTP Error',

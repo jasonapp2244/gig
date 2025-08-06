@@ -74,9 +74,9 @@ class _RegisterState extends State<ForgetPassword> {
                           requiredField: true,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Name is required';
+                              return 'Email is required';
                             }
-                            return 'Name is Required';
+                            return null;
                           },
                         ),
                         SizedBox(height: 15),
@@ -88,7 +88,6 @@ class _RegisterState extends State<ForgetPassword> {
                             loading: forgetPasswordVM.loading.value,
                             buttonColor: AppColor.primeColor,
                             onPress: () {
-                              Get.toNamed(RoutesName.resetPassword);
                               if (_formKey.currentState!.validate()) {
                                 forgetPasswordVM.forgetPasswordApi();
                               }

@@ -182,6 +182,6 @@ class AppRoutes {
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),
-    GetPage(name: RoutesName.home, page: () => HomeScreen()),
+    GetPage(name: RoutesName.home, page: () => ScreenHolderScreen()),
   ];
 }

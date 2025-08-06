@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gig/res/colors/app_color.dart';
 
 class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBarWidget({super.key});
@@ -11,7 +12,7 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
     return Container(
       padding: const EdgeInsets.only(top: 60, left: 20, right: 20),
       decoration: BoxDecoration(
-        color: Colors.blue, // Or your theme color
+        color:AppColor.appBodyBG, // Or your theme color
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

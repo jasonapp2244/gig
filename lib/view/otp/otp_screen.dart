@@ -141,7 +141,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           loading: ResendOtpVM.loading.value,
                           textColor: AppColor.secondColor,
                           onPress: () {
-                            ResendOtpVM.resendOtpApi(userEmail);
+                            ResendOtpVM.resendOtpApi();
                           },
                         ),
                       ),

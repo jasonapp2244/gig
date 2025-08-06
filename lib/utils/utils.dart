@@ -39,4 +39,16 @@ class Utils {
   Future<String?> read(String key) async {
     return await storage.read(key: key);
   }
+
+  // Static method for reading secure storage
+  static Future<String?> readSecureData(String key) async {
+    const storage = FlutterSecureStorage();
+    return await storage.read(key: key);
+  }
+
+  // Static method for writing secure storage
+  static Future<void> writeSecureStorage(String key, String value) async {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: key, value: value);
+  }
 }

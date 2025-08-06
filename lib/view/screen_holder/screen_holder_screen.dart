@@ -8,6 +8,7 @@ import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_scr
 import 'package:gig/view/screen_holder/screens/notification/notification.dart';
 import 'package:gig/view/screen_holder/screens/task/task_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
+import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ScreenHolderScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class ScreenHolderScreen extends StatefulWidget {
 
 class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
   int _selectedIndex = 0;
-
+  final LogoutnVM = Get.put(LogoutViewModel());
   final List<Widget> _screens = [
     HomeScreen(),
     TaskScreen(),
@@ -147,126 +148,6 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
       //     ),
       //   ),
       // ),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(
-          Responsive.isPortrait(context)
-              ? Responsive.height(18, context)
-              : Responsive.height(24, context),
-        ),
-        child: Container(
-          padding: EdgeInsets.only(
-            top:
-                MediaQuery.of(context).padding.top +
-                (Responsive.isTablet(context) ? 20 : 10),
-            left: Responsive.width(4, context),
-            right: Responsive.width(4, context),
-            bottom: Responsive.height(1, context),
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(Responsive.width(3, context)),
-              bottomRight: Radius.circular(Responsive.width(3, context)),
-            ),
-          ),
-          child: ListView(
-            // mainAxisSize: MainAxisSize.min, // This prevents overflow
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            shrinkWrap: true,
-            children: [
-              // Welcome Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize:
-                        MainAxisSize.min, // Prevent inner column overflow
-                    children: [
-                      Text(
-                        "Welcome",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Responsive.fontSize(16, context),
-                        ),
-                      ),
-                      Text(
-                        "John Doe",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Responsive.fontSize(22, context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/user.png'),
-                    radius: Responsive.isTablet(context)
-                        ? Responsive.width(5, context)
-                        : Responsive.width(6, context),
-                  ),
-                ],
-              ),
-              SizedBox(height: Responsive.height(1.5, context)),
-              // Search Row
-              Row(
-                children: [
-                  Expanded(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: Responsive.height(
-                          5,
-                          context,
-                        ), // Limit height
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search...",
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: Responsive.height(1, context),
-                            horizontal: Responsive.width(4, context),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              Responsive.width(8, context),
-                            ),
-                            borderSide: BorderSide.none,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            size: Responsive.fontSize(20, context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (!Responsive.isTablet(context))
-                    SizedBox(width: Responsive.width(2, context)),
-                  if (!Responsive.isTablet(context))
-                    Builder(
-                      builder: (context) => Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.menu,
-                            size: Responsive.fontSize(20, context),
-                            color: Colors.black,
-                          ),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
       body: _screens[_selectedIndex],
 
       bottomNavigationBar: isPortrait
@@ -385,6 +266,15 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
             text: "Employer",
             route: RoutesName.employerScreen,
           ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.building400,
+            text: "logout",
+            route: RoutesName.employerScreen,
+            onTap: () {
+              LogoutnVM.logoutApi();
+            },
+          ),
         ],
       ),
     );
@@ -395,6 +285,7 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
     required IconData icon,
     required String text,
     required String route,
+    void Function()? onTap,
   }) {
     return ListTile(
       leading: Icon(icon, size: Responsive.fontSize(20, context)),
@@ -402,10 +293,12 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
         text,
         style: TextStyle(fontSize: Responsive.fontSize(16, context)),
       ),
-      onTap: () {
-        Navigator.pop(context); // Close the drawer
-        Get.toNamed(route);
-      },
+      onTap:
+          onTap ??
+          () {
+            Navigator.pop(context); // Close the drawer
+            Get.toNamed(route);
+          },
     );
   }
 }

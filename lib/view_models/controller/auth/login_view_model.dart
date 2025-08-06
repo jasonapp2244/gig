@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/routes/routes.dart';
 
 import '../../../models/auth/user_model.dart';
 import '../../../repository/auth_repository/login_repository.dart';
@@ -15,7 +17,7 @@ class LoginVewModel extends GetxController {
 
   RxBool loading = false.obs;
 
-  void loginApi() {
+  void loginApi() async {
     loading.value = true;
     Map data = {
       'email': emailController.value.text,
@@ -24,19 +26,45 @@ class LoginVewModel extends GetxController {
 
     _api
         .loginApi(data)
-        .then((value) {
+        .then((value) async {
           loading.value = false;
 
           if (value['status'] == true) {
             Utils.snakBar('Login', value['message']);
-            userPreference.saveUser(UserModel.fromJson(value)).then((_) {
-              // Get.offAllNamed(RoutesName.bottomBar);
-            });
           } else {
             print("Login failed: $value");
             print("Login failed: ${value['errors']}");
             Utils.snakBar('Login', value['errors'] ?? 'Something went wrong');
           }
+          final _storage = FlutterSecureStorage();
+          // Store auth token and user data
+          await _storage.write(key: 'auth_token', value: value['token']);
+          await _storage.write(key: 'user_name', value: value['user']['name']);
+          await _storage.write(
+            key: 'user_email',
+            value: value['user']['email'],
+          );
+          await _storage.write(
+            key: 'user_id',
+            value: value['user']['id'].toString(),
+          );
+          await _storage.write(
+            key: 'user_phone',
+            value: value['user']['phone_number'],
+          );
+          // Read back and print
+          String? token = await _storage.read(key: 'auth_token');
+          String? name = await _storage.read(key: 'user_name');
+          String? email = await _storage.read(key: 'user_email');
+          String? id = await _storage.read(key: 'user_id');
+          String? phone = await _storage.read(key: 'user_phone');
+
+          print('Token: $token');
+          print('Name: $name');
+          print('Email: $email');
+          print('User ID: $id');
+          print('Phone: $phone');
+          Get.toNamed(RoutesName.home);
         })
         .onError((error, stackTrace) {
           loading.value = false;

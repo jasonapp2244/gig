@@ -30,8 +30,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/button.dart';
 import 'package:gig/res/routes/routes_name.dart';
+import 'package:gig/utils/responsive.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
+import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
@@ -47,6 +50,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final LoginVM = Get.put(LoginVewModel());
   final _formKey = GlobalKey<FormState>();
+  final LogoutnVM = Get.put(LogoutViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -54,42 +58,43 @@ class _LoginState extends State<Login> {
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(
-                  top: 0,
-                  bottom: 0,
-                  left: 25,
-                  right: 25,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 15),
-                    Text(
-                      'Join Task App Today',
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: AppColor.secondColor,
-                        fontWeight: FontWeight.w600,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    bottom: 0,
+                    left: 25,
+                    right: 25,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 15),
+                      Text(
+                        'Join Task App Today',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: AppColor.secondColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      'Lorem Ipsum is simply dummy text',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColor.whiteColor,
-                        fontWeight: FontWeight.w400,
+                      Text(
+                        'Lorem Ipsum is simply dummy text',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColor.whiteColor,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Column(
+
+                      Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -111,10 +116,13 @@ class _LoginState extends State<Login> {
                             hintText: "Email",
                             requiredField: true,
                             validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Name is required';
+                              if (value == null || value.isEmpty) {
+                                return 'Email is required';
                               }
-                              return 'Name is Required';
+                              if (!GetUtils.isEmail(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
                             },
                           ),
                           SizedBox(height: 15),
@@ -135,53 +143,65 @@ class _LoginState extends State<Login> {
                             hintText: "Password",
                             requiredField: true,
                             validator: (value) {
-                              if (value!.isEmpty) {
+                              if (value == null || value.isEmpty) {
                                 return 'Password is required';
                               }
-                              return 'Password is Required';
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
                             },
                           ),
                           SizedBox(height: 15),
-                          // Text(
-                          //   "Confirm Password",
-                          //   style: GoogleFonts.poppins(
-                          //     color: AppColor.textColor,
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
-                          // CustomInputField(
-                          //   prefixIcon: Icon(
-                          //     Icons.password,
-                          //     color: AppColor.textColor,
-                          //   ),
-                          //   controller: LoginVM.passwordController.value,
-                          //   fieldType: 'Confirm password',
-                          //   hintText: "Confirm Password",
-                          //   requiredField: true,
-                          //   validator: (value) {
-                          //     if (value!.isEmpty) {
-                          //       return 'Confirm Password is required';
-                          //     }
-                          //     return 'Confirm Password is Required';
-                          //   },
-                          // ),
-
-                          // Obx(
-                          //   () => RoundButton(
-                          //     width: double.infinity,
-                          //     height: 50,
-                          //     title: 'Sign In',
-                          //     loading: LoginVM.loading.value,
-                          //     buttonColor: AppColor.primeColor,
-                          //     onPress: () {
-                          //       Get.toNamed(RoutesName.subscriptionScreen);
-                          //       if (_formKey.currentState!.validate()) {
-                          //         LoginVM.loginApi();
-                          //       }
-                          //     },
-                          //   ),
-                          // ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    CheckboxTheme(
+                                      data: CheckboxThemeData(
+                                        side: const BorderSide(
+                                          color: Colors.yellow,
+                                          width: 2,
+                                        ), // Yellow border
+                                      ),
+                                      child: Checkbox(
+                                        value: true,
+                                        onChanged: (v) {},
+                                        //  fillColor:WidgetStateColor.resolveWith(callback),
+                                        checkColor:
+                                            Colors.white, // Checkmark color
+                                      ),
+                                    ),
+                                    Text(
+                                      'Remember me? ',
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.toNamed(RoutesName.forgetPassword);
+                                },
+                                child: Text(
+                                  'Forgot Password',
+                                  style: GoogleFonts.poppins(
+                                    color: AppColor.primeColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                           SizedBox(height: 15),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -292,7 +312,6 @@ class _LoginState extends State<Login> {
                             ),
                             child: Row(
                               children: [
-                                // Image.asset('assets/images/login-icon3.png'),
                                 SvgPicture.asset(
                                   'assets/images/facebook.svg',
                                   fit: BoxFit.contain,
@@ -316,15 +335,7 @@ class _LoginState extends State<Login> {
                             title: "Sign In",
                             textColor: AppColor.whiteColor,
                             onTap: () {
-                              //Version 2.0.0
-                              // Get.toNamed(RoutesName.subscriptionScreen);
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ScreenHolderScreen(),
-                                ),
-                              );
-                              if (_formKey.currentState!.validate()) {
+                              if (_formKey.currentState?.validate() ?? false) {
                                 LoginVM.loginApi();
                               }
                             },
@@ -333,14 +344,112 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 30),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    final bool isTablet = Responsive.isTablet(context);
+
+    return Drawer(
+      width: isTablet ? Responsive.width(40, context) : null,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(color: AppColor.primeColor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/user.png'),
+                  radius: isTablet
+                      ? Responsive.width(5, context)
+                      : Responsive.width(6, context),
+                ),
+                SizedBox(height: Responsive.height(1, context)),
+                Text(
+                  "John Doe",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: Responsive.fontSize(18, context),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "johndoe@gmail.com",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: Responsive.fontSize(14, context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.post_add,
+            text: "Create Adds",
+            route: RoutesName.createAddsScreen,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.account_circle_outlined,
+            text: "Profile",
+            route: RoutesName.userProfileScreen,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.bellDot,
+            text: "Notification",
+            route: RoutesName.notificationScreen,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.building400,
+            text: "Employer",
+            route: RoutesName.employerScreen,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.building400,
+            text: "logout",
+            route: RoutesName.employerScreen,
+            onTap: () {
+              LogoutnVM.logoutApi();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+    required String route,
+    void Function()? onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, size: Responsive.fontSize(20, context)),
+      title: Text(
+        text,
+        style: TextStyle(fontSize: Responsive.fontSize(16, context)),
+      ),
+      onTap:
+          onTap ??
+          () {
+            Navigator.pop(context); // Close the drawer
+            Get.toNamed(route);
+          },
     );
   }
 
@@ -355,196 +464,3 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:gig/res/components/button.dart';
-// import 'package:gig/res/routes/routes_name.dart';
-// import 'package:gig/view/screen_holder/screen_holder_screen.dart';
-
-// import '../../res/colors/app_color.dart';
-// import '../../res/components/input.dart';
-// import '../../res/components/round_button.dart';
-// import '../../res/fonts/app_fonts.dart';
-// import '../../view_models/controller/auth/login_view_model.dart';
-
-// class Login extends StatefulWidget {
-//   const Login({super.key});
-
-//   @override
-//   State<Login> createState() => _LoginState();
-// }
-
-// class _LoginState extends State<Login> {
-//   final LoginVM = Get.put(LoginVewModel());
-//   final _formKey = GlobalKey<FormState>();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: AppColor.appBodyBG,
-//       body: SafeArea(
-//         child: Stack(
-//           children: [
-//             Positioned(
-//               top: 10,
-//               left: 20,
-//               child: InkWell(
-//                 onTap: () {
-//                   Get.toNamed(RoutesName.getStartedScreen);
-//                 },
-//                 child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-//               ),
-//             ),
-//             Container(
-//               alignment: Alignment.center,
-//               padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     'Join Task App Today',
-//                     style: TextStyle(
-//                       fontSize: 24,
-//                       color: AppColor.secondColor,
-//                       fontWeight: FontWeight.w600,
-//                     ),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                   Text(
-//                     'Lorem Ipsum is simply dummy text',
-//                     style: TextStyle(
-//                       fontSize: 12,
-//                       color: AppColor.whiteColor,
-//                       fontWeight: FontWeight.w400,
-//                     ),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                   Form(
-//                     key: _formKey,
-//                     child: Column(
-//                       mainAxisSize: MainAxisSize.min,
-//                       children: [
-//                         SizedBox(height: 30),
-//                         CustomInputField(
-//                           controller: LoginVM.emailController.value,
-//                           fieldType: 'email',
-//                           hintText: "Email",
-//                           requiredField: true,
-//                           validator: (value) {
-//                             if (value!.isEmpty) {
-//                               return 'Name is required';
-//                             }
-//                             return 'Name is Required';
-//                           },
-//                         ),
-//                         SizedBox(height: 15),
-//                         CustomInputField(
-//                           controller: LoginVM.passwordController.value,
-//                           fieldType: 'password',
-//                           hintText: "Password",
-//                           requiredField: true,
-//                           validator: (value) {
-//                             if (value!.isEmpty) {
-//                               return 'Password is required';
-//                             }
-//                             return 'Password is Required';
-//                           },
-//                         ),
-//                         SizedBox(height: 15),
-//                         // Obx(
-//                         //   () => RoundButton(
-//                         //     width: double.infinity,
-//                         //     height: 50,
-//                         //     title: 'Sign In',
-//                         //     loading: LoginVM.loading.value,
-//                         //     buttonColor: AppColor.primeColor,
-//                         //     onPress: () {
-//                         //       Get.toNamed(RoutesName.subscriptionScreen);
-//                         //       if (_formKey.currentState!.validate()) {
-//                         //         LoginVM.loginApi();
-//                         //       }
-//                         //     },
-//                         //   ),
-//                         // ),
-//                         Button(
-//                           color: AppColor.primeColor,
-//                           title: "Sign In",
-//                           textcColor: AppColor.whiteColor,
-//                           onTap: () {
-//                             //Version 2.0.0
-//                             // Get.toNamed(RoutesName.subscriptionScreen);
-//                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>ScreenHolderScreen()));
-//                             if (_formKey.currentState!.validate()) {
-//                               LoginVM.loginApi();
-//                             }
-//                           },
-//                         ),
-//                         SizedBox(height: 30),
-//                         InkWell(
-//                           onTap: () {
-//                             Get.toNamed(RoutesName.forgetPassword);
-//                           },
-//                           child: Text(
-//                             'Forget Password?',
-//                             style: TextStyle(
-//                               color: AppColor.primeColor,
-//                               fontFamily: AppFonts.appFont,
-//                               fontSize: 16,
-//                               fontWeight: FontWeight.w900,
-//                             ),
-//                           ),
-//                         ),
-//                         SizedBox(height: 15),
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.center,
-//                           children: [
-//                             Text(
-//                               'Already have an account? ',
-//                               style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontFamily: AppFonts.appFont,
-//                                 fontSize: 16,
-//                                 fontWeight: FontWeight.w400,
-//                               ),
-//                             ),
-//                             InkWell(
-//                               onTap: () {
-//                                 Get.toNamed(RoutesName.registerScreen);
-//                               },
-//                               child: Text(
-//                                 'Sign Up',
-//                                 style: TextStyle(
-//                                   color: AppColor.primeColor,
-//                                   fontFamily: AppFonts.appFont,
-//                                   fontSize: 16,
-//                                   fontWeight: FontWeight.w900,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     if (Get.isSnackbarOpen) {
-//       Get.back();
-//     }
-//     if (Get.isDialogOpen ?? false) {
-//       Get.back();
-//     }
-//     super.dispose();
-//   }
-// }

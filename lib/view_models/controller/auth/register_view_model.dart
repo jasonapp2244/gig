@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
 import '../../../models/auth/user_model.dart';
@@ -34,23 +35,26 @@ class RegisterVewModel extends GetxController {
       Utils.snakBar('Validation Error', 'Phone number is required');
       return false;
     }
-    
+
     // Email validation
     if (!GetUtils.isEmail(emailController.value.text.trim())) {
       Utils.snakBar('Validation Error', 'Please enter a valid email');
       return false;
     }
-    
+
     // Password validation (minimum 6 characters)
     if (passwordController.value.text.trim().length < 6) {
-      Utils.snakBar('Validation Error', 'Password must be at least 6 characters');
+      Utils.snakBar(
+        'Validation Error',
+        'Password must be at least 6 characters',
+      );
       return false;
     }
-    
+
     return true;
   }
 
-  void registerApi() {
+  void registerApi() async {
     if (!validateFields()) {
       return;
     }
@@ -64,42 +68,32 @@ class RegisterVewModel extends GetxController {
 
     _api
         .registerApi(data)
-        .then((value) {
+        .then((value) async {
           loading.value = false;
 
           if (value['status'] == true) {
             if (value['message'] == 'OTP sent to your email') {
               Utils.snakBar('Register', value['message']);
+
+              // Store auth token and user data
+              const storage = FlutterSecureStorage();
+              await storage.write(
+                key: 'user_email',
+                value: value['data']['email'],
+              );
+              print("reguster.. ${value['data']['email']}");
+
               userPreference.saveUser(UserModel.fromJson(value)).then((_) {
-                Get.toNamed(RoutesName.otpScreen, arguments: {
-                  'email': emailController.value.text.trim(),
-                  'user_data': value
-                });
+                Get.toNamed(
+                  RoutesName.otpScreen,
+                  arguments: {
+                    'email': emailController.value.text.trim(),
+                    'user_data': value,
+                  },
+                );
               });
             }
           }
-
-          //     else {
-          //       Utils.snakBar('Verify OTP', value['message']);
-          //       // Get.offAllNamed(RoutesName.waitingForApproval);
-          //     }
-          //   }
-          //   else if (value['user']['role_id'] == 3) {
-          //     Utils.snakBar('Login', value['message']);
-          //     userPreference.saveUser(UserModel.fromJson(value)).then((_) {
-          //       // Get.offAllNamed(RoutesName.userBottomBar);
-          //     });
-          //   }
-          //   else {
-          //     Utils.snakBar('Unknown User', 'App is only for users and vendors.');
-          //     Get.offAllNamed(RoutesName.loginScreen);
-          //   }
-          // }
-          // else {
-          //   print("Login failed: $value");
-          //   print("Login failed: ${value['errors']}");
-          //   Utils.snakBar('Login', value['errors'] ?? 'Something went wrong');
-          // }
         })
         .onError((error, stackTrace) {
           loading.value = false;

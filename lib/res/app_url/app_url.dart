@@ -6,15 +6,15 @@ class AppUrl {
   // AUTH API
   static const String loginApi = "$baseUrl/auth/login";
   static const String registerApi = "$baseUrl/auth/signup";
-  static const String logoutApi = "$baseUrl/public/api/logout";
+  static const String logoutApi = "$baseUrl/logout";
 
   // PASSWORD API
-  static const String forgetPasswordApi = "$baseUrl/api/forget_password";
+  static const String forgetPasswordApi = "$baseUrl/auth/forgot-password";
   static const String resetPasswordApi = "$baseUrl/api/reset_password";
 
   // OTP API
   static const String otpApi = "$baseUrl/auth/verify-otp";
-  static const String resendOtpApi = "$baseUrl/api/resend_otp";
+  static const String resendOtpApi = "$baseUrl/auth/resend-otp";
 
   // TASK API
   static const String addTaskAPI = "$baseUrl/api/addTaskAPI";

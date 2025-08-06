@@ -1,0 +1,65 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
+import 'package:gig/repository/auth_repository/logout_repository.dart';
+import '../../../res/routes/routes_name.dart';
+import '../../../utils/utils.dart';
+import '../user_preference/user_preference_view_model.dart';
+
+class LogoutViewModel extends GetxController {
+  final _api = LogoutRepository();
+  UserPreference userPreference = UserPreference();
+
+  RxBool loading = false.obs;
+
+  void logoutApi() async {
+    // Get auth token from secure storage
+    String? token = await Utils.readSecureData('auth_token');
+    
+    if (token == null || token.isEmpty) {
+      Utils.snakBar('Error', 'No authentication token found');
+      return;
+    }
+    
+    loading.value = true;
+    Map data = {'token': token};
+
+    _api
+        .logoutApi(data)
+        .then((value) async {
+          loading.value = false;
+
+          if (value['status'] == true) {
+            Utils.snakBar('Logout', value['message'] ?? 'Logged out successfully');
+            
+            // Clear all stored data
+            await _clearUserData();
+            
+            // Navigate to login screen
+            Get.offAllNamed(RoutesName.loginScreen);
+          } else {
+            print("Logout failed: $value");
+            Utils.snakBar('Logout Error', value['message'] ?? 'Logout failed');
+          }
+        })
+        .onError((error, stackTrace) {
+          loading.value = false;
+          print('Logout API error: ${error.toString()}');
+          Utils.snakBar('Error', error.toString());
+        });
+  }
+
+  // Clear all user data from storage
+  Future<void> _clearUserData() async {
+    final _storage = FlutterSecureStorage();
+    
+    // Clear all secure storage keys
+    await _storage.delete(key: 'auth_token');
+    await _storage.delete(key: 'user_name');
+    await _storage.delete(key: 'user_email');
+    await _storage.delete(key: 'user_id');
+    await _storage.delete(key: 'user_phone');
+    
+    // Clear user preferences
+   // await userPreference.clearUser();
+  }
+}
