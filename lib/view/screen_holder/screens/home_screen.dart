@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gig/res/components/custom_appbar.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
+import 'package:gig/utils/utils.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -47,99 +47,102 @@ class _HomeScreenState extends State<HomeScreen> {
               bottomRight: Radius.circular(Responsive.width(3, context)),
             ),
           ),
-          child: Column(
-            children: [
-              // Welcome Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize:
-                        MainAxisSize.min, // Prevent inner column overflow
-                    children: [
-                      Text(
-                        "Welcome",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Responsive.fontSize(16, context),
-                        ),
-                      ),
-                      Text(
-                        "John Doe",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Responsive.fontSize(22, context),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/user.png'),
-                    radius: Responsive.isTablet(context)
-                        ? Responsive.width(5, context)
-                        : Responsive.width(6, context),
-                  ),
-                ],
-              ),
-              SizedBox(height: Responsive.height(1.5, context)),
-              // Search Row
-              Row(
-                children: [
-                  Expanded(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: Responsive.height(
-                          5,
-                          context,
-                        ), // Limit height
-                      ),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search...",
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: Responsive.height(1, context),
-                            horizontal: Responsive.width(4, context),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
+            child: Column(
+              children: [
+                // Welcome Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize:
+                          MainAxisSize.min, // Prevent inner column overflow
+                      children: [
+                        Text(
+                          "Welcome",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Responsive.fontSize(16, context),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                              Responsive.width(8, context),
+                        ),
+                        Text(
+                          "John Doe",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Responsive.fontSize(22, context),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/images/user.png'),
+                      radius: Responsive.isTablet(context)
+                          ? Responsive.width(5, context)
+                          : Responsive.width(6, context),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Responsive.height(1.5, context)),
+                // Search Row
+                Row(
+                  children: [
+                    Expanded(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: Responsive.height(
+                            5,
+                            context,
+                          ), // Limit height
+                        ),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: "Search...",
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: Responsive.height(1, context),
+                              horizontal: Responsive.width(4, context),
                             ),
-                            borderSide: BorderSide.none,
-                          ),
-                          prefixIcon: Icon(
-                            Icons.search,
-                            size: Responsive.fontSize(20, context),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                Responsive.width(8, context),
+                              ),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              size: Responsive.fontSize(20, context),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  if (!Responsive.isTablet(context))
-                    SizedBox(width: Responsive.width(2, context)),
-                  if (!Responsive.isTablet(context))
-                    Builder(
-                      builder: (context) => Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.menu,
-                            size: Responsive.fontSize(20, context),
-                            color: Colors.black,
+                    if (!Responsive.isTablet(context))
+                      SizedBox(width: Responsive.width(2, context)),
+                    if (!Responsive.isTablet(context))
+                      Builder(
+                        builder: (context) => Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
                           ),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.menu,
+                              size: Responsive.fontSize(20, context),
+                              color: Colors.black,
+                            ),
+                            onPressed: () => Scaffold.of(context).openDrawer(),
+                          ),
                         ),
                       ),
-                    ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -362,6 +365,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           _buildDrawerItem(
             context,
+            icon: Icons.notification_important,
+            text: "Get FCM Token",
+            route: "",
+            onTap: () async {
+              Navigator.pop(context); // Close drawer first
+              // Get and print FCM token
+              String? token = await Utils.getAndPrintFCMToken();
+              if (token != null) {
+                Utils.snakBar("FCM Token", "Token retrieved and printed to console!");
+              } else {
+                Utils.snakBar("Error", "Failed to get FCM token");
+              }
+            },
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.storage,
+            text: "Show Stored FCM Token",
+            route: "",
+            onTap: () async {
+              Navigator.pop(context); // Close drawer first
+              String? storedToken = await Utils.getStoredFCMToken();
+              if (storedToken != null) {
+                Utils.snakBar("Stored FCM Token", "Check console for full token");
+              } else {
+                Utils.snakBar("No Token", "No FCM token found in storage");
+              }
+            },
+          ),
+          _buildDrawerItem(
+            context,
             icon: Icons.logout,
             text: "Logout",
             route: "",
@@ -389,7 +423,8 @@ class _HomeScreenState extends State<HomeScreen> {
         text,
         style: TextStyle(fontSize: Responsive.fontSize(16, context)),
       ),
-      onTap: onTap ??
+      onTap:
+          onTap ??
           () {
             Navigator.pop(context); // Close the drawer
             if (route.isNotEmpty) {

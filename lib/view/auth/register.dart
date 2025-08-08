@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/button.dart';
 import 'package:gig/res/routes/routes_name.dart';
-import 'package:gig/view/otp/otp_screen.dart';
-import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view_models/controller/auth/register_view_model.dart';
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
@@ -136,30 +134,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: AppColor.primeColor,
                             title: "Sign Up",
                             textColor: AppColor.whiteColor,
-                                                          onTap: () {
-                                if (_formKey.currentState?.validate() ?? false) {
-                                  registerVM.registerApi();
-                                }
-                              },
+                            onTap: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                registerVM.registerApi();
+                              }
+                            },
                           ),
 
-                          //OTP Screen
-
-                          // Obx(
-                          //   () => RoundButton(
-                          //     width: double.infinity,
-                          //     height: 50,
-                          //     title: 'Sign Up',
-                          //     loading: registerVM.loading.value,
-                          //     buttonColor: AppColor.primeColor,
-                          //     onPress: () {
-                          //       Get.toNamed(RoutesName.otpScreen);
-                          //       if (_formKey.currentState!.validate()) {
-                          //         registerVM.registerApi();
-                          //       }
-                          //     },
-                          //   ),
-                          // ),
                           SizedBox(height: 30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

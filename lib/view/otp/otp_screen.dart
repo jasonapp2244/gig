@@ -6,7 +6,6 @@ import 'package:sms_autofill/sms_autofill.dart';
 import '../../res/colors/app_color.dart';
 import '../../res/components/round_button.dart';
 import '../../res/components/simple_button.dart';
-import '../../res/routes/routes_name.dart';
 import '../../view_models/controller/otp/otp_view_model.dart';
 import '../../view_models/controller/otp/resend_otp_view_model.dart';
 

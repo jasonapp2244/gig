@@ -1,17 +1,26 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
+import 'package:gig/utils/utils.dart';
 
-
- 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
- 
-  Color primeColor = Colors.transparent; 
+  // Print device ID to console
+  Utils.getAndPrintDeviceId();
+  
+  // Get and print FCM token
+  Utils.getAndPrintFCMToken();
+  
+  // Listen for FCM token refresh
+  Utils.listenToFCMTokenRefresh();
+
+  Color primeColor = Colors.transparent;
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: primeColor,

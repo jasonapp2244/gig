@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../../res/colors/app_color.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import '../../../../res/components/custom_photo_widget.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
@@ -16,10 +18,17 @@ class UserProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // User Image
-              CircleAvatar(
+              CustomPhotoWidget(
                 radius: 50,
-                backgroundImage: NetworkImage(
-                    'https://i.pravatar.cc/300'), // Replace with actual image
+                backgroundColor: AppColor.primeColor,
+                onImagePicked: (File? imageFile) {
+                  if (imageFile != null) {
+                    print('Profile image picked: ${imageFile.path}');
+                    // TODO: Upload image to server or save locally
+                  } else {
+                    print('Profile image removed');
+                  }
+                },
               ),
               SizedBox(height: 12),
 

@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:gig/res/routes/routes.dart';
-
-import '../../../models/auth/user_model.dart';
 import '../../../repository/auth_repository/login_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
@@ -52,18 +49,10 @@ class LoginVewModel extends GetxController {
             key: 'user_phone',
             value: value['user']['phone_number'],
           );
-          // Read back and print
-          String? token = await _storage.read(key: 'auth_token');
-          String? name = await _storage.read(key: 'user_name');
-          String? email = await _storage.read(key: 'user_email');
-          String? id = await _storage.read(key: 'user_id');
-          String? phone = await _storage.read(key: 'user_phone');
+          
+  
 
-          print('Token: $token');
-          print('Name: $name');
-          print('Email: $email');
-          print('User ID: $id');
-          print('Phone: $phone');
+       
           Get.toNamed(RoutesName.home);
         })
         .onError((error, stackTrace) {
@@ -72,4 +61,5 @@ class LoginVewModel extends GetxController {
           Utils.snakBar('Error', error.toString());
         });
   }
+
 }

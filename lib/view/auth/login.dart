@@ -1,29 +1,4 @@
-//  Container(
-//             padding: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-//             decoration: BoxDecoration(
-//               color: AppColor.grayColor,
-//               border: Border.all(color: Colors.white24, width: 1),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             child: Row(
-//               children: [
-//                 // Image.asset('assets/images/login-icon3.png'),
-//                 SvgPicture.asset(
-//                   'assets/images/facebook.svg',
-//                   fit: BoxFit.contain,
-//                 ),
-//                 SizedBox(width: 3),
-//                 Text(
-//                   'Continue with facebook',
-//                   style: TextStyle(
-//                     fontSize: 16,
-//                     color: AppColor.whiteColor,
-//                     fontWeight: FontWeight.w400,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -31,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:gig/res/components/button.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
-import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';

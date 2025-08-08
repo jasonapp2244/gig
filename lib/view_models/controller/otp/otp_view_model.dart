@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import '../../../data/app_exceptions.dart';
 import '../../../repository/otp/otp_repository.dart';
-import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
 import '../../../models/auth/user_model.dart';
@@ -28,7 +27,7 @@ class OtpViewModel extends GetxController {
         .otpApi(data)
         .then((value) async {
           loading.value = false;
-          print('==========================>>>>>>>RESPONSE $value');
+         
 
           if (value['status'] == true) {
             Utils.snakBar(

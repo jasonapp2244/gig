@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-
 import '../../../models/auth/user_model.dart';
 import '../../../repository/auth_repository/register_repository.dart';
 import '../../../res/routes/routes_name.dart';

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import '../../view_models/controller/user_preference/user_preference_view_model.dart';
 import '../app_exceptions.dart';
 import 'base_api_services.dart';
 import 'package:http/http.dart' as http;
@@ -60,7 +59,6 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-  @override
   Future<dynamic> postLogoutApi(var data, String url) async {
     dynamic responseJson;
     try {
