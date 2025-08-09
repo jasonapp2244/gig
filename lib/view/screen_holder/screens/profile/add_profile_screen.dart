@@ -80,6 +80,7 @@ class AddProfileScreen extends StatelessWidget {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
 
               CustomInputField(
                 controller: _emailController,
