@@ -83,6 +83,10 @@ class AddProfileController extends GetxController {
         Utils.snakBar("Error", "Address is required");
         return;
       }
+      if (email.isEmpty) {
+        Utils.snakBar("Error", "Email is required");
+        return;
+      }
 
       // Create profile model
       ProfileModel profileData = ProfileModel(
