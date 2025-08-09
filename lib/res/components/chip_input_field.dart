@@ -74,7 +74,7 @@ class ChipInputField extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
+                color: AppColor.grayColor,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade400, width: 2),
               ),
@@ -100,7 +100,7 @@ class ChipInputField extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColor.grayColor,
                           borderRadius: BorderRadius.circular(25),
                           border: Border.all(
                             color: Colors.grey.shade400,

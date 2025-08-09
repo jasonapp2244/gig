@@ -59,6 +59,74 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  @override
+Future<dynamic> postProfileData(var data, String url,String token) async {
+  dynamic responseJson;
+
+  try {
+    // Debug print request data
+    print("📤 Sending POST request to: $url");
+    print("📦 Data: $data");
+
+    final response = await http
+        .post(
+          Uri.parse(url),
+          body: jsonEncode(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+           'Authorization': 'Bearer $token', // Uncomment if you have a token
+          },
+        )
+        .timeout(const Duration(seconds: 10));
+
+    responseJson = returnResponse(response);
+
+  } on SocketException {
+    throw InternetException(
+      'Please check your internet connection and try again',
+    );
+  } 
+  return responseJson;
+}
+
+  // Post API with Authentication Token
+  Future<dynamic> postApiWithToken(var data, String url, String token) async {
+    dynamic responseJson;
+    try {
+      print('🔑 Sending authenticated request to: $url');
+      print('📄 Data: $data');
+      print('🎫 Token: Bearer ${token.substring(0, 10)}...');
+
+      final response = await http
+          .post(
+            Uri.parse(url),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+
+
+
+
   Future<dynamic> postLogoutApi(var data, String url) async {
     dynamic responseJson;
     try {

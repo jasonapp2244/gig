@@ -14,6 +14,7 @@ class AddProfileScreen extends StatelessWidget {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _chipController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +80,19 @@ class AddProfileScreen extends StatelessWidget {
                   return null;
                 },
               ),
+
+              CustomInputField(
+                controller: _emailController,
+                fieldType: 'text',
+                hintText: "Email",
+                requiredField: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Address is required';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 20),
               GetX<AddProfileController>(
                 builder: (controller) {
@@ -108,27 +122,45 @@ class AddProfileScreen extends StatelessWidget {
               // Save Button
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement save functionality
-                    print('Name: ${_nameController.text}');
-                    print('Phone: ${_phoneNumberController.text}');
-                    print('Address: ${_addressController.text}');
-                    print('PDF: ${controller.pdfFileName.value}');
-                    print('Skills: ${controller.selectedChips.value}');
+                child: GetX<AddProfileController>(
+                  builder: (controller) {
+                    return ElevatedButton(
+                      onPressed: controller.loading.value
+                          ? null
+                          : () {
+                              controller.postProfileData(
+                                name: _nameController.text.trim(),
+                                phoneNumber: _phoneNumberController.text.trim(),
+                                address: _addressController.text.trim(),
+                                email: _emailController.text.trim(),
+                              );
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.primeColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: controller.loading.value
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Save Profile',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primeColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Save Profile',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
                 ),
               ),
             ],
