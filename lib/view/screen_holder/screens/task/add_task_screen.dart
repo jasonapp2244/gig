@@ -51,10 +51,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                )
+                ),
               ],
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 15),
             Expanded(
               child: SingleChildScrollView(
                 child: Form(
@@ -76,7 +76,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -92,7 +92,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -108,7 +108,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -124,7 +124,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -140,7 +140,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -156,7 +156,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -172,7 +172,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: CustomInputField(
@@ -188,14 +188,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           },
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                     ],
                   ),
                 ),
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(top: 10,left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
               child: Obx(
                 () => RoundButton(
                   width: double.infinity,
@@ -218,5 +218,3 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 }
-
-
