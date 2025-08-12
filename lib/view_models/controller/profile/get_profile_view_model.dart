@@ -89,18 +89,43 @@ class GetProfileViewModel extends GetxController {
   String get userAddress => profileData['address'] ?? '';
   String get userBio =>
       profileData['bio'] ?? profileData['description'] ?? 'No bio available';
-  String get profileImage {
-    // Check for local file path first (from recent upload)
-    String localPath = profileData['profile_image'] ?? '';
-    if (localPath.isNotEmpty && localPath.startsWith('/')) {
-      return localPath; // Return local file path
-    }
-    // Fall back to network URL from API
-    return profileData['avatar'] ?? profileData['image_url'] ?? '';
-  }
+
   String get resumeUrl => profileData['resume'] ?? profileData['cv'] ?? '';
   String get resumeName =>
       profileData['resume_name'] ?? profileData['cv_name'] ?? 'resume.pdf';
+  String get profileImage {
+    // Check for local file path first (from recent upload)
+    String? localPath = profileData['profile_image'] ?? '';
+    // if (localPath != null &&
+    //     localPath.isNotEmpty &&
+    //     localPath.startsWith('http')) {
+    //   // Return local file path as is for recently uploaded images
+    //   return localPath;
+    // }
+
+    // Base URL for server images (includes the profile_images folder)
+    const String baseUrl =
+        'http://192.168.18.159/gig_mob_app/public/storage/profile_images/';
+
+    // Fall back to server path from API (just the filename)
+    String? fileName = profileData['avatar'] ?? localPath ?? '';
+
+    if (fileName != null && fileName.isNotEmpty) {
+      // If it's already a full URL, return as is
+      // if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+      //   print('📸 Using full URL: $fileName');
+      //   return fileName;
+      // }
+
+      // Otherwise, prepend base URL with profile_images folder
+      String fullUrl = '$baseUrl$fileName';
+      print('📸 Constructed URL: $fullUrl');
+      return fullUrl;
+    }
+
+    return ''; // Default empty if no image
+  }
+
   List<dynamic> get userSkills => profileData['skills'] ?? [];
 
   // Refresh profile data
@@ -112,7 +137,7 @@ class GetProfileViewModel extends GetxController {
   Future<void> loadFromStoredData() async {
     try {
       String? storedProfileData = await _storage.read(key: 'user_profile');
-      
+
       if (storedProfileData != null && storedProfileData.isNotEmpty) {
         Map<String, dynamic> data = jsonDecode(storedProfileData);
         profileData.value = Map<String, dynamic>.from(data);

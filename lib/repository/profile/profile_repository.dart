@@ -39,7 +39,7 @@ class ProfileRepository {
 
       // If we have files to upload, use multipart
       if (profileImage != null || pdfFile != null) {
-        return await _uploadProfileWithFiles(
+        return await NetworkApiServices().PostProfileWithFiles(
           profileData,
           profileImage,
           pdfFile,
@@ -55,63 +55,6 @@ class ProfileRepository {
       }
     } catch (e) {
       print('Error in updateProfile: $e');
-      rethrow;
-    }
-  }
-
-  Future<dynamic> _uploadProfileWithFiles(
-    ProfileModel profileData,
-    File? profileImage,
-    File? pdfFile,
-    String token,
-  ) async {
-    try {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(AppUrl.updateProfileApi),
-      );
-
-      // Add auth token to headers
-      request.headers['Authorization'] = 'Bearer $token';
-      request.headers['Accept'] = 'application/json';
-
-      // Add form fields
-      request.fields.addAll(profileData.toFormData());
-
-      // Add profile image if provided
-      if (profileImage != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath('profile_image', profileImage.path),
-        );
-      }
-
-      // Add PDF file if provided
-      if (pdfFile != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath('cv', pdfFile.path),
-        );
-      }
-
-      print('🚀 Sending multipart request to: ${AppUrl.updateProfileApi}');
-      print('📄 Form fields: ${request.fields}');
-      print('📎 Files: ${request.files.map((f) => f.field).toList()}');
-      print('🔑 Token: Bearer ${token.substring(0, 10)}...');
-
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
-
-      print('📈 Response status: ${response.statusCode}');
-      print('📝 Response body: ${response.body}');
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.body;
-      } else {
-        throw Exception(
-          'Failed to update profile: ${response.statusCode} - ${response.body}',
-        );
-      }
-    } catch (e) {
-      print('❌ Error in _uploadProfileWithFiles: $e');
       rethrow;
     }
   }

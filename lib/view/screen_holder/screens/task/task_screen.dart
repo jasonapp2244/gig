@@ -203,9 +203,7 @@ class _TaskScreenState extends State<TaskScreen>
                 children: [
                   // Ongoing
                   _buildTaskList(getFilteredTasksByTab('Ongoing')),
-                  // Incomplete
-                  //     _buildTaskList(getFilteredTasksByTab('Incomplete')),
-                  // Completed
+            
                   _buildTaskList(getFilteredTasksByTab('Completed')),
                 ],
               ),

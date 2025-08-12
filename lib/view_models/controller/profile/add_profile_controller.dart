@@ -33,6 +33,20 @@ class AddProfileController extends GetxController {
     super.onInit();
     // Load stored profile data when controller is initialized
     loadStoredProfileData();
+    // Also ensure GetProfileViewModel is loaded
+    _ensureProfileViewModelLoaded();
+  }
+
+  /// Ensure GetProfileViewModel is loaded to get existing profile data
+  Future<void> _ensureProfileViewModelLoaded() async {
+    try {
+      if (Get.isRegistered<GetProfileViewModel>()) {
+        final profileController = Get.find<GetProfileViewModel>();
+        await profileController.loadFromStoredData();
+      }
+    } catch (e) {
+      print('Note: Could not load GetProfileViewModel: $e');
+    }
   }
 
   @override
