@@ -179,13 +179,12 @@ class _TaskScreenState extends State<TaskScreen>
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TabBar(
                 controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
+
+                unselectedLabelColor: Colors.white,
                 indicator: BoxDecoration(
                   color: AppColor.primeColor,
                   borderRadius: BorderRadius.circular(10),
@@ -205,7 +204,7 @@ class _TaskScreenState extends State<TaskScreen>
                   // Ongoing
                   _buildTaskList(getFilteredTasksByTab('Ongoing')),
                   // Incomplete
-                  _buildTaskList(getFilteredTasksByTab('Incomplete')),
+                  //     _buildTaskList(getFilteredTasksByTab('Incomplete')),
                   // Completed
                   _buildTaskList(getFilteredTasksByTab('Completed')),
                 ],
