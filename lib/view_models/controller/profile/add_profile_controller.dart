@@ -1,19 +1,157 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gig/models/profile/profile_model.dart';
 import 'package:gig/repository/profile/profile_repository.dart';
 import 'package:gig/utils/utils.dart';
+import 'package:gig/view_models/controller/home/home_view_model.dart';
+import 'package:gig/view_models/controller/profile/get_profile_view_model.dart';
 
 class AddProfileController extends GetxController {
   final ProfileRepository _profileRepository = ProfileRepository();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
+
+  // Text controllers for form fields
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   Rxn<File> imageFile = Rxn<File>(); // reactive nullable File
   RxList<String> selectedChips = <String>[].obs;
   Rx<File?> pdfFile = Rx<File?>(null);
   RxString pdfFileName = ''.obs;
   RxBool loading = false.obs;
+  RxBool isDataLoaded = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Load stored profile data when controller is initialized
+    loadStoredProfileData();
+  }
+
+  @override
+  void onClose() {
+    // Dispose text controllers
+    nameController.dispose();
+    phoneNumberController.dispose();
+    addressController.dispose();
+    emailController.dispose();
+    super.onClose();
+  }
+
+  /// Load stored profile data and auto-fill form fields
+  Future<void> loadStoredProfileData() async {
+    try {
+      print('🔄 Loading stored profile data...');
+
+      // Get stored profile data
+      String? storedProfileData = await _storage.read(key: 'user_profile');
+
+      if (storedProfileData != null && storedProfileData.isNotEmpty) {
+        Map<String, dynamic> profileData = jsonDecode(storedProfileData);
+
+        print('📋 Found stored profile data: $profileData');
+
+        // Auto-fill text fields
+        nameController.text = profileData['name'] ?? '';
+        phoneNumberController.text =
+            profileData['phone_number'] ?? profileData['phone'] ?? '';
+        addressController.text = profileData['address'] ?? '';
+        emailController.text = profileData['email'] ?? '';
+
+        // Auto-fill skills/chips
+        if (profileData['skills'] != null) {
+          selectedChips.clear();
+          if (profileData['skills'] is String) {
+            // If skills is a comma-separated string
+            List<String> skillsList = (profileData['skills'] as String)
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+            selectedChips.addAll(skillsList);
+          } else if (profileData['skills'] is List) {
+            // If skills is already a list
+            List<String> skillsList = (profileData['skills'] as List)
+                .map((e) => e.toString().trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+            selectedChips.addAll(skillsList);
+          }
+        }
+
+        // Auto-fill PDF filename if exists
+        if (profileData['cv_name'] != null ||
+            profileData['resume_name'] != null) {
+          pdfFileName.value =
+              profileData['cv_name'] ?? profileData['resume_name'] ?? '';
+        }
+
+        // Auto-fill profile image if exists (local file path)
+        if (profileData['profile_image'] != null &&
+            profileData['profile_image'].toString().isNotEmpty) {
+          String imagePath = profileData['profile_image'].toString();
+          if (imagePath.startsWith('/')) {
+            // It's a local file path, set it as the current image
+            imageFile.value = File(imagePath);
+          }
+        }
+
+        isDataLoaded.value = true;
+        print('✅ Profile data auto-filled successfully');
+      } else {
+        print('ℹ️ No stored profile data found');
+        isDataLoaded.value = true;
+      }
+    } catch (e) {
+      print('❌ Error loading stored profile data: $e');
+      isDataLoaded.value = true;
+    }
+  }
+
+  /// Refresh stored data from secure storage
+  Future<void> refreshStoredData() async {
+    isDataLoaded.value = false;
+    await loadStoredProfileData();
+  }
+
+  /// Update stored profile data immediately after successful API update
+  Future<void> _updateStoredProfileData() async {
+    try {
+      Map<String, dynamic> updatedData = {
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'phone_number': phoneNumberController.text.trim(),
+        'address': addressController.text.trim(),
+        'skills': selectedChips.toList(),
+        'cv_name': pdfFileName.value.isNotEmpty ? pdfFileName.value : null,
+        'profile_image': imageFile.value?.path ?? '', // Store local image path
+      };
+
+      await _storage.write(key: 'user_profile', value: jsonEncode(updatedData));
+
+      // Also update individual user fields for home screen
+      await _storage.write(key: 'user_name', value: nameController.text.trim());
+      await _storage.write(
+        key: 'user_email',
+        value: emailController.text.trim(),
+      );
+      await _storage.write(
+        key: 'user_phone',
+        value: phoneNumberController.text.trim(),
+      );
+
+      print('✅ Stored profile data updated immediately');
+    } catch (e) {
+      print('❌ Error updating stored profile data: $e');
+    }
+  }
 
   pickImage() async {
     final picker = ImagePicker();
@@ -61,31 +199,28 @@ class AddProfileController extends GetxController {
     print('PDF cleared');
   }
 
-  Future<void> postProfileData({
-    required String name,
-    required String phoneNumber,
-    required String address,
-    required String email,
-  }) async {
+  Future<void> postProfileData() async {
     try {
       loading.value = true;
 
+      // Get values from controllers
+      String name = nameController.text.trim();
+      String phoneNumber = phoneNumberController.text.trim();
+      String address = addressController.text.trim();
+      String email = emailController.text.trim();
+
       // Validate required fields
       if (name.isEmpty) {
-        Utils.snakBar("Error", "Name is required");
-        return;
+        return Utils.snakBar("Error", "Name is required");
       }
       if (phoneNumber.isEmpty) {
-        Utils.snakBar("Error", "Phone number is required");
-        return;
+        return Utils.snakBar("Error", "Phone number is required");
       }
       if (address.isEmpty) {
-        Utils.snakBar("Error", "Address is required");
-        return;
+        return Utils.snakBar("Error", "Address is required");
       }
       if (email.isEmpty) {
-        Utils.snakBar("Error", "Email is required");
-        return;
+        return Utils.snakBar("Error", "Email is required");
       }
 
       // Create profile model
@@ -113,6 +248,27 @@ class AddProfileController extends GetxController {
 
       Utils.snakBar("Success", "Profile updated successfully!");
 
+      // Update stored profile data in secure storage for instant access
+      await _updateStoredProfileData();
+
+      // Update home screen data if controller exists
+      try {
+        if (Get.isRegistered<HomeViewModel>()) {
+          Get.find<HomeViewModel>().refreshUserData();
+        }
+      } catch (e) {
+        print('Note: HomeViewModel not found for refresh');
+      }
+
+      // Update profile view screen if controller exists (instant update from storage)
+      try {
+        if (Get.isRegistered<GetProfileViewModel>()) {
+          await Get.find<GetProfileViewModel>().loadFromStoredData();
+        }
+      } catch (e) {
+        print('Note: GetProfileViewModel not found for refresh');
+      }
+
       // Optionally clear form or navigate
       // clearForm();
     } catch (error) {
@@ -124,9 +280,15 @@ class AddProfileController extends GetxController {
   }
 
   void clearForm() {
+    nameController.clear();
+    phoneNumberController.clear();
+    addressController.clear();
+    emailController.clear();
     imageFile.value = null;
     selectedChips.clear();
     pdfFile.value = null;
     pdfFileName.value = '';
   }
+
+  //get
 }

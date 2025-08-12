@@ -6,6 +6,7 @@ import 'package:gig/utils/responsive.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../../view_models/controller/home/home_view_model.dart';
 
 import '../../../res/colors/app_color.dart';
 
@@ -23,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final HomeViewModel homeController = Get.put(HomeViewModel());
+    
     return Scaffold(
       backgroundColor: Colors.transparent,
       drawer: _buildDrawer(context),
@@ -67,14 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: Responsive.fontSize(16, context),
                           ),
                         ),
-                        Text(
-                          "John Doe",
+                        Obx(() => Text(
+                          homeController.userName.value,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: Responsive.fontSize(22, context),
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        )),
                       ],
                     ),
                     CircleAvatar(
@@ -303,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDrawer(BuildContext context) {
     final bool isTablet = Responsive.isTablet(context);
+    final HomeViewModel homeController = Get.find<HomeViewModel>();
 
     return Drawer(
       width: isTablet ? Responsive.width(40, context) : null,
@@ -321,21 +325,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Responsive.width(6, context),
                 ),
                 SizedBox(height: Responsive.height(1, context)),
-                Text(
-                  "John Doe",
+                Obx(() => Text(
+                  homeController.userName.value,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(18, context),
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                Text(
-                  "johndoe@gmail.com",
+                )),
+                Obx(() => Text(
+                  homeController.userEmail.value,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: Responsive.fontSize(14, context),
                   ),
-                ),
+                )),
               ],
             ),
           ),
@@ -373,7 +377,10 @@ class _HomeScreenState extends State<HomeScreen> {
               // Get and print FCM token
               String? token = await Utils.getAndPrintFCMToken();
               if (token != null) {
-                Utils.snakBar("FCM Token", "Token retrieved and printed to console!");
+                Utils.snakBar(
+                  "FCM Token",
+                  "Token retrieved and printed to console!",
+                );
               } else {
                 Utils.snakBar("Error", "Failed to get FCM token");
               }
@@ -388,7 +395,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pop(context); // Close drawer first
               String? storedToken = await Utils.getStoredFCMToken();
               if (storedToken != null) {
-                Utils.snakBar("Stored FCM Token", "Check console for full token");
+                Utils.snakBar(
+                  "Stored FCM Token",
+                  "Check console for full token",
+                );
               } else {
                 Utils.snakBar("No Token", "No FCM token found in storage");
               }

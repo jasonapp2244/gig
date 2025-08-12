@@ -39,7 +39,7 @@ class CustomPhotoWidget extends StatelessWidget {
         }),
         const SizedBox(height: 8),
         const Text(
-          "add photo",
+          "Add photo",
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],

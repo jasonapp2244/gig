@@ -22,4 +22,5 @@ class AppUrl {
 
   // PROFILE API
   static const String updateProfileApi = "$baseUrl/update-profile";
+  static const String getProfileApi = "$baseUrl/get-user";
 }

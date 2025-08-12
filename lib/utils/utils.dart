@@ -41,13 +41,12 @@ class Utils {
     await storage.write(key: key, value: value);
   }
 
-  Future<String?> read(String key) async {
+  static Future<String?> readSecureData(String key) async {
+    const storage = FlutterSecureStorage();
     return await storage.read(key: key);
   }
 
-  // Static method for reading secure storage
-  static Future<String?> readSecureData(String key) async {
-    const storage = FlutterSecureStorage();
+  Future<String?> read(String key) async {
     return await storage.read(key: key);
   }
 
@@ -201,6 +200,7 @@ class Utils {
       return null;
     }
   }
+  
 
   // Future<void> saveTokenToServer() async {
   //   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -261,4 +261,5 @@ class Utils {
       return null;
     }
   }
+  
 }

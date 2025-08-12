@@ -11,7 +11,8 @@ class TaskScreen extends StatefulWidget {
   State<TaskScreen> createState() => _TaskScreenState();
 }
 
-class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateMixin {
+class _TaskScreenState extends State<TaskScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String searchText = '';
 
@@ -93,21 +94,21 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
     },
   ];
 
-
   String searchQuery = '';
 
   List<Map<String, dynamic>> get filteredTasks => tasks
-  .where((task) =>
-      task['title'].toLowerCase().contains(searchText.toLowerCase()) ||
-      task['startDate'].contains(searchText) ||
-      task['endDate'].contains(searchText) ||
-      task['status'].toLowerCase().contains(searchText.toLowerCase()))
-  .toList();
+      .where(
+        (task) =>
+            task['title'].toLowerCase().contains(searchText.toLowerCase()) ||
+            task['startDate'].contains(searchText) ||
+            task['endDate'].contains(searchText) ||
+            task['status'].toLowerCase().contains(searchText.toLowerCase()),
+      )
+      .toList();
 
   List<Map<String, dynamic>> getFilteredTasksByTab(String status) {
     return filteredTasks.where((task) => task['status'] == status).toList();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +146,7 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
                     ),
                     textAlign: TextAlign.center,
                   ),
-                )
+                ),
               ],
             ),
 
@@ -218,7 +219,12 @@ class _TaskScreenState extends State<TaskScreen> with SingleTickerProviderStateM
 
   Widget _buildTaskList(List<Map<String, dynamic>> taskList) {
     if (taskList.isEmpty) {
-      return Center(child: Text('No tasks found.',style: GoogleFonts.poppins(color: AppColor.whiteColor),));
+      return Center(
+        child: Text(
+          'No tasks found.',
+          style: GoogleFonts.poppins(color: AppColor.whiteColor),
+        ),
+      );
     }
 
     return ListView(

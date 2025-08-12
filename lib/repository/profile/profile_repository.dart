@@ -9,6 +9,22 @@ import 'package:http/http.dart' as http;
 class ProfileRepository {
   final BaseApiServices _apiServices = NetworkApiServices();
 
+  Future<dynamic> getProfile() async {
+    try {
+      // Get auth token
+      String? token = await Utils.readSecureData('auth_token');
+      if (token == null) {
+        throw Exception('Authentication token not found. Please login again.');
+      }
+
+      // Call the get profile API
+      return await NetworkApiServices().getProfileApi(token);
+    } catch (e) {
+      print('Error in getProfile: $e');
+      rethrow;
+    }
+  }
+
   Future<dynamic> updateProfile(
     ProfileModel profileData, {
     File? profileImage,

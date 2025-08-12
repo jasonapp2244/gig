@@ -51,4 +51,5 @@ class RoutesName {
   static const String employerDetailScreen = '/employer_detail_screen';
 
   static const String home = '/home';
+  static const String profileViewScreen = '/profile_view_screen';
 }

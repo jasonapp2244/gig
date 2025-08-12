@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:gig/res/app_url/app_url.dart';
 import '../app_exceptions.dart';
 import 'base_api_services.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,34 @@ class NetworkApiServices extends BaseApiServices {
       );
     } on RequestTimeout {
       throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getProfileApi(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .get(
+            Uri.parse(
+              AppUrl.getProfileApi,
+            ), // Replace with your profile endpoint
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token', // Only token passed
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
     } catch (e) {
       throw FetchDataException('Unexpected error: $e');
     }
@@ -46,7 +75,7 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(Duration(seconds: 10));
 
-      responseJson =                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  returnResponse(response);
+      responseJson = returnResponse(response);
     } on SocketException {
       throw InternetException(
         'Please check your internet connection and try again',
@@ -60,35 +89,34 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-Future<dynamic> postProfileData(var data, String url,String token) async {
-  dynamic responseJson;
+  Future<dynamic> postProfileData(var data, String url, String token) async {
+    dynamic responseJson;
 
-  try {
-    // Debug print request data
-    print("📤 Sending POST request to: $url");
-    print("📦 Data: $data");
+    try {
+      // Debug print request data
+      print(" Sending POST request to: $url");
+      print(" Data: $data");
 
-    final response = await http
-        .post(
-          Uri.parse(url),
-          body: jsonEncode(data),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-           'Authorization': 'Bearer $token', // Uncomment if you have a token
-          },
-        )
-        .timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse(url),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token', // Uncomment if you have a token
+            },
+          )
+          .timeout(const Duration(seconds: 10));
 
-    responseJson = returnResponse(response);
-
-  } on SocketException {
-    throw InternetException(
-      'Please check your internet connection and try again',
-    );
-  } 
-  return responseJson;
-}
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    }
+    return responseJson;
+  }
 
   // Post API with Authentication Token
   Future<dynamic> postApiWithToken(var data, String url, String token) async {
@@ -122,10 +150,6 @@ Future<dynamic> postProfileData(var data, String url,String token) async {
     }
     return responseJson;
   }
-
-
-
-
 
   Future<dynamic> postLogoutApi(var data, String url) async {
     dynamic responseJson;
@@ -173,6 +197,19 @@ Future<dynamic> postProfileData(var data, String url,String token) async {
           return jsonDecode(response.body);
 
         case 400:
+          // For 400 status codes, try to parse JSON response
+          // This handles cases like email verification errors
+          try {
+            var jsonResponse = jsonDecode(response.body);
+            // If it's a valid JSON with status and message, return it
+            if (jsonResponse is Map &&
+                jsonResponse.containsKey('status') &&
+                jsonResponse.containsKey('message')) {
+              return jsonResponse;
+            }
+          } catch (jsonError) {
+            // If JSON parsing fails, fall back to throwing exception
+          }
           throw InvalidUrl('Bad request (400)');
 
         case 401:
@@ -193,6 +230,10 @@ Future<dynamic> postProfileData(var data, String url,String token) async {
           );
       }
     } catch (e) {
+      // If it's already a formatted response from case 400, rethrow it
+      if (e is Map) {
+        return e;
+      }
       throw FetchDataException('Invalid JSON or unexpected error: $e');
     }
   }

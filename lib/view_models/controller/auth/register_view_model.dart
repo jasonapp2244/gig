@@ -92,6 +92,31 @@ class RegisterVewModel extends GetxController {
                 );
               });
             }
+          } else {
+            String errorMsg = value['message'] ?? 'Something went wrong';
+
+            if (errorMsg == 'Please verify your email first') {
+              // Show informative message about email verification
+              Utils.snakBar('Email Verification Required', 'Please verify your email to complete registration');
+              
+              // Store email for OTP verification
+              const storage = FlutterSecureStorage();
+              await storage.write(
+                key: 'user_email',
+                value: emailController.value.text.trim(),
+              );
+              
+              // Navigate to OTP screen for email verification
+              Get.toNamed(
+                RoutesName.otpScreen,
+                arguments: {
+                  'email': emailController.value.text.trim(),
+                  'user_data': value,
+                },
+              );
+            } else {
+              Utils.snakBar('Register', errorMsg);
+            }
           }
         })
         .onError((error, stackTrace) {

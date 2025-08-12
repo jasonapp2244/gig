@@ -36,6 +36,7 @@ class CustomPhotoController {
 class CustomPhotoWidget extends StatefulWidget {
   final Function(File?)? onImagePicked;
   final String? initialImagePath;
+  final String? imageUrl; // Add support for network images
   final double radius;
   final Color backgroundColor;
   final CustomPhotoController? controller;
@@ -44,6 +45,7 @@ class CustomPhotoWidget extends StatefulWidget {
     super.key,
     this.onImagePicked,
     this.initialImagePath,
+    this.imageUrl,
     this.radius = 40,
     this.backgroundColor = Colors.orange,
     this.controller,
@@ -169,6 +171,81 @@ class _CustomPhotoWidgetState extends State<CustomPhotoWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Widget imageWidget;
+    
+    if (_imageFile != null) {
+      // Local file image (user picked)
+      imageWidget = ClipOval(
+        child: Image.file(
+          _imageFile!,
+          width: widget.radius * 2,
+          height: widget.radius * 2,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty) {
+      // Check if it's a local file path or network URL
+      if (widget.imageUrl!.startsWith('/') || widget.imageUrl!.startsWith('file://')) {
+        // Local file path from storage
+        imageWidget = ClipOval(
+          child: Image.file(
+            File(widget.imageUrl!),
+            width: widget.radius * 2,
+            height: widget.radius * 2,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Icon(
+                Icons.person,
+                color: Colors.white,
+                size: widget.radius * 0.875,
+              );
+            },
+          ),
+        );
+      } else {
+        // Network image from API
+        imageWidget = ClipOval(
+          child: Image.network(
+            widget.imageUrl!,
+            width: widget.radius * 2,
+            height: widget.radius * 2,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Icon(
+                Icons.person,
+                color: Colors.white,
+                size: widget.radius * 0.875,
+              );
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return SizedBox(
+                width: widget.radius * 2,
+                height: widget.radius * 2,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }
+    } else {
+      // Default icon when no image
+      imageWidget = Icon(
+        Icons.add_photo_alternate,
+        color: Colors.white,
+        size: widget.radius * 0.875,
+      );
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -177,26 +254,15 @@ class _CustomPhotoWidgetState extends State<CustomPhotoWidget> {
           child: CircleAvatar(
             radius: widget.radius,
             backgroundColor: widget.backgroundColor,
-            child: _imageFile == null
-                ? Icon(
-                    Icons.add_photo_alternate,
-                    color: Colors.white,
-                    size: widget.radius * 0.875, // Proportional icon size
-                  )
-                : ClipOval(
-                    child: Image.file(
-                      _imageFile!,
-                      width: widget.radius * 2,
-                      height: widget.radius * 2,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+            child: imageWidget,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
-          "Add Photo",
-          style: TextStyle(color: Colors.white, fontSize: 14),
+        Text(
+          _imageFile != null || (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+              ? "Change Photo"
+              : "Add Photo",
+          style: const TextStyle(color: Colors.white, fontSize: 14),
         ),
       ],
     );

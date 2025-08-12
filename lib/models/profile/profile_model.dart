@@ -33,19 +33,28 @@ class ProfileModel {
     };
   }
 
-  // Create from JSON
+  // Create from JSON (enhanced for GET API response)
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    List<String>? skillsList;
+    
+    // Handle different skill data formats
+    if (json['skills'] != null) {
+      if (json['skills'] is String) {
+        skillsList = (json['skills'] as String).split(',').map((e) => e.trim()).toList();
+      } else if (json['skills'] is List) {
+        skillsList = (json['skills'] as List).map((e) => e.toString()).toList();
+      }
+    }
+
     return ProfileModel(
-      name: json['name'],
-      phoneNumber: json['phone_number'],
-      address: json['address'],
-      profileImagePath: json['profile_image'],
-      pdfFilePath: json['cv'],
-      pdfFileName: json['cv_filename'],
+      name: json['name'] ?? json['full_name'],
+      phoneNumber: json['phone_number'] ?? json['phone'],
+      address: json['address'] ?? json['location'],
+      profileImagePath: json['profile_image'] ?? json['avatar'] ?? json['image_url'],
+      pdfFilePath: json['cv'] ?? json['resume'] ?? json['cv_url'],
+      pdfFileName: json['cv_filename'] ?? json['resume_name'] ?? json['cv_name'],
       email: json['email'],
-      skills: json['skills'] != null
-          ? (json['skills'] as String).split(',')
-          : null,
+      skills: skillsList,
     );
   }
 

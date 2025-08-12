@@ -9,10 +9,12 @@ class ResendOtpViewModel extends GetxController {
   RxBool loading = false.obs;
 
   Future<void> resendOtpApi() async {
+    loading.value = true;
     String? email = await Utils.readSecureData('user_email');
 
     if (email == null || email.isEmpty) {
-      Utils.snakBar('Error', 'OTP is not recieved');
+      loading.value = false;
+      Utils.snakBar('Error', 'Email not found. Please try registering again.');
       return;
     }
 

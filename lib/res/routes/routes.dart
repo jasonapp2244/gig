@@ -12,6 +12,7 @@ import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_scr
 import 'package:gig/view/screen_holder/screens/market_place_screen/market_place_screen.dart';
 import 'package:gig/view/screen_holder/screens/notification/notification.dart';
 import 'package:gig/view/screen_holder/screens/profile/add_profile_screen.dart';
+import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
 import 'package:gig/view/subscription/subscription_screen.dart';
 import '../../view/auth/get_started_secreen.dart';
 import '../../view/auth/login.dart';
@@ -157,6 +158,12 @@ class AppRoutes {
 
     GetPage(
       name: RoutesName.userProfileScreen,
+      page: () => UserProfileScreen(),
+      transitionDuration: Duration(milliseconds: 300),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: RoutesName.profileViewScreen,
       page: () => AddProfileScreen(),
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
@@ -181,6 +188,7 @@ class AppRoutes {
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),
+    
     GetPage(name: RoutesName.home, page: () => ScreenHolderScreen()),
   ];
 }
