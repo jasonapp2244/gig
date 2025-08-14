@@ -4,7 +4,6 @@ import 'package:gig/data/network/network_api_services.dart';
 import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/models/profile/profile_model.dart';
 import 'package:gig/utils/utils.dart';
-import 'package:http/http.dart' as http;
 
 class ProfileRepository {
   final BaseApiServices _apiServices = NetworkApiServices();

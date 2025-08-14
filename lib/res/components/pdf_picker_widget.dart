@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
 
 class PdfPickerWidget extends StatelessWidget {

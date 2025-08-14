@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/routes/routes_name.dart';
-import 'package:gig/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {

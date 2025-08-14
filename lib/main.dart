@@ -12,11 +12,11 @@ void main() async {
   await Firebase.initializeApp();
 
   // Print device ID to console
-  Utils.getAndPrintDeviceId();
-  
+  //Utils.getAndPrintDeviceId();
+
   // Get and print FCM token
   Utils.getAndPrintFCMToken();
-  
+
   // Listen for FCM token refresh
   Utils.listenToFCMTokenRefresh();
 

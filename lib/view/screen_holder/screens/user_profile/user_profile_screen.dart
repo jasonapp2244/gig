@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gig/res/routes/routes.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import '../../../../res/colors/app_color.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';

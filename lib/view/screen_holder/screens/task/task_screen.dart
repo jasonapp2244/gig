@@ -16,7 +16,7 @@ class _TaskScreenState extends State<TaskScreen>
   late TabController _tabController;
   String searchText = '';
 
-  final List<String> tabs = ['Ongoing', 'Incomplete', 'Completed'];
+  final List<String> tabs = ['Ongoing', 'Completed'];
 
   // Update status based on endDate
   void updateTaskStatuses() {
@@ -28,8 +28,6 @@ class _TaskScreenState extends State<TaskScreen>
 
       if (task['progress'] == 1.0) {
         task['status'] = 'Completed';
-      } else if (now.isBefore(startDate)) {
-        task['status'] = 'Ongoing'; // Will start later
       } else if (now.isAfter(endDate)) {
         task['status'] = 'Incomplete'; // Date passed, not complete
       } else {
@@ -203,7 +201,7 @@ class _TaskScreenState extends State<TaskScreen>
                 children: [
                   // Ongoing
                   _buildTaskList(getFilteredTasksByTab('Ongoing')),
-            
+
                   _buildTaskList(getFilteredTasksByTab('Completed')),
                 ],
               ),
