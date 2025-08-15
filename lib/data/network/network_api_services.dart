@@ -255,20 +255,19 @@ class NetworkApiServices extends BaseApiServices {
           return jsonDecode(response.body);
 
         case 400:
-          // For 400 status codes, try to parse JSON response
-          // This handles cases like email verification errors
+        case 422:
+          // For 400 and 422 status codes, try to parse JSON response
+          // This handles cases like email verification errors and validation errors
           try {
             var jsonResponse = jsonDecode(response.body);
             // If it's a valid JSON with status and message, return it
-            if (jsonResponse is Map &&
-                jsonResponse.containsKey('status') &&
-                jsonResponse.containsKey('message')) {
+            if (jsonResponse is Map && jsonResponse.containsKey('message')) {
               return jsonResponse;
             }
           } catch (jsonError) {
             // If JSON parsing fails, fall back to throwing exception
           }
-          throw InvalidUrl('Bad request (400)');
+          throw InvalidUrl('Bad request (${response.statusCode})');
 
         case 401:
           throw FetchDataException('Unauthorized (401)');

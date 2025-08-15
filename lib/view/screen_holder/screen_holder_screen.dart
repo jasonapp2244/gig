@@ -23,7 +23,7 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
   final LogoutnVM = Get.put(LogoutViewModel());
   final List<Widget> _screens = [
     HomeScreen(),
-
+    TaskScreen(),
     NotificationScreen(),
     IncomeTracker(),
     UserProfileScreen(),

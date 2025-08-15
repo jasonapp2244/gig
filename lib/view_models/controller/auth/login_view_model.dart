@@ -28,32 +28,59 @@ class LoginVewModel extends GetxController {
 
           if (value['status'] == true) {
             Utils.snakBar('Login', value['message']);
-          } else {
-            print("Login failed: $value");
-            print("Login failed: ${value['errors']}");
-            Utils.snakBar('Login', value['errors'] ?? 'Something went wrong');
-          }
-          final _storage = FlutterSecureStorage();
-          // Store auth token and user data
-          await _storage.write(key: 'auth_token', value: value['token']);
-          await _storage.write(key: 'user_name', value: value['user']['name']);
-          await _storage.write(
-            key: 'user_email',
-            value: value['user']['email'],
-          );
-          await _storage.write(
-            key: 'user_id',
-            value: value['user']['id'].toString(),
-          );
-          await _storage.write(
-            key: 'user_phone',
-            value: value['user']['phone_number'],
-          );
-          
-  
 
-       
-          Get.toNamed(RoutesName.home);
+            // Store auth token and user data only on successful login
+            final _storage = FlutterSecureStorage();
+            await _storage.write(key: 'auth_token', value: value['token']);
+            await _storage.write(
+              key: 'user_name',
+              value: value['user']['name'],
+            );
+            await _storage.write(
+              key: 'user_email',
+              value: value['user']['email'],
+            );
+            await _storage.write(
+              key: 'user_id',
+              value: value['user']['id'].toString(),
+            );
+            await _storage.write(
+              key: 'user_phone',
+              value: value['user']['phone_number'],
+            );
+
+            // Navigate to home only on successful login
+            Get.toNamed(RoutesName.home);
+          } else {
+            String errorMsg = value['message'] ?? 'Something went wrong';
+
+            // Check for nested validation errors first
+            if (value['errors'] != null && value['errors'] is Map) {
+              Map<String, dynamic> errors = value['errors'];
+              String detailedErrorMsg = '';
+
+              // Combine all validation errors
+              errors.forEach((field, errorList) {
+                if (errorList is List) {
+                  for (String error in errorList) {
+                    if (detailedErrorMsg.isNotEmpty) {
+                      detailedErrorMsg += '\n';
+                    }
+                    detailedErrorMsg += error;
+                  }
+                }
+              });
+
+              // Show the detailed validation errors from backend
+              Utils.snakBar(
+                'Login',
+                detailedErrorMsg.isNotEmpty ? detailedErrorMsg : errorMsg,
+              );
+            } else {
+              // Show the general backend error message
+              Utils.snakBar('Login', errorMsg);
+            }
+          }
         })
         .onError((error, stackTrace) {
           loading.value = false;
@@ -61,5 +88,4 @@ class LoginVewModel extends GetxController {
           Utils.snakBar('Error', error.toString());
         });
   }
-
 }
