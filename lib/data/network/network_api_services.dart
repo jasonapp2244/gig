@@ -355,8 +355,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print('🗑️ POST Response Status: ${response.statusCode}');
-      print('🗑️ POST Response Body: ${response.body}');
+      print(' POST Response Status: ${response.statusCode}');
+      print(' POST Response Body: ${response.body}');
 
       responseJson = returnResponse(response);
     } on SocketException {
