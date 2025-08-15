@@ -202,8 +202,8 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
                   CircleAvatar(
                     backgroundImage: AssetImage('assets/images/user.png'),
                     radius: Responsive.isTablet(context)
-                        ? Responsive.width(5, context)
-                        : Responsive.width(6, context),
+                        ? Responsive.width(3, context)
+                        : Responsive.width(4, context),
                   ),
                 ],
               ),

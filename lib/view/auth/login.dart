@@ -30,6 +30,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/button.dart';
 import 'package:gig/res/routes/routes_name.dart';
+import 'package:gig/view/password/forget_password.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -70,7 +71,7 @@ class _LoginState extends State<Login> {
                   children: [
                     SizedBox(height: 15),
                     Text(
-                      'Join Task App Today',
+                      'Welcome back!',
                       style: TextStyle(
                         fontSize: 24,
                         color: AppColor.secondColor,
@@ -117,6 +118,7 @@ class _LoginState extends State<Login> {
                               return 'Name is Required';
                             },
                           ),
+
                           SizedBox(height: 15),
                           Text(
                             "Password",
@@ -142,51 +144,34 @@ class _LoginState extends State<Login> {
                             },
                           ),
                           SizedBox(height: 15),
-                          Text(
-                            "Confirm Password",
-                            style: GoogleFonts.poppins(
-                              color: AppColor.textColor,
-                              fontSize: 16,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ForgetPassword(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "Forget Password?",
+                                  style: GoogleFonts.poppins(
+                                    color: AppColor.primeColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          CustomInputField(
-                            prefixIcon: Icon(
-                              Icons.password,
-                              color: AppColor.textColor,
-                            ),
-                            controller: LoginVM.passwordController.value,
-                            fieldType: 'Confirm password',
-                            hintText: "Confirm Password",
-                            requiredField: true,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Confirm Password is required';
-                              }
-                              return 'Confirm Password is Required';
-                            },
-                          ),
-
-                          // Obx(
-                          //   () => RoundButton(
-                          //     width: double.infinity,
-                          //     height: 50,
-                          //     title: 'Sign In',
-                          //     loading: LoginVM.loading.value,
-                          //     buttonColor: AppColor.primeColor,
-                          //     onPress: () {
-                          //       Get.toNamed(RoutesName.subscriptionScreen);
-                          //       if (_formKey.currentState!.validate()) {
-                          //         LoginVM.loginApi();
-                          //       }
-                          //     },
-                          //   ),
-                          // ),
                           SizedBox(height: 15),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Already have an account? ',
+                                'Don\'t have an account? ',
                                 style: GoogleFonts.poppins(
                                   color: Colors.white,
                                   fontSize: 12,
@@ -254,15 +239,19 @@ class _LoginState extends State<Login> {
                               children: [
                                 // Image.asset('assets/images/login-icon3.png'),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric( vertical: 7.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7.0,
+                                  ),
                                   child: SvgPicture.asset(
-                                    'assets/images/devicon_google.svg',width: 22,height: 22,
+                                    'assets/images/devicon_google.svg',
+                                    width: 22,
+                                    height: 22,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                                 SizedBox(width: 3),
                                 Text(
-                                  'Continue wit facebook',
+                                  'Continue wit google',
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: AppColor.whiteColor,
@@ -309,7 +298,7 @@ class _LoginState extends State<Login> {
                           SizedBox(height: 28),
                           Button(
                             color: AppColor.primeColor,
-                            title: "Sign In",
+                            title: "Login",
                             textColor: AppColor.whiteColor,
                             onTap: () {
                               //Version 2.0.0
@@ -323,7 +312,7 @@ class _LoginState extends State<Login> {
                               if (_formKey.currentState!.validate()) {
                                 LoginVM.loginApi();
                               }
-                            }, 
+                            },
                           ),
                           Row(children: []),
                           SizedBox(height: 30),

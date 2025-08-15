@@ -38,7 +38,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
   @override
   Widget build(BuildContext context) {
     TextInputType keyboardType;
-    bool isPassword = widget.fieldType == "password";
+    bool isPassword = widget.fieldType == "password"||widget.fieldType == "confirm password";
 
     switch (widget.fieldType) {
       case "email":
@@ -48,6 +48,9 @@ class _CustomInputFieldState extends State<CustomInputField> {
         keyboardType = TextInputType.number;
         break;
       case "password":
+        keyboardType = TextInputType.text;
+        break;
+      case "confirm password":
         keyboardType = TextInputType.text;
         break;
       default:

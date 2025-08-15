@@ -288,9 +288,12 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
               child: Row(
                 children: [
                   // Image.asset('assets/images/login-icon2.png'),
-                  SvgPicture.asset(
-                    'assets/images/devicon_google.svg',
-                    fit: BoxFit.contain,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      'assets/images/devicon_google.svg',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   SizedBox(width: 5),
                   Text(
