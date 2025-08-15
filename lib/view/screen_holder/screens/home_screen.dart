@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final HomeViewModel homeController = Get.put(HomeViewModel());
-    
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       drawer: _buildDrawer(context),
@@ -70,14 +70,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: Responsive.fontSize(16, context),
                           ),
                         ),
-                        Obx(() => Text(
-                          homeController.userName.value,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Responsive.fontSize(22, context),
-                            fontWeight: FontWeight.bold,
+                        Obx(
+                          () => Text(
+                            homeController.userName.value,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: Responsive.fontSize(22, context),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                     CircleAvatar(
@@ -172,7 +174,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                 });
-                Get.toNamed(RoutesName.addTaskScreen);
+                Get.toNamed(
+                  RoutesName.addTaskScreen,
+                  arguments: {'selectedDate': selectedDay},
+                );
               },
               calendarStyle: CalendarStyle(
                 todayDecoration: const BoxDecoration(
@@ -325,21 +330,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Responsive.width(6, context),
                 ),
                 SizedBox(height: Responsive.height(1, context)),
-                Obx(() => Text(
-                  homeController.userName.value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Responsive.fontSize(18, context),
-                    fontWeight: FontWeight.bold,
+                Obx(
+                  () => Text(
+                    homeController.userName.value,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Responsive.fontSize(18, context),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                )),
-                Obx(() => Text(
-                  homeController.userEmail.value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Responsive.fontSize(14, context),
+                ),
+                Obx(
+                  () => Text(
+                    homeController.userEmail.value,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Responsive.fontSize(14, context),
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),

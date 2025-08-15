@@ -18,7 +18,7 @@ class AppUrl {
   static const String resendOtpApi = "$baseUrl/auth/resend-otp";
 
   // TASK API
-  static const String addTaskAPI = "$baseUrl/api/tasks";
+  static const String addTaskAPI = "$baseUrl/tasks";
   static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
 
   // PROFILE API

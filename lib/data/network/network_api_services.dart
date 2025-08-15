@@ -119,6 +119,35 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> postTask(var data, String url, String token) async {
+    dynamic responseJson;
+
+    try {
+      // Debug print request data
+      print(" Sending POST request to: $url");
+      print(" Data: $data");
+
+      final response = await http
+          .post(
+            Uri.parse(url),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token', // Uncomment if you have a token
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    }
+    return responseJson;
+  }
+
   Future<dynamic> PostProfileWithFiles(
     ProfileModel profileData,
     File? profileImage,
@@ -235,6 +264,109 @@ class NetworkApiServices extends BaseApiServices {
     } on RequestTimeout {
       throw RequestTimeout('Server is not responding');
     } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getEmployerApi(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.getEmployerApi),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> deleteEmployerApi(String employerId, String token) async {
+    dynamic responseJson;
+    try {
+      final deleteUrl = '${AppUrl.deleteEmployeerApi}$employerId';
+      print('🗑️ DELETE Request URL: $deleteUrl');
+      print('🗑️ DELETE Request Headers: Authorization: Bearer $token');
+
+      // First, get the employer data to use their actual salary
+      print('🔍 Fetching employer data for ID: $employerId');
+      final employerResponse = await http
+          .get(
+            Uri.parse(AppUrl.getEmployerApi),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final employerData = jsonDecode(employerResponse.body);
+      print('📋 Employer data response: $employerData');
+
+      // Find the specific employer by ID
+      Map<String, dynamic>? targetEmployer;
+      if (employerData['status'] == true && employerData['data'] != null) {
+        List<dynamic> employers = employerData['data'];
+        targetEmployer = employers.firstWhere(
+          (employer) => employer['id'].toString() == employerId,
+          orElse: () => null,
+        );
+      }
+
+      if (targetEmployer == null) {
+        throw Exception('Employer with ID $employerId not found');
+      }
+
+      print(
+        '✅ Found employer: ${targetEmployer['employer_name']} with salary: ${targetEmployer['salary']}',
+      );
+
+      // Use the actual employer data for the delete request
+      Map<String, dynamic> requestBody = {
+        'salary': targetEmployer['salary']?.toString() ?? '0',
+        // Mark as inactive/deleted
+      };
+
+      print('🗑️ POST Request Body: $requestBody');
+
+      final response = await http
+          .post(
+            Uri.parse(deleteUrl),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print('🗑️ POST Response Status: ${response.statusCode}');
+      print('🗑️ POST Response Body: ${response.body}');
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      print('🗑️ DELETE Error: $e');
       throw FetchDataException('Unexpected error: $e');
     }
     return responseJson;
