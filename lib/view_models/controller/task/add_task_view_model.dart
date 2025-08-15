@@ -5,11 +5,13 @@ import '../../../repository/employer/employer_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
+import '../task/get_task_view_model.dart';
 
 class AddTaskViewModel extends GetxController {
   final _api = AddTaskRepository();
   final _employerRepository = EmployerRepository();
   UserPreference userPreference = UserPreference();
+  final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
   final employerController = TextEditingController().obs;
   final jobTypeController = TextEditingController().obs;
   final locationController = TextEditingController().obs;
@@ -26,7 +28,7 @@ class AddTaskViewModel extends GetxController {
   RxList<Map<String, dynamic>> filteredEmployers = <Map<String, dynamic>>[].obs;
   RxString searchQuery = ''.obs;
 
-  void addTaskApi() {
+  Future<void> addTaskApi() async {
     loading.value = true;
     Map data = {
       'employer': employerController.value.text,
@@ -41,28 +43,25 @@ class AddTaskViewModel extends GetxController {
       'notes': notesController.value.text,
     };
 
-    _api
-        .addTaskAPI(data)
-        .then((value) {
-          loading.value = false;
+    try {
+      dynamic value = await _api.addTaskAPI(data);
+      loading.value = false;
 
-          if (value['status'] == true) {
-            Utils.snakBar('Success', 'Task added successfully!');
-            Get.toNamed(RoutesName.taskScreen);
-          } else {
-            print("Task Add failed: $value");
-            print("Task Add failed: ${value['errors']}");
-            Utils.snakBar(
-              'Task Add',
-              value['errors'] ?? 'Something went wrong',
-            );
-          }
-        })
-        .onError((error, stackTrace) {
-          loading.value = false;
-          print('Task Add API error: ${error.toString()}');
-          Utils.snakBar('Error', error.toString());
-        });
+      if (value['status'] == true) {
+        Utils.snakBar('Success', 'Task added successfully!');
+        // Refresh the task list to show the new task
+        await taskViewModel.refreshTasks();
+        Get.toNamed(RoutesName.taskScreen);
+      } else {
+        print("Task Add failed: $value");
+        print("Task Add failed: ${value['errors']}");
+        Utils.snakBar('Task Add', value['errors'] ?? 'Something went wrong');
+      }
+    } catch (error) {
+      loading.value = false;
+      print('Task Add API error: ${error.toString()}');
+      Utils.snakBar('Error', error.toString());
+    }
   }
 
   @override

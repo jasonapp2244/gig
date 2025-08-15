@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/task_block.dart';
+import '../../../../view_models/controller/task/get_task_view_model.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -15,41 +17,24 @@ class _TaskScreenState extends State<TaskScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String searchText = '';
+  final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh tasks when screen becomes visible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        taskViewModel.refreshTasks();
+      }
+    });
+  }
 
   final List<String> tabs = ['Ongoing', 'Completed'];
-
-  // Update status based on endDate
-  void updateTaskStatuses() {
-    final now = DateTime.now();
-
-    for (var task in tasks) {
-      DateTime startDate = _parseDate(task['startDate']);
-      DateTime endDate = _parseDate(task['endDate']);
-
-      if (task['progress'] == 1.0) {
-        task['status'] = 'Completed';
-      } else if (now.isAfter(endDate)) {
-        task['status'] = 'Incomplete'; // Date passed, not complete
-      } else {
-        task['status'] = 'Ongoing'; // In progress
-      }
-    }
-  }
-
-  // Parse date helper
-  DateTime _parseDate(String dateString) {
-    List<String> parts = dateString.split('/');
-    return DateTime(
-      int.parse(parts[2]), // year
-      int.parse(parts[0]), // month
-      int.parse(parts[1]), // day
-    );
-  }
 
   @override
   void initState() {
     _tabController = TabController(length: tabs.length, vsync: this);
-    updateTaskStatuses(); // 👈 Move here
     super.initState();
   }
 
@@ -59,58 +44,31 @@ class _TaskScreenState extends State<TaskScreen>
     super.dispose();
   }
 
-  final List<Map<String, dynamic>> tasks = [
-    {
-      'title': 'On going Task',
-      'startDate': '06/12/2025',
-      'endDate': '06/13/2025',
-      'status': 'Ongoing', // 👈 Add this
-      'profileImage': 'https://i.pravatar.cc/300',
-      'progress': 0.5,
-      'completedTasks': 24,
-      'totalTasks': 48,
-    },
-    {
-      'title': 'Mane Kit',
-      'startDate': '01/01/2021',
-      'endDate': '01/02/2021',
-      'status': 'Incomplete', // 👈 Add this
-      'profileImage': 'https://i.pravatar.cc/300',
-      'progress': 0.5,
-      'completedTasks': 24,
-      'totalTasks': 48,
-    },
-    {
-      'title': 'Test Task',
-      'startDate': '01/03/2021',
-      'endDate': '01/04/2021',
-      'status': 'Completed', // 👈 Another example
-      'profileImage': 'https://i.pravatar.cc/301',
-      'progress': 1.0,
-      'completedTasks': 48,
-      'totalTasks': 48,
-    },
-  ];
-
-  String searchQuery = '';
-
-  List<Map<String, dynamic>> get filteredTasks => tasks
-      .where(
-        (task) =>
-            task['title'].toLowerCase().contains(searchText.toLowerCase()) ||
-            task['startDate'].contains(searchText) ||
-            task['endDate'].contains(searchText) ||
-            task['status'].toLowerCase().contains(searchText.toLowerCase()),
-      )
-      .toList();
+  List<Map<String, dynamic>> get filteredTasks =>
+      taskViewModel.getFilteredTasks(searchText);
 
   List<Map<String, dynamic>> getFilteredTasksByTab(String status) {
-    return filteredTasks.where((task) => task['status'] == status).toList();
+    return taskViewModel.getTasksByStatus(status);
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString == 'N/A') return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
+  String _mapStatus(String? status, bool? hasEntry) {
+    if (hasEntry == true) return 'Completed';
+    if (status == 'pending') return 'Ongoing';
+    return status ?? 'Unknown';
   }
 
   @override
   Widget build(BuildContext context) {
-    updateTaskStatuses();
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
@@ -145,6 +103,16 @@ class _TaskScreenState extends State<TaskScreen>
                     textAlign: TextAlign.center,
                   ),
                 ),
+                Positioned(
+                  top: 10,
+                  right: 20,
+                  child: InkWell(
+                    onTap: () {
+                      taskViewModel.refreshTasks();
+                    },
+                    child: Icon(Icons.refresh, color: AppColor.primeColor),
+                  ),
+                ),
               ],
             ),
 
@@ -158,7 +126,8 @@ class _TaskScreenState extends State<TaskScreen>
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search by task name, date, or status...',
+                  hintText:
+                      'Search by job title, employer, location, or status...',
                   hintStyle: TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: Colors.white,
@@ -196,15 +165,25 @@ class _TaskScreenState extends State<TaskScreen>
 
             // Tab content
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  // Ongoing
-                  _buildTaskList(getFilteredTasksByTab('Ongoing')),
+              child: Obx(() {
+                if (taskViewModel.loading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor.primeColor,
+                    ),
+                  );
+                }
 
-                  _buildTaskList(getFilteredTasksByTab('Completed')),
-                ],
-              ),
+                return TabBarView(
+                  controller: _tabController,
+                  children: [
+                    // Ongoing
+                    _buildTaskList(getFilteredTasksByTab('Ongoing')),
+                    // Completed
+                    _buildTaskList(getFilteredTasksByTab('Completed')),
+                  ],
+                );
+              }),
             ),
           ],
         ),
@@ -222,22 +201,27 @@ class _TaskScreenState extends State<TaskScreen>
       );
     }
 
-    return ListView(
-      children: taskList.map((task) {
-        return TaskBlock(
-          title: task['title'],
-          startDate: task['startDate'],
-          status: task['status'],
-          endDate: task['endDate'],
-          profileImage: task['profileImage'],
-          progress: task['progress'],
-          completedTasks: task['completedTasks'],
-          totalTasks: task['totalTasks'],
-          onTap: () {
-            // Handle task tap
-          },
-        );
-      }).toList(),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await taskViewModel.refreshTasks();
+      },
+      child: ListView(
+        children: taskList.map((task) {
+          return TaskBlock(
+            title: task['job_title'] ?? 'Untitled Task',
+            startDate: _formatDate(task['task_date_time']),
+            status: _mapStatus(task['status'], task['has_entry']),
+            endDate: _formatDate(task['task_end_date_time']),
+            profileImage: 'https://i.pravatar.cc/300',
+            progress: task['has_entry'] == true ? 1.0 : 0.0,
+            completedTasks: task['has_entry'] == true ? 1 : 0,
+            totalTasks: 1,
+            onTap: () {
+              // Handle task tap
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 }

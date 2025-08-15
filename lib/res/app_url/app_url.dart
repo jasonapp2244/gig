@@ -20,6 +20,7 @@ class AppUrl {
   // TASK API
   static const String addTaskAPI = "$baseUrl/tasks";
   static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
+  static const String getTaskAPI = "$baseUrl/tasks";
 
   // PROFILE API
   static const String updateProfileApi = "$baseUrl/update-profile";

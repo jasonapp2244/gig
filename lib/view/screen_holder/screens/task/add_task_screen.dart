@@ -125,15 +125,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Employer',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.secondColor,
-                              ),
-                            ),
-                            SizedBox(height: 8),
                             Obx(
                               () => EmployerDropdown(
                                 controller: addTaskVM.employerController.value,
@@ -148,23 +139,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 isLoading: addTaskVM.employerLoading.value,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Obx(() {
-                              if (addTaskVM
-                                  .employerController
-                                  .value
-                                  .text
-                                  .isEmpty) {
-                                return Text(
-                                  'Please enter an employer name',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                );
-                              }
-                              return SizedBox.shrink();
-                            }),
+                            // SizedBox(height: 8),
+                            // Obx(() {
+                            //   if (addTaskVM
+                            //       .employerController
+                            //       .value
+                            //       .text
+                            //       .isEmpty) {
+                            //     return Text(
+                            //       'Please enter an employer name',
+                            //       style: TextStyle(
+                            //         color: Colors.red,
+                            //         fontSize: 12,
+                            //       ),
+                            //     );
+                            //   }
+                            //   return SizedBox.shrink();
+                            // }),
                           ],
                         ),
                       ),

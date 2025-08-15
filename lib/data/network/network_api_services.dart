@@ -295,6 +295,32 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> getTasksApi(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.getTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> deleteEmployerApi(String employerId, String token) async {
     dynamic responseJson;
     try {
