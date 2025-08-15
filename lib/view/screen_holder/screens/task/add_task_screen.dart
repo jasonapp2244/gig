@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
 import '../../../../res/components/employer_dropdown.dart';
-import '../../../../res/routes/routes_name.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
 import '../../../../utils/utils.dart';
 
@@ -16,6 +16,7 @@ class AddTaskScreen extends StatefulWidget {
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
+  final getTaskVM = Get.put(GetTaskViewModel());
   final addTaskVM = Get.put(AddTaskViewModel());
   final _formKey = GlobalKey<FormState>();
 
@@ -139,23 +140,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 isLoading: addTaskVM.employerLoading.value,
                               ),
                             ),
-                            // SizedBox(height: 8),
-                            // Obx(() {
-                            //   if (addTaskVM
-                            //       .employerController
-                            //       .value
-                            //       .text
-                            //       .isEmpty) {
-                            //     return Text(
-                            //       'Please enter an employer name',
-                            //       style: TextStyle(
-                            //         color: Colors.red,
-                            //         fontSize: 12,
-                            //       ),
-                            //     );
-                            //   }
-                            //   return SizedBox.shrink();
-                            // }),
                           ],
                         ),
                       ),

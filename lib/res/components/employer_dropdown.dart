@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../colors/app_color.dart';
 
 class EmployerDropdown extends StatefulWidget {
@@ -67,21 +66,41 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
       children: [
         // Search TextField
         TextField(
+          style: const TextStyle(color: Colors.white),
           controller: searchController,
+
           decoration: InputDecoration(
             hintText: 'Search employers or type new employer name...',
             prefixIcon: const Icon(Icons.search),
             suffixIcon: searchController.text.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(Icons.add, color: AppColor.primeColor),
                     onPressed: _useCustomEmployer,
                     tooltip: 'Use as custom employer',
                   )
                 : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+
+            border: OutlineInputBorder(),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white24, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white24, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.red, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
+              vertical: 15,
+              horizontal: 17,
             ),
           ),
           onSubmitted: (value) {
@@ -89,6 +108,7 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
               _useCustomEmployer();
             }
           },
+
           onTap: () {
             setState(() {
               showResults = searchController.text.isNotEmpty;
@@ -101,7 +121,7 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
           Container(
             margin: const EdgeInsets.only(top: 4),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColor.textColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
@@ -135,8 +155,8 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
                   const Padding(
                     padding: EdgeInsets.all(16),
                     child: Text(
-                      'No employers found matching your search',
-                      style: TextStyle(color: Colors.grey),
+                      'Search Employeer',
+                      style: TextStyle(color: Colors.white),
                     ),
                   )
                 else
@@ -228,7 +248,8 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+          color: Colors.transparent,
+          border: Border(bottom: BorderSide()),
         ),
         child: Row(
           children: [

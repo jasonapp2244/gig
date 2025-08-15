@@ -18,7 +18,7 @@ void main() async {
   Utils.getAndPrintFCMToken();
 
   // Listen for FCM token refresh
-  Utils.listenToFCMTokenRefresh();
+  //  Utils.listenToFCMTokenRefresh();
 
   Color primeColor = Colors.transparent;
   SystemChrome.setSystemUIOverlayStyle(

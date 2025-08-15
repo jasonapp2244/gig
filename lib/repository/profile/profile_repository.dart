@@ -6,7 +6,6 @@ import 'package:gig/models/profile/profile_model.dart';
 import 'package:gig/utils/utils.dart';
 
 class ProfileRepository {
-  final BaseApiServices _apiServices = NetworkApiServices();
 
   Future<dynamic> getProfile() async {
     try {

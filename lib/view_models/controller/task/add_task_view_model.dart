@@ -74,11 +74,11 @@ class AddTaskViewModel extends GetxController {
     try {
       employerLoading.value = true;
 
-      print('🔄 Fetching employers for task screen...');
+      print(' Fetching employers for task screen...');
 
       dynamic response = await _employerRepository.getEmployers();
 
-      print('📋 Employers response: $response');
+      print(' Employers response: $response');
 
       if (response != null) {
         if (response['status'] == true) {

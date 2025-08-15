@@ -89,7 +89,6 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-  @override
   Future<dynamic> postProfileData(var data, String url, String token) async {
     dynamic responseJson;
 

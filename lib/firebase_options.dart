@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '531010601160',
     projectId: 'gig-ctd-app-c4f0b',
     storageBucket: 'gig-ctd-app-c4f0b.firebasestorage.app',
-    iosBundleId: 'com.example.gig',
+    iosBundleId: 'com.carfrttechs.gig',
   );
-
 }

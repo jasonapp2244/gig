@@ -1,4 +1,4 @@
-package com.example.gig
+package com.carfrttechs.gig
 
 import io.flutter.embedding.android.FlutterActivity
 

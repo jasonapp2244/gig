@@ -21,6 +21,7 @@ class AppUrl {
   static const String addTaskAPI = "$baseUrl/tasks";
   static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
   static const String getTaskAPI = "$baseUrl/tasks";
+  static const String deleteTaskAPI = "$baseUrl/tasks-delete/";
 
   // PROFILE API
   static const String updateProfileApi = "$baseUrl/update-profile";
@@ -28,7 +29,7 @@ class AppUrl {
 
   static const String getEmployerApi = "$baseUrl/get-employer";
   static const String updateEmployeerApi = "$baseUrl/employer/";
-  static const String deleteEmployeerApi = "$baseUrl/employer/";
+  static const String deleteEmployeerApi = "$baseUrl/delete-employer/";
 
   static const String addmployeerApi = "$baseUrl/employers/";
 }
