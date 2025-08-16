@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../res/colors/app_color.dart';
@@ -208,6 +209,7 @@ class _TaskScreenState extends State<TaskScreen>
       child: ListView(
         children: taskList.map((task) {
           return TaskBlock(
+            id: task['id'],
             title: task['job_title'] ?? 'Untitled Task',
             startDate: _formatDate(task['task_date_time']),
             status: _mapStatus(task['status'], task['has_entry']),

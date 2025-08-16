@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
 
 class TaskBlock extends StatelessWidget {
+  int? id;
   final String title;
   final String startDate;
   final String endDate;
@@ -14,8 +18,9 @@ class TaskBlock extends StatelessWidget {
   final String status;
   final VoidCallback onTap;
 
-  const TaskBlock({
+  TaskBlock({
     super.key,
+    required this.id,
     required this.title,
     required this.startDate,
     required this.endDate,
@@ -29,6 +34,7 @@ class TaskBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final deleteTaskVM = Get.put(DeleteTaskViewModel());
 
     return InkWell(
       onTap: onTap,
@@ -65,11 +71,19 @@ class TaskBlock extends StatelessWidget {
             // Dates row
             Row(
               children: [
-                Icon(Icons.calendar_today, color: Colors.grey.shade400, size: 16),
+                Icon(
+                  Icons.calendar_today,
+                  color: Colors.grey.shade400,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(startDate, style: TextStyle(color: Colors.grey.shade400)),
                 const SizedBox(width: 12),
-                Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey.shade500),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: Colors.grey.shade500,
+                ),
                 const SizedBox(width: 12),
                 Icon(Icons.access_time, color: Colors.amber, size: 16),
                 const SizedBox(width: 6),
@@ -103,40 +117,45 @@ class TaskBlock extends StatelessWidget {
                 ),
               ],
             ),
-            if(status != 'Completed')
-            Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: Row(
-                spacing: 20,
-                children: [
-                  Icon(LucideIcons.squarePen400, color: Colors.green,size: 20,),
-                  InkWell(
-                    onTap : () {
-                      customBottomSheet(
-                        context,
-                        title: 'Are you sure you want to delete?',
-                        btnText1: 'Yes, Delete',
-                        btnText2: 'Cancel',
-                        onFirstTap: () {
-                          // Pehle button ka kaam
-                          print('Deleted!');
-                        },
-                        onSecondTap: () {
-                          // Dusre button ka kaam
-                          print('Cancelled!');
-                        },
-                      );
-                    },
-                    child: Icon(Icons.delete_outline_rounded, color: Colors.red,)
-                  ),
+            if (status != 'Completed')
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Row(
+                  spacing: 20,
+                  children: [
+                    Icon(
+                      LucideIcons.squarePen400,
+                      color: Colors.green,
+                      size: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        customBottomSheet(
+                          context,
+                          title: 'Are you sure you want to delete?',
+                          btnText1: 'Yes, Delete',
+                          btnText2: 'Cancel',
+                          onFirstTap: () {
+                            deleteTaskVM.deleteTask(id ?? 0 );
 
-                ],
+                            print('Deleted!');
+                          },
+                          onSecondTap: () {
+                            print('Cancelled!');
+                          },
+                        );
+                      },
+                      child: Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )
           ],
         ),
       ),
     );
   }
 }
-

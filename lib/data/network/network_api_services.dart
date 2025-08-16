@@ -397,6 +397,70 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> deleteTaskApi(int taskId, String token, String url) async {
+    dynamic responseJson;
+    try {
+      final deleteUrl = '${url}$taskId';
+      print('🗑️ DELETE Request URL: $deleteUrl');
+      print('🗑️ DELETE Request Headers: Authorization: Bearer $token');
+
+      // First, get the task data to verify it exists
+      print('🔍 Fetching task data for ID: $taskId');
+      final taskResponse = await http
+          .get(
+            Uri.parse(AppUrl.getTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      final tasksData = jsonDecode(taskResponse.body);
+      print('📋 Task data response: $tasksData');
+
+      // Find the specific task by ID
+      Map<String, dynamic>? targetTask;
+      if (tasksData['status'] == true && tasksData['tasks'] != null) {
+        List<dynamic> tasks = tasksData['tasks'];
+        targetTask = tasks.firstWhere(
+          (task) => task['id'].toString() == taskId.toString(),
+          orElse: () => null,
+        );
+      }
+
+      if (targetTask == null) {
+        throw Exception('Task with ID $taskId not found');
+      }
+
+      final response = await http
+          .post(
+            Uri.parse(deleteUrl),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print(' POST Response Status: ${response.statusCode}');
+      print(' POST Response Body: ${response.body}');
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      print('🗑️ DELETE Error: $e');
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   dynamic returnResponse(http.Response response) {
     if (kDebugMode) {
       print("Response Body: ${response.body}");
