@@ -25,17 +25,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            Positioned(
-              top: 10,
-              left: 20,
-              child: InkWell(
-                onTap: () {
-                  // Get.toNamed(RoutesName.loginScreen);
-                  Navigator.pop(context);
-                },
-                child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-              ),
-            ),
             SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(

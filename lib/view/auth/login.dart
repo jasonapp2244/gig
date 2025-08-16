@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/button.dart';
+import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
@@ -50,7 +51,7 @@ class _LoginState extends State<Login> {
                     children: [
                       SizedBox(height: 15),
                       Text(
-                        'Join Task App Today',
+                        'Welcome back!',
                         style: TextStyle(
                           fontSize: 24,
                           color: AppColor.secondColor,
@@ -128,37 +129,9 @@ class _LoginState extends State<Login> {
                           ),
                           SizedBox(height: 15),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    CheckboxTheme(
-                                      data: CheckboxThemeData(
-                                        side: const BorderSide(
-                                          color: Colors.yellow,
-                                          width: 2,
-                                        ), // Yellow border
-                                      ),
-                                      child: Checkbox(
-                                        value: true,
-                                        onChanged: (v) {},
-                                        //  fillColor:WidgetStateColor.resolveWith(callback),
-                                        checkColor:
-                                            Colors.white, // Checkmark color
-                                      ),
-                                    ),
-                                    Text(
-                                      'Remember me? ',
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            
                               InkWell(
                                 onTap: () {
                                   Get.toNamed(RoutesName.forgetPassword);
@@ -176,14 +149,15 @@ class _LoginState extends State<Login> {
                           ),
                           SizedBox(height: 15),
 
-                          Row(
+                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Already have an account? ',
-                                style: GoogleFonts.poppins(
+                                'Don\'t have an account? ',
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 12,
+                                  fontFamily: AppFonts.appFont,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -193,10 +167,11 @@ class _LoginState extends State<Login> {
                                 },
                                 child: Text(
                                   'Sign Up',
-                                  style: GoogleFonts.poppins(
+                                  style: TextStyle(
                                     color: AppColor.primeColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
+                                    fontFamily: AppFonts.appFont,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                 ),
                               ),

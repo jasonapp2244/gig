@@ -71,52 +71,31 @@ class _TaskScreenState extends State<TaskScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColor.appBodyBG,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Tasks',
+          style: TextStyle(
+            color: AppColor.secondColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          InkWell(
+            onTap: () {
+              taskViewModel.refreshTasks();
+            },
+            child: Icon(Icons.refresh, color: AppColor.primeColor),
+          ),
+        ],
+      ),
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
         child: Column(
           children: [
-            // Top bar
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 35,
-                  left: 35,
-                  child: Text(
-                    'Task',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.secondColor,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 20,
-                  child: InkWell(
-                    onTap: () {
-                      taskViewModel.refreshTasks();
-                    },
-                    child: Icon(Icons.refresh, color: AppColor.primeColor),
-                  ),
-                ),
-              ],
-            ),
-
             // 🔍 Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

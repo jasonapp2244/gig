@@ -39,10 +39,7 @@ class NotificationScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColor.primeColor),
-          onPressed: () => Navigator.pop(context),
-        ),
+      
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(16),

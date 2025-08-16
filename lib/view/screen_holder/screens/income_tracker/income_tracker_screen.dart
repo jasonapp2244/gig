@@ -65,37 +65,50 @@ class _IncomeTrackerState extends State<IncomeTracker> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
+      appBar: AppBar(
+        backgroundColor: AppColor.appBodyBG,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Income Tracker',
+          style: TextStyle(
+            color: AppColor.secondColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 35,
-                  left: 35,
-                  child: Text(
-                    'Income Tracker',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.secondColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
+            // Stack(
+            //   children: [
+            //     Padding(
+            //       padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
+            //       child: Align(
+            //         alignment: Alignment.centerLeft,
+            //         child: InkWell(
+            //           onTap: () => Navigator.pop(context),
+            //           child: Icon(Icons.arrow_back, color: AppColor.primeColor),
+            //         ),
+            //       ),
+            //     ),
+            //     Positioned(
+            //       top: 10,
+            //       right: 35,
+            //       left: 35,
+            //       child: Text(
+            //         'Income Tracker',
+            //         style: TextStyle(
+            //           fontSize: 18,
+            //           color: AppColor.secondColor,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Column(
               children: [
                 buildInputField("Name", nameController),
