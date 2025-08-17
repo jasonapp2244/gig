@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../res/components/round_button.dart';
@@ -32,18 +31,34 @@ class _ResetPasswordState extends State<ResetPassword> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Icon(Icons.arrow_back, color: AppColor.primeColor,)
+                child: Icon(Icons.arrow_back, color: AppColor.primeColor),
               ),
             ),
             Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25,),
+              padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Secure your account', style: TextStyle(fontSize: 24,color: AppColor.secondColor, fontWeight: FontWeight.w600), textAlign: TextAlign.center,),
-                  Text('Lorem Ipsum is simply dummy text', style: TextStyle(fontSize: 12, color: AppColor.whiteColor, fontWeight: FontWeight.w400), textAlign: TextAlign.center,),
+                  Text(
+                    'Secure your account',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: AppColor.secondColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    'Lorem Ipsum is simply dummy text',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColor.whiteColor,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -56,24 +71,24 @@ class _ResetPasswordState extends State<ResetPassword> {
                           hintText: "Older Password",
                           requiredField: true,
                           validator: (value) {
-                            if(value!.isEmpty){
-                              Utils.snakBar('Password', 'Enter password');
+                            if (value == null || value.isEmpty) {
+                              return 'Older Password is required';
                             }
-                            return 'Password is required';
+                            return null;
                           },
                         ),
                         CustomInputField(
-                            controller: ResetPasswordVM.oldPasswordController.value,
-                            fieldType: 'password',
-                            hintText: "New Password",
-                            requiredField: true,
-                            validator: (value) {
-                              if(value!.isEmpty){
-                                Utils.snakBar('Password', 'Enter password');
-
-                              }
-                              return 'Password is required';
-                            },
+                          controller:
+                              ResetPasswordVM.oldPasswordController.value,
+                          fieldType: 'password',
+                          hintText: "New Password",
+                          requiredField: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'New Password is required';
+                            }
+                            return null;
+                          },
                         ),
                         Obx(
                           () => RoundButton(
@@ -81,7 +96,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             title: 'Save New Password',
                             loading: ResetPasswordVM.loading.value,
                             onPress: () {
-                              if(_formKey.currentState!.validate()){
+                              if (_formKey.currentState!.validate()) {
                                 ResetPasswordVM.resetPasswordApi();
                               }
                             },

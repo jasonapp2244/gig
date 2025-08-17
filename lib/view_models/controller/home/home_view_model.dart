@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:gig/utils/utils.dart';
+import '../auth/logout_view_model.dart';
 
 class HomeViewModel extends GetxController {
+  final LogoutViewModel logoutViewModel = Get.put(LogoutViewModel());
   RxString userName = 'User'.obs;
   RxString userEmail = 'user@example.com'.obs;
   RxString profileImage = ''.obs;
@@ -22,11 +24,11 @@ class HomeViewModel extends GetxController {
       if (name != null && name.isNotEmpty) {
         userName.value = name;
       }
-      
+
       if (email != null && email.isNotEmpty) {
         userEmail.value = email;
       }
-      
+
       if (avatar != null && avatar.isNotEmpty) {
         profileImage.value = avatar;
       }
@@ -41,5 +43,3 @@ class HomeViewModel extends GetxController {
     await loadUserData();
   }
 }
-
-

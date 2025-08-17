@@ -70,13 +70,16 @@ class AddProfileController extends GetxController {
       if (storedProfileData != null && storedProfileData.isNotEmpty) {
         Map<String, dynamic> profileData = jsonDecode(storedProfileData);
 
-        print('📋 Found stored profile data: $profileData');
+        print(' Found stored profile data: $profileData');
+        print(' Address from stored data: ${profileData['address_one']}');
+        print(' Address fallback from stored data: ${profileData['address']}');
 
         // Auto-fill text fields
         nameController.text = profileData['name'] ?? '';
         phoneNumberController.text =
             profileData['phone_number'] ?? profileData['phone'] ?? '';
-        addressController.text = profileData['address'] ?? '';
+        addressController.text =
+            profileData['address_one'] ?? profileData['address'] ?? '';
         emailController.text = profileData['email'] ?? '';
 
         // Auto-fill skills/chips
@@ -105,6 +108,28 @@ class AddProfileController extends GetxController {
             profileData['resume_name'] != null) {
           pdfFileName.value =
               profileData['cv_name'] ?? profileData['resume_name'] ?? '';
+          print(' PDF filename auto-filled: ${pdfFileName.value}');
+        }
+
+        // Auto-fill PDF URL if exists (for download functionality)
+        if (profileData['cv'] != null || profileData['resume'] != null) {
+          String pdfUrl = profileData['cv'] ?? profileData['resume'] ?? '';
+          if (pdfUrl.isNotEmpty) {
+            print(' PDF URL found: $pdfUrl');
+            // Store PDF URL for download functionality
+            await _storage.write(key: 'user_pdf_url', value: pdfUrl);
+          }
+        }
+
+        // Auto-fill local PDF file if exists
+        if (profileData['cv'] != null &&
+            profileData['cv'].toString().isNotEmpty) {
+          String pdfPath = profileData['cv'].toString();
+          if (pdfPath.startsWith('/') && File(pdfPath).existsSync()) {
+            // It's a local file path, set it as the current PDF
+            pdfFile.value = File(pdfPath);
+            print(' Local PDF file auto-filled: $pdfPath');
+          }
         }
 
         // Auto-fill profile image if exists (local file path)
@@ -118,13 +143,14 @@ class AddProfileController extends GetxController {
         }
 
         isDataLoaded.value = true;
-        print('✅ Profile data auto-filled successfully');
+        print(' Profile data auto-filled successfully');
+        print(' Address controller text: ${addressController.text}');
       } else {
-        print('ℹ️ No stored profile data found');
+        print('ℹ No stored profile data found');
         isDataLoaded.value = true;
       }
     } catch (e) {
-      print('❌ Error loading stored profile data: $e');
+      print(' Error loading stored profile data: $e');
       isDataLoaded.value = true;
     }
   }
@@ -142,9 +168,10 @@ class AddProfileController extends GetxController {
         'name': nameController.text.trim(),
         'email': emailController.text.trim(),
         'phone_number': phoneNumberController.text.trim(),
-        'address': addressController.text.trim(),
+        'address_one': addressController.text.trim(),
         'skills': selectedChips.toList(),
         'cv_name': pdfFileName.value.isNotEmpty ? pdfFileName.value : null,
+        'cv': pdfFile.value?.path ?? '', // Store local PDF path
         'profile_image': imageFile.value?.path ?? '', // Store local image path
       };
 
@@ -161,9 +188,9 @@ class AddProfileController extends GetxController {
         value: phoneNumberController.text.trim(),
       );
 
-      print('✅ Stored profile data updated immediately');
+      print(' Stored profile data updated immediately');
     } catch (e) {
-      print('❌ Error updating stored profile data: $e');
+      print(' Error updating stored profile data: $e');
     }
   }
 
@@ -303,6 +330,4 @@ class AddProfileController extends GetxController {
     pdfFile.value = null;
     pdfFileName.value = '';
   }
-
-  //get
 }

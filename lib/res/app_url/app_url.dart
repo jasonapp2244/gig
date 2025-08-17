@@ -11,7 +11,7 @@ class AppUrl {
 
   // PASSWORD API
   static const String forgetPasswordApi = "$baseUrl/auth/forgot-password";
-  static const String resetPasswordApi = "$baseUrl/api/reset_password";
+  static const String resetPasswordApi = "$baseUrl/reset-password";
 
   // OTP API
   static const String otpApi = "$baseUrl/auth/verify-otp";

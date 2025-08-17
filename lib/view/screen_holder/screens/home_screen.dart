@@ -4,6 +4,7 @@ import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
 import 'package:gig/utils/utils.dart';
+import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../view_models/controller/home/home_view_model.dart';
@@ -312,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDrawer(BuildContext context) {
     final bool isTablet = Responsive.isTablet(context);
     final HomeViewModel homeController = Get.find<HomeViewModel>();
-
+    final LogoutViewModel logoutController = Get.find<LogoutViewModel>();
     return Drawer(
       width: isTablet ? Responsive.width(40, context) : null,
       child: ListView(
@@ -378,50 +379,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           _buildDrawerItem(
             context,
-            icon: Icons.notification_important,
-            text: "Get FCM Token",
-            route: "",
-            onTap: () async {
-              Navigator.pop(context); // Close drawer first
-              // Get and print FCM token
-              String? token = await Utils.getAndPrintFCMToken();
-              if (token != null) {
-                Utils.snakBar(
-                  "FCM Token",
-                  "Token retrieved and printed to console!",
-                );
-              } else {
-                Utils.snakBar("Error", "Failed to get FCM token");
-              }
-            },
+            icon: LucideIcons.building400,
+            text: "Reset Password",
+            route: RoutesName.resetPassword,
           ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.storage,
-            text: "Show Stored FCM Token",
-            route: "",
-            onTap: () async {
-              Navigator.pop(context); // Close drawer first
-              String? storedToken = await Utils.getStoredFCMToken();
-              if (storedToken != null) {
-                Utils.snakBar(
-                  "Stored FCM Token",
-                  "Check console for full token",
-                );
-              } else {
-                Utils.snakBar("No Token", "No FCM token found in storage");
-              }
-            },
-          ),
+
           _buildDrawerItem(
             context,
             icon: Icons.logout,
             text: "Logout",
             route: "",
             onTap: () {
+              logoutController.logout(); // Call logout API
               Navigator.pop(context); // Close drawer first
-              // Add logout functionality here
-              Get.toNamed(RoutesName.loginScreen);
+              // Show confirmation dialog
             },
           ),
         ],

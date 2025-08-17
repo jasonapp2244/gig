@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
+import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
@@ -35,6 +36,7 @@ class TaskBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deleteTaskVM = Get.put(DeleteTaskViewModel());
+    final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
 
     return InkWell(
       onTap: onTap,
@@ -128,26 +130,39 @@ class TaskBlock extends StatelessWidget {
                       color: Colors.green,
                       size: 20,
                     ),
-                    InkWell(
-                      onTap: () {
-                        customBottomSheet(
-                          context,
-                          title: 'Are you sure you want to delete?',
-                          btnText1: 'Yes, Delete',
-                          btnText2: 'Cancel',
-                          onFirstTap: () {
-                            deleteTaskVM.deleteTask(id ?? 0 );
-
-                            print('Deleted!');
-                          },
-                          onSecondTap: () {
-                            print('Cancelled!');
-                          },
-                        );
-                      },
-                      child: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red,
+                    Obx(
+                      () => InkWell(
+                        onTap: deleteTaskVM.loading.value
+                            ? null
+                            : () {
+                                customBottomSheet(
+                                  context,
+                                  title: 'Are you sure you want to delete?',
+                                  btnText1: 'Yes, Delete',
+                                  btnText2: 'Cancel',
+                                  onFirstTap: () async {
+                                    await deleteTaskVM.deleteTask(id ?? 0);
+                                    // The DeleteTaskViewModel will handle the refresh automatically
+                                    print('Deleted!');
+                                  },
+                                  onSecondTap: () {
+                                    print('Cancelled!');
+                                  },
+                                );
+                              },
+                        child: deleteTaskVM.loading.value
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : Icon(
+                                Icons.delete_outline_rounded,
+                                color: Colors.red,
+                              ),
                       ),
                     ),
                   ],

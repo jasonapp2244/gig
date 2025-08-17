@@ -26,7 +26,7 @@ class _TaskScreenState extends State<TaskScreen>
     // Refresh tasks when screen becomes visible
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        taskViewModel.refreshTasks();
+        taskViewModel.fetchTasks();
       }
     });
   }
@@ -37,6 +37,12 @@ class _TaskScreenState extends State<TaskScreen>
   void initState() {
     _tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
+    // Only refresh if tasks list is empty
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && taskViewModel.tasks.isEmpty) {
+        taskViewModel.fetchTasks();
+      }
+    });
   }
 
   @override
@@ -74,6 +80,7 @@ class _TaskScreenState extends State<TaskScreen>
       appBar: AppBar(
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
+        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back)),
         centerTitle: true,
         title: Text(
           'Tasks',
@@ -86,7 +93,7 @@ class _TaskScreenState extends State<TaskScreen>
         actions: [
           InkWell(
             onTap: () {
-              taskViewModel.refreshTasks();
+              taskViewModel.fetchTasks();
             },
             child: Icon(Icons.refresh, color: AppColor.primeColor),
           ),
@@ -183,7 +190,7 @@ class _TaskScreenState extends State<TaskScreen>
 
     return RefreshIndicator(
       onRefresh: () async {
-        await taskViewModel.refreshTasks();
+        await taskViewModel.fetchTasks(); // Use fetchTasks to avoid snackbar
       },
       child: ListView(
         children: taskList.map((task) {

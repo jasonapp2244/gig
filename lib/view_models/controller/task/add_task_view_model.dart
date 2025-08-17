@@ -31,7 +31,6 @@ class AddTaskViewModel extends GetxController {
   Future<void> addTaskApi() async {
     loading.value = true;
     Map data = {
-      
       'employer': employerController.value.text,
       'job_title': jobTypeController.value.text,
       'location': locationController.value.text,

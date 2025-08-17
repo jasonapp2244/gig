@@ -23,7 +23,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void initState() {
     super.initState();
-    // Get the selected date from navigation arguments
     final args = Get.arguments;
     if (args != null && args['selectedDate'] != null) {
       addTaskVM.selectedDate = args['selectedDate'];
@@ -35,225 +34,220 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColor.appBodyBG,
-        body: Column(
-          children: [
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 35,
-                  left: 35,
-                  child: Text(
-                    'Add Task',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.secondColor,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-            // Display selected date if available
-            if (addTaskVM.selectedDate != null)
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                decoration: BoxDecoration(
-                  color: AppColor.primeColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppColor.primeColor.withOpacity(0.3),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      color: AppColor.primeColor,
-                      size: 20,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Selected Date: ${addTaskVM.selectedDate!.day}/${addTaskVM.selectedDate!.month}/${addTaskVM.selectedDate!.year}',
-                      style: TextStyle(
-                        color: AppColor.primeColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            SizedBox(height: 15),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 15),
+              if (addTaskVM.selectedDate != null) _buildSelectedDate(),
+              const SizedBox(height: 15),
+              Expanded(
+                child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.jobTypeController.value,
-                          fieldType: 'text',
-                          hintText: "Task Name",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Task name is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Obx(
-                              () => EmployerDropdown(
-                                controller: addTaskVM.employerController.value,
-                                employers: addTaskVM.employers,
-                                filteredEmployers: addTaskVM.filteredEmployers,
-                                onSearchChanged: (query) {
-                                  addTaskVM.filterEmployers(query);
-                                },
-                                onDeleteEmployer: (employerId) {
-                                  addTaskVM.deleteEmployer(employerId);
-                                },
-                                isLoading: addTaskVM.employerLoading.value,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.locationController.value,
-                          fieldType: 'text',
-                          hintText: "Location",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Location is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.supervisorController.value,
-                          fieldType: 'text',
-                          hintText: "Supervisor & their contact",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Supervisor contact is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
-
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.wagesController.value,
-                          fieldType: 'number',
-                          hintText: "Wages",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Wages is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.straightTimeController.value,
-                          fieldType: 'number',
-                          hintText: "Straight time",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Straight time is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: CustomInputField(
-                          controller: addTaskVM.notesController.value,
-                          fieldType: 'text',
-                          hintText: "Notes",
-                          requiredField: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Notes is required';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      SizedBox(height: 15),
+                      _buildTaskName(),
+                      const SizedBox(height: 15),
+                      _buildEmployerDropdown(),
+                      const SizedBox(height: 15),
+                      _buildLocation(),
+                      const SizedBox(height: 15),
+                      _buildSupervisor(),
+                      const SizedBox(height: 15),
+                      _buildWages(),
+                      const SizedBox(height: 15),
+                      _buildStraightTime(),
+                      const SizedBox(height: 15),
+                      _buildNotes(),
+                      const SizedBox(height: 15),
                     ],
                   ),
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-              child: Obx(
-                () => RoundButton(
-                  width: double.infinity,
-                  height: 50,
-                  title: 'Add Task',
-                  loading: addTaskVM.loading.value,
-                  buttonColor: AppColor.primeColor,
-                  onPress: () {
-                    // Check if employer is entered
-                    if (addTaskVM.employerController.value.text.isEmpty) {
-                      Utils.snakBar('Error', 'Please enter an employer name');
-                      return;
-                    }
+              _buildSubmitButton(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-                    if (_formKey.currentState!.validate()) {
-                      addTaskVM.addTaskApi();
-                    }
-                  },
-                ),
-              ),
+  /// ------------------- Widgets -------------------
+
+  Widget _buildHeader(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Icon(Icons.arrow_back, color: AppColor.primeColor),
             ),
-          ],
+          ),
+        ),
+        const Positioned(
+          top: 10,
+          right: 35,
+          left: 35,
+          child: Text(
+            'Add Task',
+            style: TextStyle(
+              fontSize: 18,
+              color: AppColor.secondColor,
+              fontWeight: FontWeight.w400,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectedDate() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      decoration: BoxDecoration(
+        color: AppColor.primeColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColor.primeColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.calendar_today, color: AppColor.primeColor, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            'Selected Date: ${addTaskVM.selectedDate!.day}/${addTaskVM.selectedDate!.month}/${addTaskVM.selectedDate!.year}',
+            style: TextStyle(
+              color: AppColor.primeColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskName() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.jobTypeController.value,
+        fieldType: 'text',
+        hintText: "Task Name",
+        requiredField: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Task name is required' : null,
+      ),
+    );
+  }
+
+  Widget _buildEmployerDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Obx(
+        () => EmployerDropdown(
+          controller: addTaskVM.employerController.value,
+          employers: addTaskVM.employers,
+          filteredEmployers: addTaskVM.filteredEmployers,
+          onSearchChanged: addTaskVM.filterEmployers,
+          onDeleteEmployer: addTaskVM.deleteEmployer,
+          isLoading: addTaskVM.employerLoading.value,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocation() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.locationController.value,
+        fieldType: 'text',
+        hintText: "Location",
+        requiredField: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Location is required' : null,
+      ),
+    );
+  }
+
+  Widget _buildSupervisor() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.supervisorController.value,
+        fieldType: 'number',
+        hintText: "Supervisor & their contact",
+        requiredField: true,
+        validator: (value) => (value == null || value.isEmpty)
+            ? 'Supervisor contact is required'
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildWages() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.wagesController.value,
+        fieldType: 'number',
+        hintText: "Wages",
+        requiredField: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Wages is required' : null,
+      ),
+    );
+  }
+
+  Widget _buildStraightTime() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.straightTimeController.value,
+        fieldType: 'number',
+        hintText: "Straight time",
+        requiredField: true,
+        validator: (value) => (value == null || value.isEmpty)
+            ? 'Straight time is required'
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildNotes() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.notesController.value,
+        fieldType: 'text',
+        hintText: "Notes",
+        requiredField: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Notes is required' : null,
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return Container(
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+      child: Obx(
+        () => RoundButton(
+          width: double.infinity,
+          height: 50,
+          title: 'Add Task',
+          loading: addTaskVM.loading.value,
+          buttonColor: AppColor.primeColor,
+          onPress: () {
+            if (_formKey.currentState!.validate()) {
+              addTaskVM.addTaskApi();
+              Get.back();
+            }
+          },
         ),
       ),
     );

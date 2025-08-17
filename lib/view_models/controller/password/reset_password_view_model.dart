@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:gig/repository/password/reset_password_repository.dart';
+import 'package:gig/repository/auth_repository/reset_otp_repository.dart';
 
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 
 class ResetPasswordViewModel extends GetxController {
-  final _api = ResetPasswordRepository();
+  final _api = ResetOtpRepository();
   final passwordController = TextEditingController().obs;
   final oldPasswordController = TextEditingController().obs;
 
@@ -15,12 +15,12 @@ class ResetPasswordViewModel extends GetxController {
   void resetPasswordApi() {
     loading.value = true;
     Map data = {
-      'password': passwordController.value.text,
-      'old_password': oldPasswordController.value.text,
+      'old_password': passwordController.value.text,
+      'new_password': oldPasswordController.value.text,
     };
 
     _api
-        .resetPasswordApi(data)
+        .resetOtpApi(data)
         .then((value) {
           loading.value = false;
 

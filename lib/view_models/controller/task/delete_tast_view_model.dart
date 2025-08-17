@@ -18,13 +18,35 @@ class DeleteTaskViewModel extends GetxController {
       if (response != null) {
         if (response['status'] == true) {
           Utils.snakBar('Success', 'Task deleted successfully!');
-          
-          // Refresh the tasks list automatically
+
+          // Update the UI immediately by removing the task from local list
           try {
             final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
-            await taskViewModel.fetchTasks(); // Refresh without showing another snackbar
+
+            print('🗑️ Before deletion: ${taskViewModel.tasks.length} tasks');
+            print('🗑️ Deleting task with ID: $taskId');
+
+            // Remove the deleted task from the local list immediately for instant UI update
+            taskViewModel.tasks.removeWhere((task) {
+              final taskIdFromList = task['id'];
+              print(
+                '🗑️ Comparing task ID: $taskIdFromList (${taskIdFromList.runtimeType}) with $taskId (${taskId.runtimeType})',
+              );
+              // Handle both string and int ID types
+              if (taskIdFromList is String) {
+                return int.tryParse(taskIdFromList) == taskId;
+              } else if (taskIdFromList is int) {
+                return taskIdFromList == taskId;
+              }
+              return false;
+            });
+
+            print('🗑️ After deletion: ${taskViewModel.tasks.length} tasks');
+
+            // Force UI update by triggering a rebuild
+            taskViewModel.tasks.refresh();
           } catch (e) {
-            print('⚠️ Could not refresh task list: $e');
+            print('⚠️ Could not update task list: $e');
           }
         } else {
           Utils.snakBar(

@@ -26,44 +26,57 @@ class ChipInputField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Input field for adding chips
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white24, width: 1),
-            ),
-            child: TextField(
-              controller: textController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColor.grayColor,
-                hintText: hintText,
-                hintStyle: TextStyle(color: AppColor.grayColor, fontSize: 16),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    Icons.add_circle,
-                    color: AppColor.primeColor,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    if (textController.text.trim().isNotEmpty) {
-                      onChipAdded(textController.text.trim());
-                      textController.clear();
-                    }
-                  },
-                ),
+          TextField(
+            controller: textController,
+            style: TextStyle(color: Colors.white),
+
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 17,
               ),
-              onSubmitted: (value) {
-                if (value.trim().isNotEmpty) {
-                  onChipAdded(value.trim());
-                  textController.clear();
-                }
-              },
+              border: OutlineInputBorder(),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white24, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white24, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.red, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.red, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              filled: true,
+              fillColor: AppColor.grayColor,
+              hintText: hintText,
+              hintStyle: TextStyle(color: AppColor.grayColor, fontSize: 16),
+
+              suffixIcon: IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: AppColor.primeColor,
+                  size: 24,
+                ),
+                onPressed: () {
+                  if (textController.text.trim().isNotEmpty) {
+                    onChipAdded(textController.text.trim());
+                    textController.clear();
+                  }
+                },
+              ),
             ),
+            onSubmitted: (value) {
+              if (value.trim().isNotEmpty) {
+                onChipAdded(value.trim());
+                textController.clear();
+              }
+            },
           ),
 
           const SizedBox(height: 16),
@@ -82,7 +95,7 @@ class ChipInputField extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Input Chip',
+                    'Skills',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

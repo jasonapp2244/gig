@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gig/res/fonts/app_fonts.dart';
 import '../colors/app_color.dart';
 
 class EmployerDropdown extends StatefulWidget {
@@ -70,8 +71,14 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
           controller: searchController,
 
           decoration: InputDecoration(
-            hintText: 'Search employers or type new employer name...',
-            prefixIcon: const Icon(Icons.search),
+            hintStyle: const TextStyle(
+              color: Colors.white60,
+              fontFamily: AppFonts.appFont,
+            ),
+            filled: true,
+            fillColor: AppColor.grayColor,
+            hintText: 'Employer Name',
+            suffix: const Icon(Icons.search, color: Colors.white60),
             suffixIcon: searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.add, color: AppColor.primeColor),
@@ -121,7 +128,6 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
           Container(
             margin: const EdgeInsets.only(top: 4),
             decoration: BoxDecoration(
-              color: AppColor.textColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
@@ -206,7 +212,7 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
           children: [
             Icon(
               Icons.add_circle_outline,
-              color: Colors.blue.shade600,
+              color: AppColor.primeColor,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -218,7 +224,7 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
                     'Use "${searchController.text}" as new employer',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.blue.shade700,
+                      color: AppColor.primeColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -236,11 +242,22 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
   }
 
   Widget _buildEmployerItem(Map<String, dynamic> employer) {
-    final employerName =
-        employer['employer_name'] ??
-        employer['name'] ??
-        employer['company'] ??
-        'Unknown';
+    // Get employer name with better fallback logic
+    String employerName = '';
+    if (employer['employer_name'] != null &&
+        employer['employer_name'].toString().isNotEmpty) {
+      employerName = employer['employer_name'].toString();
+    } else if (employer['name'] != null &&
+        employer['name'].toString().isNotEmpty) {
+      employerName = employer['name'].toString();
+    } else if (employer['company'] != null &&
+        employer['company'].toString().isNotEmpty) {
+      employerName = employer['company'].toString();
+    } else {
+      // If no valid name found, skip this item
+      return const SizedBox.shrink();
+    }
+
     final employerId = employer['id']?.toString() ?? '';
 
     return InkWell(

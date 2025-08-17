@@ -14,12 +14,12 @@ class LogoutViewModel extends GetxController {
   void logoutApi() async {
     // Get auth token from secure storage
     String? token = await Utils.readSecureData('auth_token');
-    
+
     if (token == null || token.isEmpty) {
       Utils.snakBar('Error', 'No authentication token found');
       return;
     }
-    
+
     loading.value = true;
     Map data = {'token': token};
 
@@ -29,11 +29,14 @@ class LogoutViewModel extends GetxController {
           loading.value = false;
 
           if (value['status'] == true) {
-            Utils.snakBar('Logout', value['message'] ?? 'Logged out successfully');
-            
+            Utils.snakBar(
+              'Logout',
+              value['message'] ?? 'Logged out successfully',
+            );
+
             // Clear all stored data
-            await _clearUserData();
-            
+            await Utils().clearUserData();
+
             // Navigate to login screen
             Get.offAllNamed(RoutesName.loginScreen);
           } else {
@@ -48,18 +51,7 @@ class LogoutViewModel extends GetxController {
         });
   }
 
-  // Clear all user data from storage
-  Future<void> _clearUserData() async {
-    final _storage = FlutterSecureStorage();
-    
-    // Clear all secure storage keys
-    await _storage.delete(key: 'auth_token');
-    await _storage.delete(key: 'user_name');
-    await _storage.delete(key: 'user_email');
-    await _storage.delete(key: 'user_id');
-    await _storage.delete(key: 'user_phone');
-    
-    // Clear user preferences
-   // await userPreference.clearUser();
+  void logout() {
+    logoutApi();
   }
 }

@@ -18,13 +18,6 @@ class Utils {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  static void toastMessage(String message) {
-    // Fluttertoast.showToast(
-    //   msg: message,
-    //   backgroundColor: AppColor.blackColor,
-    // );
-  }
-
   static void snakBar(String title, String message) {
     Get.snackbar(
       title,
@@ -110,48 +103,6 @@ class Utils {
     }
   }
 
-  // // Get and print FCM token
-  // static Future<String?> getAndPrintFCMToken() async {
-  //   try {
-  //     FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  //     // Request permission for notifications (iOS)
-  //     NotificationSettings settings = await messaging.requestPermission(
-  //       alert: true,
-  //       announcement: false,
-  //       badge: true,
-  //       carPlay: false,
-  //       criticalAlert: false,
-  //       provisional: false,
-  //       sound: true,
-  //     );
-
-  //     print('🔥 FCM Permission Status: ${settings.authorizationStatus}');
-
-  //     // Get the FCM token
-  //     String? token = await messaging.getToken();
-
-  //     if (token != null) {
-  //       print('🔥 FCM TOKEN RETRIEVED SUCCESSFULLY! 🔥');
-  //       print('=' * 80);
-  //       print('📱 DEVICE FCM TOKEN:');
-  //       print(token);
-  //       print('=' * 80);
-
-  //       // Store token securely
-  //       await writeSecureStorage('fcm_token', token);
-  //       print('✅ FCM Token saved to secure storage');
-
-  //       return token;
-  //     } else {
-  //       print('❌ Failed to get FCM token');
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     print('❌ Error getting FCM token: $e');
-  //     return null;
-  //   }
-  // }
   static Future<String?> getAndPrintFCMToken() async {
     try {
       FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -185,10 +136,6 @@ class Utils {
           print(token);
           print('=' * 80);
 
-          // Store token securely if needed
-          // await writeSecureStorage('fcm_token', token);
-          // print('✅ FCM Token saved to secure storage');
-
           return token;
         } else {
           print('❌ Failed to get FCM token');
@@ -200,30 +147,6 @@ class Utils {
       return null;
     }
   }
-  
-
-  // Future<void> saveTokenToServer() async {
-  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  //   NotificationSettings settings = await messaging.requestPermission(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //   );
-
-  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-  //     String? token = await messaging.getToken();
-  //     print("Device FCM Token: $token");
-
-  //     if (token != null) {
-  //       // Send token to Laravel via API
-  //       await http.post(
-  //         Uri.parse('https://yourapp.com/api/save-fcm-token'),
-  //         body: {'fcm_token': token},
-  //         headers: {'Authorization': 'Bearer YOUR_USER_TOKEN'},
-  //       );
-  //     }
-  //   }
-  // }
 
   // Get FCM token without extra printing (simple version)
   static Future<String?> getFCMToken() async {
@@ -261,5 +184,19 @@ class Utils {
       return null;
     }
   }
-  
+
+  // Clear all user data from storage
+  Future<void> clearUserData() async {
+    final _storage = FlutterSecureStorage();
+
+    // Clear all secure storage keys
+    await _storage.delete(key: 'auth_token');
+    await _storage.delete(key: 'user_name');
+    await _storage.delete(key: 'user_email');
+    await _storage.delete(key: 'user_id');
+    await _storage.delete(key: 'user_phone');
+
+    // Clear user preferences
+    // await userPreference.clearUser();
+  }
 }
