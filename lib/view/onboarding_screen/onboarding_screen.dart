@@ -1,10 +1,10 @@
-
 library;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/routes/routes_name.dart';
+import 'package:gig/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -150,8 +150,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
-                      onPressed: () {
-                        Get.toNamed(RoutesName.getStartedScreen);
+                      onPressed: () async {
+                        // Check if user is already logged in before going to get started
+                        String? token = await Utils.readSecureData(
+                          'auth_token',
+                        );
+
+                        if (token != null && token.isNotEmpty) {
+                          // User is logged in - go directly to home screen
+                          Get.offAllNamed(RoutesName.screenHolderScreen);
+                        } else {
+                          // User is not logged in - go to get started screen
+                          Get.toNamed(RoutesName.getStartedScreen);
+                        }
                       },
                       child: Text(
                         'Get Started',
@@ -173,8 +184,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextButton(
-                            onPressed: () {
-                              _controller.jumpToPage(_pages.length - 1);
+                            onPressed: () async {
+                              // Check if user is already logged in before skipping
+                              String? token = await Utils.readSecureData(
+                                'auth_token',
+                              );
+
+                              if (token != null && token.isNotEmpty) {
+                                // User is logged in - go directly to home screen
+                                Get.offAllNamed(RoutesName.screenHolderScreen);
+                              } else {
+                                // User is not logged in - jump to last page
+                                _controller.jumpToPage(_pages.length - 1);
+                              }
                             },
                             child: Text(
                               'Skip',

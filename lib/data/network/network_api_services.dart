@@ -305,7 +305,7 @@ class NetworkApiServices extends BaseApiServices {
               'Authorization': 'Bearer $token',
             },
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 15));
 
       responseJson = returnResponse(response);
     } on SocketException {

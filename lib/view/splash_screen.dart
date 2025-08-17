@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/view/onboarding_screen/onboarding_screen.dart';
+import 'package:gig/view_models/controller/splash/splash_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,12 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => OnboardingScreen()),
-      );
-    });
+    // Initialize the splash controller which will handle authentication check
+    Get.put(SplashController());
   }
 
   @override

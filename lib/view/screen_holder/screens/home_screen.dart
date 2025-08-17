@@ -33,8 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
           Responsive.isPortrait(context)
-              ? Responsive.height(18, context)
-              : Responsive.height(24, context),
+              ? Responsive.height(22, context)
+              : Responsive.height(28, context),
         ),
         child: Container(
           padding: EdgeInsets.only(
@@ -52,8 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
+            padding: const EdgeInsets.only(left: 20, bottom: 5, top: 10),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Welcome Row
                 Row(
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Welcome",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: Responsive.fontSize(16, context),
+                            fontSize: Responsive.fontSize(14, context),
                           ),
                         ),
                         Obx(
@@ -76,42 +77,42 @@ class _HomeScreenState extends State<HomeScreen> {
                             homeController.userName.value,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: Responsive.fontSize(22, context),
+                              fontSize: Responsive.fontSize(18, context),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/user.png'),
-                      radius: Responsive.isTablet(context)
-                          ? Responsive.width(5, context)
-                          : Responsive.width(6, context),
-                    ),
+                                         CircleAvatar(
+                       backgroundImage: AssetImage('assets/images/user.png'),
+                       radius: Responsive.isTablet(context)
+                           ? Responsive.width(4, context)
+                           : Responsive.width(5, context),
+                     ),
                   ],
                 ),
-                SizedBox(height: Responsive.height(1.5, context)),
+                SizedBox(height: Responsive.height(1, context)),
                 // Search Row
                 Row(
                   children: [
                     Expanded(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: Responsive.height(
-                            5,
-                            context,
-                          ), // Limit height
-                        ),
+                                                 constraints: BoxConstraints(
+                           maxHeight: Responsive.height(
+                             3.5,
+                             context,
+                           ), // Limit height
+                         ),
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: "Search...",
                             filled: true,
                             fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: Responsive.height(1, context),
-                              horizontal: Responsive.width(4, context),
-                            ),
+                                                         contentPadding: EdgeInsets.symmetric(
+                               vertical: Responsive.height(0.3, context),
+                               horizontal: Responsive.width(4, context),
+                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
                                 Responsive.width(8, context),
