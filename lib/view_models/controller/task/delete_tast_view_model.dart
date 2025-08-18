@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:gig/repository/task/delete_task_repository.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
+import 'package:gig/view_models/controller/home/home_view_model.dart';
 
 class DeleteTaskViewModel extends GetxController {
   RxBool loading = false.obs;
@@ -45,6 +46,15 @@ class DeleteTaskViewModel extends GetxController {
 
             // Force UI update by triggering a rebuild
             taskViewModel.tasks.refresh();
+
+            // Also refresh home screen calendar data
+            try {
+              final HomeViewModel homeController = Get.find<HomeViewModel>();
+              await homeController.silentRefreshTasksForCalendar();
+              print('✅ Home calendar data refreshed after deleting task');
+            } catch (e) {
+              print('⚠️ Could not refresh home calendar: $e');
+            }
           } catch (e) {
             print('⚠️ Could not update task list: $e');
           }

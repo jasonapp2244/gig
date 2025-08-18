@@ -6,12 +6,14 @@ import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
 import '../task/get_task_view_model.dart';
+import '../home/home_view_model.dart';
 
 class AddTaskViewModel extends GetxController {
   final _api = AddTaskRepository();
   final _employerRepository = EmployerRepository();
   UserPreference userPreference = UserPreference();
   final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
+
   final employerController = TextEditingController().obs;
   final jobTypeController = TextEditingController().obs;
   final locationController = TextEditingController().obs;
@@ -30,6 +32,10 @@ class AddTaskViewModel extends GetxController {
 
   Future<void> addTaskApi() async {
     loading.value = true;
+
+    // Handle null selectedDate by using current date as default
+    DateTime taskDate = selectedDate ?? DateTime.now();
+
     Map data = {
       'employer': employerController.value.text,
       'job_title': jobTypeController.value.text,
@@ -37,7 +43,7 @@ class AddTaskViewModel extends GetxController {
       'supervisorContactNumber': supervisorController.value.text,
       //  'workingHoursController': workingHoursController.value.text,
       'task_date_time':
-          "${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}T${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}.${DateTime.now().millisecond.toString().padLeft(3, '0')}Z",
+          "${taskDate.year.toString().padLeft(4, '0')}-${taskDate.month.toString().padLeft(2, '0')}-${taskDate.day.toString().padLeft(2, '0')}T${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}.${DateTime.now().millisecond.toString().padLeft(3, '0')}Z",
       'pay': wagesController.value.text,
       'workingHours': straightTimeController.value.text,
       'notes': notesController.value.text,
@@ -49,8 +55,19 @@ class AddTaskViewModel extends GetxController {
 
       if (value['status'] == true) {
         Utils.snakBar('Success', 'Task added successfully!');
-        // Refresh the task list to show the new task
+
+        // Refresh both task list and home calendar data
         await taskViewModel.refreshTasks();
+
+        // Also refresh home screen calendar data
+        try {
+          final HomeViewModel homeController = Get.find<HomeViewModel>();
+          await homeController.silentRefreshTasksForCalendar();
+          print('✅ Home calendar data refreshed after adding task');
+        } catch (e) {
+          print('⚠️ Could not refresh home calendar: $e');
+        }
+
         Get.toNamed(RoutesName.taskScreen);
       } else {
         print("Task Add failed: $value");

@@ -79,14 +79,14 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
             fillColor: AppColor.grayColor,
             hintText: 'Employer Name',
             suffix: const Icon(Icons.search, color: Colors.white60),
-            suffixIcon: searchController.text.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.add, color: AppColor.primeColor),
-                    onPressed: _useCustomEmployer,
-                    tooltip: 'Use as custom employer',
-                  )
-                : null,
 
+            // suffixIcon: searchController.text.isNotEmpty
+            //     ? IconButton(
+            //         icon: const Icon(Icons.add, color: AppColor.primeColor),
+            //         onPressed: _useCustomEmployer,
+            //         tooltip: 'Use as custom employer',
+            //       )
+            //     : null,
             border: OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white24, width: 1),
@@ -265,13 +265,16 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border(bottom: BorderSide()),
+          color: AppColor.grayColor,
+          border: Border.all(color: Colors.white24),
         ),
         child: Row(
           children: [
             Expanded(
-              child: Text(employerName, style: const TextStyle(fontSize: 16)),
+              child: Text(
+                employerName,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
             // Delete button
             if (employerId.isNotEmpty)

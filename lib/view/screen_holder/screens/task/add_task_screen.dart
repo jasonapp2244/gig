@@ -24,8 +24,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   void initState() {
     super.initState();
     final args = Get.arguments;
+    print('🔍 AddTaskScreen - Received arguments: $args');
+    print('🔍 AddTaskScreen - Arguments type: ${args.runtimeType}');
+
     if (args != null && args['selectedDate'] != null) {
       addTaskVM.selectedDate = args['selectedDate'];
+      print('✅ AddTaskScreen - Selected date set: ${addTaskVM.selectedDate}');
+      print(
+        '✅ AddTaskScreen - Selected date type: ${addTaskVM.selectedDate.runtimeType}',
+      );
+      if (addTaskVM.selectedDate != null) {
+        print(
+          '✅ AddTaskScreen - Selected date components: ${addTaskVM.selectedDate!.year}-${addTaskVM.selectedDate!.month}-${addTaskVM.selectedDate!.day}',
+        );
+      }
+    } else {
+      print('⚠️ AddTaskScreen - No selected date provided, using current date');
+      addTaskVM.selectedDate = DateTime.now();
+      print('✅ AddTaskScreen - Current date set: ${addTaskVM.selectedDate}');
     }
   }
 

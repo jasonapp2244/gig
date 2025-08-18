@@ -24,6 +24,28 @@ class _HomeScreenState extends State<HomeScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
+  void initState() {
+    super.initState();
+    // Refresh calendar data when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final HomeViewModel homeController = Get.find<HomeViewModel>();
+      homeController.silentRefreshTasksForCalendar();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh calendar data when screen becomes visible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final HomeViewModel homeController = Get.find<HomeViewModel>();
+        homeController.silentRefreshTasksForCalendar();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final HomeViewModel homeController = Get.put(HomeViewModel());
 
@@ -84,12 +106,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                                         CircleAvatar(
-                       backgroundImage: AssetImage('assets/images/user.png'),
-                       radius: Responsive.isTablet(context)
-                           ? Responsive.width(4, context)
-                           : Responsive.width(5, context),
-                     ),
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/images/user.png'),
+                      radius: Responsive.isTablet(context)
+                          ? Responsive.width(4, context)
+                          : Responsive.width(5, context),
+                    ),
                   ],
                 ),
                 SizedBox(height: Responsive.height(1, context)),
@@ -98,21 +120,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: ConstrainedBox(
-                                                 constraints: BoxConstraints(
-                           maxHeight: Responsive.height(
-                             3.5,
-                             context,
-                           ), // Limit height
-                         ),
+                        constraints: BoxConstraints(
+                          maxHeight: Responsive.height(
+                            5,
+                            context,
+                          ), // Limit height
+                        ),
                         child: TextField(
                           decoration: InputDecoration(
                             hintText: "Search...",
                             filled: true,
                             fillColor: Colors.white,
-                                                         contentPadding: EdgeInsets.symmetric(
-                               vertical: Responsive.height(0.3, context),
-                               horizontal: Responsive.width(4, context),
-                             ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: Responsive.height(0.5, context),
+                              horizontal: Responsive.width(4, context),
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(
                                 Responsive.width(8, context),
@@ -159,59 +181,139 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 20),
 
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              calendarFormat: _calendarFormat, // required
-              onFormatChanged: (format) {
-                setState(() {
-                  _calendarFormat = format;
-                });
-              },
-              daysOfWeekVisible: true,
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-                Get.toNamed(
-                  RoutesName.addTaskScreen,
-                  arguments: {'selectedDate': selectedDay},
+            // Calendar with task indicators
+            Obx(() {
+              if (homeController.tasksLoading.value) {
+                return Container(
+                  height: 400,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor.primeColor,
+                    ),
+                  ),
                 );
-              },
-              calendarStyle: CalendarStyle(
-                todayDecoration: const BoxDecoration(
-                  color: AppColor.primeColor,
-                  shape: BoxShape.circle,
+              }
+
+              return TableCalendar(
+                firstDay: DateTime.utc(2020, 1, 1),
+                lastDay: DateTime.utc(2030, 12, 31),
+                focusedDay: _focusedDay,
+                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                calendarFormat: _calendarFormat,
+                onFormatChanged: (format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                },
+                daysOfWeekVisible: true,
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                  });
+                  _handleDateSelection(selectedDay, homeController);
+                },
+                // Add event loader to show task indicators
+                eventLoader: (day) {
+                  return homeController.getEventsForDate(day);
+                },
+                calendarStyle: CalendarStyle(
+                  todayDecoration: const BoxDecoration(
+                    color: AppColor.primeColor,
+                    shape: BoxShape.circle,
+                  ),
+                  selectedDecoration: BoxDecoration(
+                    border: Border.all(color: AppColor.primeColor, width: 2),
+                    color: const Color(0xFF2D2F3A),
+                    shape: BoxShape.circle,
+                  ),
+                  defaultTextStyle: const TextStyle(color: Colors.white),
+                  weekendTextStyle: const TextStyle(color: Colors.white),
+                  outsideDaysVisible: false,
+                  // Add marker decoration for dates with tasks
+                  markerDecoration: BoxDecoration(
+                    color: AppColor.primeColor,
+                    shape: BoxShape.circle,
+                  ),
+                  markerSize: 6,
+                  markerMargin: EdgeInsets.symmetric(horizontal: 1),
                 ),
-                selectedDecoration: BoxDecoration(
-                  border: Border.all(color: AppColor.primeColor, width: 2),
-                  color: const Color(0xFF2D2F3A),
-                  shape: BoxShape.circle,
+                headerStyle: const HeaderStyle(
+                  titleCentered: true,
+                  formatButtonVisible: false,
+                  titleTextStyle: TextStyle(color: Colors.white),
+                  leftChevronIcon: Icon(
+                    Icons.chevron_left,
+                    color: Colors.white,
+                  ),
+                  rightChevronIcon: Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                  ),
                 ),
-                defaultTextStyle: const TextStyle(color: Colors.white),
-                weekendTextStyle: const TextStyle(color: Colors.white),
-                outsideDaysVisible: false,
-              ),
-              headerStyle: const HeaderStyle(
-                titleCentered: true,
-                formatButtonVisible: false,
-                titleTextStyle: TextStyle(color: Colors.white),
-                leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-                rightChevronIcon: Icon(
-                  Icons.chevron_right,
-                  color: Colors.white,
+                daysOfWeekStyle: const DaysOfWeekStyle(
+                  weekdayStyle: TextStyle(color: Colors.white70),
+                  weekendStyle: TextStyle(color: Colors.white70),
                 ),
-              ),
-              daysOfWeekStyle: const DaysOfWeekStyle(
-                weekdayStyle: TextStyle(color: Colors.white70),
-                weekendStyle: TextStyle(color: Colors.white70),
-              ),
-            ),
+              );
+            }),
 
             SizedBox(height: 10),
+
+            // // Refresh button for tasks
+            // Obx(() {
+            //   if (homeController.tasksLoading.value) {
+            //     return SizedBox.shrink();
+            //   }
+            //   return Padding(
+            //     padding: EdgeInsets.symmetric(horizontal: 20),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.end,
+            //       children: [
+            //         TextButton.icon(
+            //           onPressed: () => homeController.refreshTasksForCalendar(),
+            //           icon: Icon(
+            //             Icons.refresh,
+            //             color: AppColor.primeColor,
+            //             size: 16,
+            //           ),
+            //           label: Text(
+            //             'Refresh Calendar',
+            //             style: TextStyle(
+            //               color: AppColor.primeColor,
+            //               fontSize: 12,
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   );
+            // }),
+
+            // // Test button for date passing (temporary for debugging)
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 20),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       ElevatedButton(
+            //         onPressed: () {
+            //           DateTime testDate = DateTime.now().add(Duration(days: 1));
+            //           print('🧪 Testing date passing with: $testDate');
+            //           Get.toNamed(
+            //             RoutesName.addTaskScreen,
+            //             arguments: {'selectedDate': testDate},
+            //           );
+            //         },
+            //         child: Text('Test Date Passing'),
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: AppColor.primeColor,
+            //           foregroundColor: Colors.white,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             InkWell(
               onTap: () {
                 Get.toNamed(RoutesName.taskScreen);
@@ -307,6 +409,172 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Handle date selection - show existing tasks or go to add task
+  void _handleDateSelection(
+    DateTime selectedDate,
+    HomeViewModel homeController,
+  ) {
+    print('📅 HomeScreen - Date selected: $selectedDate');
+    print('📅 HomeScreen - Date type: ${selectedDate.runtimeType}');
+    print(
+      '📅 HomeScreen - Date components: ${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
+    );
+
+    List<Map<String, dynamic>> tasksForDate = homeController.getTasksForDate(
+      selectedDate,
+    );
+
+    if (tasksForDate.isNotEmpty) {
+      // Show existing tasks for this date
+      print(
+        '📅 HomeScreen - Found ${tasksForDate.length} existing tasks for this date',
+      );
+      _showTasksForDateDialog(selectedDate, tasksForDate, homeController);
+    } else {
+      // No tasks for this date, go to add task screen
+      print(
+        '📅 HomeScreen - No existing tasks, navigating to AddTaskScreen with date: $selectedDate',
+      );
+      print(
+        '📅 HomeScreen - Arguments being passed: ${{'selectedDate': selectedDate}}',
+      );
+      Get.toNamed(
+        RoutesName.addTaskScreen,
+        arguments: {'selectedDate': selectedDate},
+      );
+    }
+  }
+
+  /// Show dialog with tasks for selected date
+  void _showTasksForDateDialog(
+    DateTime selectedDate,
+    List<Map<String, dynamic>> tasks,
+    HomeViewModel homeController,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.appBodyBG,
+          title: Text(
+            'Tasks for ${homeController.formatTaskDate(selectedDate.toString())}',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Task list
+                ...tasks
+                    .map((task) => _buildTaskItem(task, homeController))
+                    .toList(),
+                SizedBox(height: 20),
+                // Add new task button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Get.toNamed(
+                      RoutesName.addTaskScreen,
+                      arguments: {'selectedDate': selectedDate},
+                    );
+                  },
+                  icon: Icon(Icons.add, color: Colors.white),
+                  label: Text('Add New Task'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primeColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Close',
+                style: TextStyle(color: AppColor.primeColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Build individual task item for dialog
+  Widget _buildTaskItem(
+    Map<String, dynamic> task,
+    HomeViewModel homeController,
+  ) {
+    String status = homeController.mapTaskStatus(
+      task['status'],
+      task['has_entry'],
+    );
+    Color statusColor = status == 'Completed'
+        ? Colors.green
+        : AppColor.primeColor;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColor.inputBGColor100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  task['job_title'] ?? 'Untitled Task',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          if (task['location'] != null &&
+              task['location'].toString().isNotEmpty)
+            Text(
+              '📍 ${task['location']}',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+          if (task['employer'] != null &&
+              task['employer'].toString().isNotEmpty)
+            Text(
+              '👤 ${task['employer']}',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+        ],
       ),
     );
   }

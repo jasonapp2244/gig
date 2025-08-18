@@ -19,14 +19,16 @@ class _TaskScreenState extends State<TaskScreen>
   late TabController _tabController;
   String searchText = '';
   final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+  bool _isInitialized = false; // Track if screen has been initialized
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Refresh tasks when screen becomes visible
+    // Only refresh tasks when screen becomes visible and tasks list is empty
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
+      if (mounted && taskViewModel.tasks.isEmpty && !_isInitialized) {
         taskViewModel.fetchTasks();
+        _isInitialized = true;
       }
     });
   }
@@ -37,10 +39,11 @@ class _TaskScreenState extends State<TaskScreen>
   void initState() {
     _tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
-    // Only refresh if tasks list is empty
+    // Only refresh if tasks list is empty and not already initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && taskViewModel.tasks.isEmpty) {
+      if (mounted && taskViewModel.tasks.isEmpty && !_isInitialized) {
         taskViewModel.fetchTasks();
+        _isInitialized = true;
       }
     });
   }
@@ -78,9 +81,13 @@ class _TaskScreenState extends State<TaskScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+        ),
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back)),
+
         centerTitle: true,
         title: Text(
           'Tasks',
@@ -90,14 +97,6 @@ class _TaskScreenState extends State<TaskScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          InkWell(
-            onTap: () {
-              taskViewModel.fetchTasks();
-            },
-            child: Icon(Icons.refresh, color: AppColor.primeColor),
-          ),
-        ],
       ),
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
