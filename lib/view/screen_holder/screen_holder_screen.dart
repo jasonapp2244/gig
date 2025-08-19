@@ -9,6 +9,7 @@ import 'package:gig/view/screen_holder/screens/notification/notification.dart';
 import 'package:gig/view/screen_holder/screens/task/task_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
+import 'package:gig/view_models/controller/home/home_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class ScreenHolderScreen extends StatefulWidget {
@@ -19,8 +20,8 @@ class ScreenHolderScreen extends StatefulWidget {
 }
 
 class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
-  int _selectedIndex = 0;
   final LogoutnVM = Get.put(LogoutViewModel());
+  final homeVM = Get.put(HomeViewModel());
   final List<Widget> _screens = [
     HomeScreen(),
     TaskScreen(),
@@ -28,13 +29,6 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
     IncomeTracker(),
     UserProfileScreen(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool isPortrait = Responsive.isPortrait(context);
@@ -43,58 +37,60 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
 
-      body: _screens[_selectedIndex],
+      // ✅ BODY: show override screen if set, otherwise show tab screen
+      body: Obx(() {
+        if (homeVM.overrideScreen.value != null) {
+          return homeVM.overrideScreen.value!;
+        }
+        return _screens[homeVM.selectedIndex.value];
+      }),
 
+      // ✅ BOTTOM NAVIGATION
       bottomNavigationBar: isPortrait
-          ? BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              selectedItemColor: AppColor.secondColor,
-              unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
-              selectedFontSize: Responsive.fontSize(12, context),
-              unselectedFontSize: Responsive.fontSize(12, context),
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.home,
-                    size: Responsive.fontSize(24, context),
+          ? Obx(
+              () => BottomNavigationBar(
+                currentIndex: homeVM.selectedIndex.value,
+                onTap: homeVM.changeTab,
+                selectedItemColor: AppColor.secondColor,
+                unselectedItemColor: Colors.grey,
+                type: BottomNavigationBarType.fixed,
+                selectedFontSize: Responsive.fontSize(12, context),
+                unselectedFontSize: Responsive.fontSize(12, context),
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.home,
+                      size: Responsive.fontSize(24, context),
+                    ),
+                    label: "Home",
                   ),
-                  label: "Home",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.task,
-                    size: Responsive.fontSize(24, context),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.task,
+                      size: Responsive.fontSize(24, context),
+                    ),
+                    label: "Tasks",
                   ),
-                  label: "Task",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.notifications,
-                    size: Responsive.fontSize(24, context),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.monetization_on,
+                      size: Responsive.fontSize(24, context),
+                    ),
+                    label: "Income",
                   ),
-                  label: "Notification",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.monetization_on,
-                    size: Responsive.fontSize(24, context),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person,
+                      size: Responsive.fontSize(24, context),
+                    ),
+                    label: "User",
                   ),
-                  label: "Income",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person,
-                    size: Responsive.fontSize(24, context),
-                  ),
-                  label: "User",
-                ),
-              ],
+                ],
+              ),
             )
           : null,
+
       drawer: isPortrait ? _buildDrawer(context) : null,
-      // For landscape mode on tablets/desktops
       endDrawer: !isPortrait && isTablet ? _buildDrawer(context) : null,
     );
   }
@@ -191,7 +187,7 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
       onTap:
           onTap ??
           () {
-            Navigator.pop(context); // Close the drawer
+            Navigator.pop(context);
             Get.toNamed(route);
           },
     );

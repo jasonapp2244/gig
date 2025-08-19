@@ -10,10 +10,15 @@ class GetTaskViewModel extends GetxController {
   RxList<Map<String, dynamic>> tasks = <Map<String, dynamic>>[].obs;
   RxString searchQuery = ''.obs;
 
+  // Task status summary observables
+  RxBool statusLoading = false.obs;
+  RxMap<String, dynamic> taskStatusSummary = <String, dynamic>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
-    fetchTasks();
+    //  fetchTasks();
+    fetchTaskStatus();
   }
 
   Future<void> fetchTasks() async {
@@ -83,7 +88,7 @@ class GetTaskViewModel extends GetxController {
 
       // Map API status to UI status
       if (status == 'Ongoing') {
-        return taskStatus == 'pending' && !hasEntry;
+        return taskStatus == '' && !hasEntry;
       } else if (status == 'Completed') {
         return hasEntry == true;
       }
@@ -92,8 +97,49 @@ class GetTaskViewModel extends GetxController {
     }).toList();
   }
 
+  Future<void> fetchTaskStatus() async {
+    try {
+      statusLoading.value = true;
+
+      print('🔄 Fetching task status summary...');
+
+      dynamic response = await _api.getTaskStatusAPI();
+
+      print('📊 Task status response: $response');
+
+      if (response != null) {
+        if (response['status'] == true) {
+          // Store the full response to access employer_all_summary and employer_status_summary arrays
+          Map<String, dynamic> fullData = Map<String, dynamic>.from(response);
+          fullData.remove('status'); // Remove non-data fields
+          fullData.remove('message');
+
+          taskStatusSummary.value = fullData;
+          print('✅ Task status loaded successfully: $taskStatusSummary');
+          print('📊 employer_all_summary: ${response['employer_all_summary']}');
+          print(
+            '📊 employer_status_summary: ${response['employer_status_summary']}',
+          );
+        } else {
+          taskStatusSummary.value = {};
+          print('❌ Failed to load task status: ${response['message']}');
+        }
+      } else {
+        taskStatusSummary.value = {};
+        print('❌ No response from task status API');
+      }
+    } catch (e) {
+      taskStatusSummary.value = {};
+      print('❌ Error fetching task status: $e');
+      Utils.snakBar('Error', 'Failed to load task status: $e');
+    } finally {
+      statusLoading.value = false;
+    }
+  }
+
   Future<void> refreshTasks() async {
     await fetchTasks();
+    await fetchTaskStatus(); // Also refresh status summary
     Utils.snakBar('Success', 'Tasks refreshed successfully!');
   }
 }

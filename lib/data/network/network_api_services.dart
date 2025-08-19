@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 class NetworkApiServices extends BaseApiServices {
   @override
-  Future<dynamic> getApi(String url) async {
+  Future<dynamic> getApi(String url, String token) async {
     dynamic responseJson;
     try {
       final response = await http
@@ -300,6 +300,32 @@ class NetworkApiServices extends BaseApiServices {
       final response = await http
           .get(
             Uri.parse(AppUrl.getTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 15));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getTaskStatusApi(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .post(
+            Uri.parse(AppUrl.taskStatusAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',

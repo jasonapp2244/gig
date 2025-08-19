@@ -6,10 +6,11 @@ import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
 import '../../../../res/components/employer_dropdown.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
-import '../../../../utils/utils.dart';
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  final DateTime? selectedDate;
+  
+  const AddTaskScreen({super.key, this.selectedDate});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -23,25 +24,39 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments;
-    print('🔍 AddTaskScreen - Received arguments: $args');
-    print('🔍 AddTaskScreen - Arguments type: ${args.runtimeType}');
+    
+    // Use constructor parameter first, then fallback to Get.arguments
+    DateTime? dateToUse;
+    
+    if (widget.selectedDate != null) {
+      dateToUse = widget.selectedDate;
+      print('🔍 AddTaskScreen - Using constructor selectedDate: $dateToUse');
+    } else {
+      final args = Get.arguments;
+      print('🔍 AddTaskScreen - Received arguments: $args');
+      print('🔍 AddTaskScreen - Arguments type: ${args.runtimeType}');
 
-    if (args != null && args['selectedDate'] != null) {
-      addTaskVM.selectedDate = args['selectedDate'];
-      print('✅ AddTaskScreen - Selected date set: ${addTaskVM.selectedDate}');
+      if (args != null && args['selectedDate'] != null) {
+        dateToUse = args['selectedDate'];
+        print(' AddTaskScreen - Using arguments selectedDate: $dateToUse');
+      }
+    }
+
+    if (dateToUse != null) {
+      addTaskVM.selectedDate = dateToUse;
+      print(' AddTaskScreen - Selected date set: ${addTaskVM.selectedDate}');
       print(
-        '✅ AddTaskScreen - Selected date type: ${addTaskVM.selectedDate.runtimeType}',
+        ' AddTaskScreen - Selected date type: ${addTaskVM.selectedDate.runtimeType}',
       );
       if (addTaskVM.selectedDate != null) {
         print(
-          '✅ AddTaskScreen - Selected date components: ${addTaskVM.selectedDate!.year}-${addTaskVM.selectedDate!.month}-${addTaskVM.selectedDate!.day}',
+          ' AddTaskScreen - Selected date components: ${addTaskVM.selectedDate!.year}-${addTaskVM.selectedDate!.month}-${addTaskVM.selectedDate!.day}',
         );
       }
     } else {
-      print('⚠️ AddTaskScreen - No selected date provided, using current date');
+      print(' AddTaskScreen - No selected date provided, using current date');
       addTaskVM.selectedDate = DateTime.now();
-      print('✅ AddTaskScreen - Current date set: ${addTaskVM.selectedDate}');
+      print('AddTaskScreen - Current date set: ${addTaskVM.selectedDate}');
     }
   }
 

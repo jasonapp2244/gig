@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:gig/repository/auth_repository/reset_otp_repository.dart';
-
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 

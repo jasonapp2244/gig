@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/routes/routes_name.dart';
-
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';

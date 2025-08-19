@@ -14,8 +14,9 @@ class TaskBlock extends StatelessWidget {
   final String endDate;
   final String profileImage;
   final double progress; // 0.0 to 1.0
-  final int completedTasks;
+
   final int totalTasks;
+  final int count;
   final String status;
   final VoidCallback onTap;
 
@@ -27,9 +28,10 @@ class TaskBlock extends StatelessWidget {
     required this.endDate,
     required this.profileImage,
     required this.progress,
-    required this.completedTasks,
+
     required this.totalTasks,
     required this.status,
+    required this.count,
     required this.onTap,
   });
 
@@ -114,7 +116,7 @@ class TaskBlock extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  "$completedTasks/$totalTasks tasks",
+                  "$count/$totalTasks tasks",
                   style: const TextStyle(color: Colors.amber),
                 ),
               ],

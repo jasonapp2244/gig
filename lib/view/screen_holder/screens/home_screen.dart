@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
-import 'package:gig/utils/utils.dart';
+import 'package:gig/view/screen_holder/screens/task/add_task_screen.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -260,63 +260,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
             SizedBox(height: 10),
 
-            // // Refresh button for tasks
-            // Obx(() {
-            //   if (homeController.tasksLoading.value) {
-            //     return SizedBox.shrink();
-            //   }
-            //   return Padding(
-            //     padding: EdgeInsets.symmetric(horizontal: 20),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.end,
-            //       children: [
-            //         TextButton.icon(
-            //           onPressed: () => homeController.refreshTasksForCalendar(),
-            //           icon: Icon(
-            //             Icons.refresh,
-            //             color: AppColor.primeColor,
-            //             size: 16,
-            //           ),
-            //           label: Text(
-            //             'Refresh Calendar',
-            //             style: TextStyle(
-            //               color: AppColor.primeColor,
-            //               fontSize: 12,
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   );
-            // }),
-
-            // // Test button for date passing (temporary for debugging)
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 20),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       ElevatedButton(
-            //         onPressed: () {
-            //           DateTime testDate = DateTime.now().add(Duration(days: 1));
-            //           print('🧪 Testing date passing with: $testDate');
-            //           Get.toNamed(
-            //             RoutesName.addTaskScreen,
-            //             arguments: {'selectedDate': testDate},
-            //           );
-            //         },
-            //         child: Text('Test Date Passing'),
-            //         style: ElevatedButton.styleFrom(
-            //           backgroundColor: AppColor.primeColor,
-            //           foregroundColor: Colors.white,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             InkWell(
               onTap: () {
-                Get.toNamed(RoutesName.taskScreen);
+                final homeVM = Get.find<HomeViewModel>();
+                homeVM.changeTab(1); // 0=Home, 1=Task, 2=Notification, etc.
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
@@ -442,10 +389,8 @@ class _HomeScreenState extends State<HomeScreen> {
       print(
         '📅 HomeScreen - Arguments being passed: ${{'selectedDate': selectedDate}}',
       );
-      Get.toNamed(
-        RoutesName.addTaskScreen,
-        arguments: {'selectedDate': selectedDate},
-      );
+              final homeVM = Get.find<HomeViewModel>();
+        homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
     }
   }
 
@@ -478,10 +423,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    Get.toNamed(
-                      RoutesName.addTaskScreen,
-                      arguments: {'selectedDate': selectedDate},
-                    );
+                    final homeVM = Get.find<HomeViewModel>();
+                    homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
                   },
                   icon: Icon(Icons.add, color: Colors.white),
                   label: Text('Add New Task'),

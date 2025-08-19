@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:gig/utils/utils.dart';
 import '../auth/logout_view_model.dart';
@@ -6,7 +7,7 @@ import '../task/get_task_view_model.dart';
 class HomeViewModel extends GetxController {
   final LogoutViewModel logoutViewModel = Get.put(LogoutViewModel());
   final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
-
+  RxInt selectedIndex = 0.obs;
   RxString userName = 'User'.obs;
   RxString userEmail = 'user@example.com'.obs;
   RxString profileImage = ''.obs;
@@ -143,7 +144,7 @@ class HomeViewModel extends GetxController {
     return dateTasks.where((task) {
       final status = task['status'] ?? '';
       final hasEntry = task['has_entry'] ?? false;
-      return status == 'pending' && !hasEntry;
+      return status == 'o' && !hasEntry;
     }).toList();
   }
 
@@ -181,7 +182,19 @@ class HomeViewModel extends GetxController {
   /// Map task status for display
   String mapTaskStatus(String? status, bool? hasEntry) {
     if (hasEntry == true) return 'Completed';
-    if (status == 'pending') return 'Ongoing';
+    if (status == 'ongoing') return 'Ongoing';
     return status ?? 'Unknown';
+  }
+
+  // For special/extra screens (like AddTaskScreen)
+  var overrideScreen = Rxn<Widget>();
+
+  void changeTab(int index) {
+    overrideScreen.value = null; // clear special screen when using tabs
+    selectedIndex.value = index;
+  }
+
+  void openScreen(Widget screen) {
+    overrideScreen.value = screen; // set special screen
   }
 }
