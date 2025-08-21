@@ -67,63 +67,37 @@ class RegisterVewModel extends GetxController {
       'phone_number': phoneNumberController.value.text.trim(),
     };
 
-    _api
-        .registerApi(data)
-        .then((value) async {
-          loading.value = false;
+    // Retry logic for registration
+    int maxRetries = 3;
+    int retryCount = 0;
 
-          if (value['status'] == true) {
-            if (value['message'] == 'OTP sent to your email') {
-              Utils.snakBar('Register', value['message']);
+    while (retryCount < maxRetries) {
+      try {
+        print('🔄 Register attempt ${retryCount + 1} of $maxRetries');
 
-              // Store auth token and user data
-              const storage = FlutterSecureStorage();
-              await storage.write(
-                key: 'user_email',
-                value: value['data']['email'],
-              );
+        final value = await _api.registerApi(data);
 
-              // Also store in SharedPreferences for OTP screen fallback
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('otp_email', value['data']['email']);
+        print('✅ Register successful on attempt ${retryCount + 1}');
+        loading.value = false;
 
-              print("reguster.. ${value['data']['email']}");
+        if (value['status'] == true) {
+          if (value['message'] == 'OTP sent to your email') {
+            Utils.snakBar('Register', value['message']);
 
-              userPreference.saveUser(UserModel.fromJson(value)).then((_) {
-                Get.toNamed(
-                  RoutesName.otpScreen,
-                  arguments: {
-                    'email': emailController.value.text.trim(),
-                    'user_data': value,
-                  },
-                );
-              });
-            }
-          } else {
-            String errorMsg = value['message'] ?? 'Something went wrong';
+            // Store auth token and user data
+            const storage = FlutterSecureStorage();
+            await storage.write(
+              key: 'user_email',
+              value: value['data']['email'],
+            );
 
-            // Check for email verification error first
-            if (errorMsg.contains('verify your email')) {
-              // Show the original backend error message
-              Utils.snakBar('Register', errorMsg);
-              final ResendOtpVM = Get.put(ResendOtpViewModel());
-              ResendOtpVM.resendOtpApi();
+            // Also store in SharedPreferences for OTP screen fallback
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('otp_email', value['data']['email']);
 
-              // Store email for OTP verification
-              const storage = FlutterSecureStorage();
-              await storage.write(
-                key: 'user_email',
-                value: emailController.value.text.trim(),
-              );
+            print("register.. ${value['data']['email']}");
 
-              // Also store in SharedPreferences for OTP screen fallback
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString(
-                'otp_email',
-                emailController.value.text.trim(),
-              );
-
-              // Navigate to OTP screen for email verification
+            userPreference.saveUser(UserModel.fromJson(value)).then((_) {
               Get.toNamed(
                 RoutesName.otpScreen,
                 arguments: {
@@ -131,37 +105,103 @@ class RegisterVewModel extends GetxController {
                   'user_data': value,
                 },
               );
-            } else if (value['errors'] != null && value['errors'] is Map) {
-              Map<String, dynamic> errors = value['errors'];
-              String detailedErrorMsg = '';
-
-              // Combine all validation errors
-              errors.forEach((field, errorList) {
-                if (errorList is List) {
-                  for (String error in errorList) {
-                    if (detailedErrorMsg.isNotEmpty) {
-                      detailedErrorMsg += '\n';
-                    }
-                    detailedErrorMsg += error;
-                  }
-                }
-              });
-
-              // Show the detailed validation errors from backend
-              Utils.snakBar(
-                'Register',
-                detailedErrorMsg.isNotEmpty ? detailedErrorMsg : errorMsg,
-              );
-            } else {
-              // Show the general backend error message
-              Utils.snakBar('Register', errorMsg);
-            }
+            });
+            return; // Success, exit retry loop
           }
-        })
-        .onError((error, stackTrace) {
+        } else {
+          String errorMsg = value['message'] ?? 'Something went wrong';
+
+          // Check for email verification error first
+          if (errorMsg.contains('verify your email')) {
+            // Show the original backend error message
+            Utils.snakBar('Register', errorMsg);
+            final ResendOtpVM = Get.put(ResendOtpViewModel());
+            ResendOtpVM.resendOtpApi();
+
+            // Store email for OTP verification
+            const storage = FlutterSecureStorage();
+            await storage.write(
+              key: 'user_email',
+              value: emailController.value.text.trim(),
+            );
+
+            // Also store in SharedPreferences for OTP screen fallback
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(
+              'otp_email',
+              emailController.value.text.trim(),
+            );
+
+            // Navigate to OTP screen for email verification
+            Get.toNamed(
+              RoutesName.otpScreen,
+              arguments: {
+                'email': emailController.value.text.trim(),
+                'user_data': value,
+              },
+            );
+            return; // Exit retry loop for email verification
+          } else if (value['errors'] != null && value['errors'] is Map) {
+            Map<String, dynamic> errors = value['errors'];
+            String detailedErrorMsg = '';
+
+            // Combine all validation errors
+            errors.forEach((field, errorList) {
+              if (errorList is List) {
+                for (String error in errorList) {
+                  if (detailedErrorMsg.isNotEmpty) {
+                    detailedErrorMsg += '\n';
+                  }
+                  detailedErrorMsg += error;
+                }
+              }
+            });
+
+            // Show the detailed validation errors from backend
+            Utils.snakBar(
+              'Register',
+              detailedErrorMsg.isNotEmpty ? detailedErrorMsg : errorMsg,
+            );
+            return; // Exit retry loop for validation errors
+          } else {
+            // Show the general backend error message
+            Utils.snakBar('Register', errorMsg);
+            return; // Exit retry loop for general errors
+          }
+        }
+      } catch (e) {
+        retryCount++;
+        print('❌ Register attempt $retryCount failed: ${e.toString()}');
+
+        if (retryCount >= maxRetries) {
+          print('❌ Max register retries reached, giving up');
           loading.value = false;
-          print('Register API error: ${error.toString()}');
-          Utils.snakBar('Error', error.toString());
-        });
+
+          // Provide specific error messages
+          String errorMessage;
+          if (e.toString().contains('TimeoutException')) {
+            errorMessage =
+                'Registration request timed out. Please check your internet connection and try again.';
+          } else if (e.toString().contains('SocketException')) {
+            errorMessage =
+                'No internet connection. Please check your network settings.';
+          } else {
+            errorMessage = 'Registration failed: ${e.toString()}';
+          }
+
+          Utils.snakBar('Register Error', errorMessage);
+          return;
+        }
+
+        // Wait before retry
+        int waitTime = (2 * retryCount) + 1; // 3, 5, 7 seconds
+        print('⏳ Waiting $waitTime seconds before retry...');
+        Utils.snakBar(
+          'Retrying',
+          'Registration attempt failed. Retrying in $waitTime seconds...',
+        );
+        await Future.delayed(Duration(seconds: waitTime));
+      }
+    }
   }
 }

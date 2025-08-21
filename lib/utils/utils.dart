@@ -27,6 +27,10 @@ class Utils {
       snackPosition: SnackPosition.TOP, // (optional) kahaan show karna hai
       margin: const EdgeInsets.all(10), // (optional) thoda margin dena
       borderRadius: 10, // (optional) halki rounding
+      duration: const Duration(seconds: 4), // Show for 4 seconds
+      isDismissible: true, // Allow user to dismiss
+      dismissDirection:
+          DismissDirection.horizontal, // Allow horizontal swipe to dismiss
     );
   }
 

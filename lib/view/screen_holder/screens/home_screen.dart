@@ -217,6 +217,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 eventLoader: (day) {
                   return homeController.getEventsForDate(day);
                 },
+                // Custom calendar builder to show task count
+                calendarBuilders: CalendarBuilders(
+                  markerBuilder: (context, date, events) {
+                    if (events.isNotEmpty) {
+                      if (events.length == 1) {
+                        // Show only a dot for 1 task
+                        return Positioned(
+                          bottom: 1,
+                          child: Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: AppColor.primeColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        );
+                      } else {
+                        // Show number for 2+ tasks
+                        return Positioned(
+                          bottom: 1,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColor.primeColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '${events.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                    return null;
+                  },
+                ),
                 calendarStyle: CalendarStyle(
                   todayDecoration: const BoxDecoration(
                     color: AppColor.primeColor,
@@ -230,13 +275,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   defaultTextStyle: const TextStyle(color: Colors.white),
                   weekendTextStyle: const TextStyle(color: Colors.white),
                   outsideDaysVisible: false,
-                  // Add marker decoration for dates with tasks
+                  // Remove default markers since we're using custom builder
                   markerDecoration: BoxDecoration(
-                    color: AppColor.primeColor,
+                    color: Colors.transparent,
                     shape: BoxShape.circle,
                   ),
-                  markerSize: 6,
-                  markerMargin: EdgeInsets.symmetric(horizontal: 1),
+                  markerSize: 0,
+                  markerMargin: EdgeInsets.zero,
                 ),
                 headerStyle: const HeaderStyle(
                   titleCentered: true,
@@ -263,7 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
             InkWell(
               onTap: () {
                 final homeVM = Get.find<HomeViewModel>();
-                homeVM.changeTab(1); // 0=Home, 1=Task, 2=Notification, etc.
+                Get.toNamed(RoutesName.addTaskScreen);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
@@ -411,31 +456,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           content: Container(
             width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Task list
-                ...tasks
-                    .map((task) => _buildTaskItem(task, homeController))
-                    .toList(),
-                SizedBox(height: 20),
-                // Add new task button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    final homeVM = Get.find<HomeViewModel>();
-                    homeVM.openScreen(
-                      AddTaskScreen(selectedDate: selectedDate),
-                    );
-                  },
-                  icon: Icon(Icons.add, color: Colors.white),
-                  label: Text('Add New Task'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primeColor,
-                    foregroundColor: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Task list
+                  ...tasks
+                      .map((task) => _buildTaskItem(task, homeController))
+                      .toList(),
+                  SizedBox(height: 20),
+                  // Add new task button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      final homeVM = Get.find<HomeViewModel>();
+                      homeVM.openScreen(
+                        AddTaskScreen(selectedDate: selectedDate),
+                      );
+                    },
+                    icon: Icon(Icons.add, color: Colors.white),
+                    label: Text('Add New Task'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.primeColor,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: [

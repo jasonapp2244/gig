@@ -45,48 +45,50 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
         return _screens[homeVM.selectedIndex.value];
       }),
 
-      // ✅ BOTTOM NAVIGATION
+      // ✅ BOTTOM NAVIGATION - Hide when override screen is active
       bottomNavigationBar: isPortrait
           ? Obx(
-              () => BottomNavigationBar(
-                currentIndex: homeVM.selectedIndex.value,
-                onTap: homeVM.changeTab,
-                selectedItemColor: AppColor.secondColor,
-                unselectedItemColor: Colors.grey,
-                type: BottomNavigationBarType.fixed,
-                selectedFontSize: Responsive.fontSize(12, context),
-                unselectedFontSize: Responsive.fontSize(12, context),
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.home,
-                      size: Responsive.fontSize(24, context),
-                    ),
-                    label: "Home",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.task,
-                      size: Responsive.fontSize(24, context),
-                    ),
-                    label: "Tasks",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.monetization_on,
-                      size: Responsive.fontSize(24, context),
-                    ),
-                    label: "Income",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      Icons.person,
-                      size: Responsive.fontSize(24, context),
-                    ),
-                    label: "User",
-                  ),
-                ],
-              ),
+              () => homeVM.overrideScreen.value == null
+                  ? BottomNavigationBar(
+                      currentIndex: homeVM.selectedIndex.value,
+                      onTap: homeVM.changeTab,
+                      selectedItemColor: AppColor.secondColor,
+                      unselectedItemColor: Colors.grey,
+                      type: BottomNavigationBarType.fixed,
+                      selectedFontSize: Responsive.fontSize(12, context),
+                      unselectedFontSize: Responsive.fontSize(12, context),
+                      items: [
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.home,
+                            size: Responsive.fontSize(24, context),
+                          ),
+                          label: "Home",
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.task,
+                            size: Responsive.fontSize(24, context),
+                          ),
+                          label: "Tasks",
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.monetization_on,
+                            size: Responsive.fontSize(24, context),
+                          ),
+                          label: "Income",
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.person,
+                            size: Responsive.fontSize(24, context),
+                          ),
+                          label: "User",
+                        ),
+                      ],
+                    )
+                  : const SizedBox.shrink(), // Hide bottom navigation when override screen is active
             )
           : null,
 

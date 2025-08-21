@@ -13,7 +13,6 @@ import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../view_models/controller/auth/login_view_model.dart';
 
-
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -275,15 +274,18 @@ class _LoginState extends State<Login> {
 
   /// ----------------- SIGN IN BUTTON -----------------
   Widget _buildSignInButton() {
-    return Button(
-      color: AppColor.primeColor,
-      title: "Sign In",
-      textColor: AppColor.whiteColor,
-      onTap: () {
-        if (_formKey.currentState?.validate() ?? false) {
-          LoginVM.loginApi();
-        }
-      },
+    return Obx(
+      () => Button(
+        color: LoginVM.loading.value ? Colors.grey : AppColor.primeColor,
+        title: "Sign In",
+        textColor: AppColor.whiteColor,
+        isLoading: LoginVM.loading.value,
+        onTap: () {
+          if (_formKey.currentState?.validate() ?? false) {
+            LoginVM.loginApi();
+          }
+        },
+      ),
     );
   }
 

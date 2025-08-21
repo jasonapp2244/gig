@@ -10,6 +10,7 @@ class IncomeTrackerViewModel extends GetxController {
 
   RxBool loading = false.obs;
   RxBool buttonLoading = false.obs;
+  RxBool isRetrying = false.obs;
   RxList<String> paymentTitles = <String>[].obs;
   RxString selectedPaymentTitle = ''.obs;
   RxString error = ''.obs;
@@ -17,6 +18,11 @@ class IncomeTrackerViewModel extends GetxController {
 
   // Store full task data for auto-filling
   RxList<Map<String, dynamic>> allTasks = <Map<String, dynamic>>[].obs;
+
+  // Cache for offline/fallback support
+  List<Map<String, dynamic>> _cachedTasks = [];
+  DateTime? _lastCacheTime;
+  static const Duration _cacheValidDuration = Duration(minutes: 30);
 
   // Controllers for the form
   final TextEditingController nameController = TextEditingController();
@@ -50,9 +56,14 @@ class IncomeTrackerViewModel extends GetxController {
           List<dynamic> tasksList = response['tasks'] ?? [];
 
           // Store full task data for auto-filling
-          allTasks.value = tasksList.map((task) {
+          List<Map<String, dynamic>> tasks = tasksList.map((task) {
             return Map<String, dynamic>.from(task);
           }).toList();
+
+          allTasks.value = tasks;
+
+          // Update cache with fresh data
+          _updateCache(tasks);
 
           // Extract job titles from tasks
           List<String> titles = tasksList
@@ -71,22 +82,58 @@ class IncomeTrackerViewModel extends GetxController {
             '✅ Payment titles loaded successfully: ${paymentTitles.length} titles',
           );
         } else {
-          paymentTitles.value = [];
-          error.value = response['message'] ?? 'Failed to load payment titles';
-          print('❌ Failed to load payment titles: ${response['message']}');
+          // Try to use cached data if available
+          if (_isCacheValid()) {
+            _useCachedData();
+          } else {
+            paymentTitles.value = [];
+            error.value =
+                response['message'] ?? 'Failed to load payment titles';
+            print('❌ Failed to load payment titles: ${response['message']}');
+          }
         }
       } else {
-        paymentTitles.value = [];
-        error.value = 'No response from server';
-        print('❌ No response from server');
+        // Try to use cached data if available
+        if (_isCacheValid()) {
+          _useCachedData();
+        } else {
+          paymentTitles.value = [];
+          error.value = 'No response from server';
+          print('❌ No response from server');
+        }
       }
     } catch (e) {
-      paymentTitles.value = [];
-      error.value = 'Failed to load payment titles: $e';
-      print('❌ Error fetching payment titles: $e');
-      Utils.snakBar('Error', 'Failed to load payment titles: $e');
+      print('❌ All retry attempts failed: $e');
+
+      // Try to use cached data as last resort
+      if (_isCacheValid()) {
+        _useCachedData();
+        error.value = ''; // Clear error since we have cached data
+      } else {
+        paymentTitles.value = [];
+
+        // Provide more specific error messages
+        String errorMessage;
+        if (e.toString().contains('TimeoutException')) {
+          errorMessage =
+              'Request timed out after multiple attempts. Please check your internet connection and try again.';
+        } else if (e.toString().contains('SocketException')) {
+          errorMessage =
+              'No internet connection. Please check your network settings.';
+        } else if (e.toString().contains('401')) {
+          errorMessage = 'Authentication failed. Please log in again.';
+        } else {
+          errorMessage =
+              'Failed to load payment titles after multiple attempts: $e';
+        }
+
+        error.value = errorMessage;
+        print('❌ Error fetching payment titles: $e');
+        Utils.snakBar('Error', errorMessage);
+      }
     } finally {
       loading.value = false;
+      isRetrying.value = false; // Ensure retry state is reset
     }
   }
 
@@ -217,8 +264,39 @@ class IncomeTrackerViewModel extends GetxController {
   }
 
   void refreshPaymentTitles() async {
-    await fetchPaymentTitles();
-    Utils.snakBar('Success', 'Payment titles refreshed successfully!');
+    try {
+      // Clear any previous errors
+      error.value = '';
+
+      await fetchPaymentTitles();
+      if (paymentTitles.isNotEmpty) {
+        Utils.snakBar('Success', 'Payment titles refreshed successfully!');
+      }
+    } catch (e) {
+      print('❌ Error refreshing payment titles: $e');
+      // Error handling is already done in fetchPaymentTitles
+    }
+  }
+
+  // Force refresh without cache
+  void forceRefreshPaymentTitles() async {
+    try {
+      // Clear cache to force fresh data
+      _cachedTasks.clear();
+      _lastCacheTime = null;
+
+      error.value = '';
+      await fetchPaymentTitles();
+
+      if (paymentTitles.isNotEmpty) {
+        Utils.snakBar(
+          'Success',
+          'Payment titles force refreshed successfully!',
+        );
+      }
+    } catch (e) {
+      print('❌ Error force refreshing payment titles: $e');
+    }
   }
 
   void clearForm() {
@@ -228,5 +306,43 @@ class IncomeTrackerViewModel extends GetxController {
     selectedStatus.value = 'paid';
     selectedPaymentTitle.value = '';
     selectedTaskId.value = 0;
+  }
+
+  // Check if cached data is available and valid
+  bool _isCacheValid() {
+    if (_lastCacheTime == null || _cachedTasks.isEmpty) {
+      return false;
+    }
+    return DateTime.now().difference(_lastCacheTime!) < _cacheValidDuration;
+  }
+
+  // Use cached data as fallback
+  void _useCachedData() {
+    if (_cachedTasks.isNotEmpty) {
+      allTasks.value = _cachedTasks;
+
+      // Extract job titles from cached tasks
+      List<String> titles = _cachedTasks
+          .where(
+            (task) =>
+                task['job_title'] != null &&
+                task['job_title'].toString().isNotEmpty,
+          )
+          .map((task) => task['job_title'].toString())
+          .toSet() // Remove duplicates
+          .toList();
+
+      paymentTitles.value = titles;
+
+      print('📦 Using cached data: ${paymentTitles.length} titles');
+      Utils.snakBar('Info', 'Using cached data due to connection issues');
+    }
+  }
+
+  // Update cache with fresh data
+  void _updateCache(List<Map<String, dynamic>> tasks) {
+    _cachedTasks = tasks;
+    _lastCacheTime = DateTime.now();
+    print('💾 Cache updated with ${tasks.length} tasks');
   }
 }

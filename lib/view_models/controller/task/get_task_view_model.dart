@@ -173,19 +173,22 @@ class GetTaskViewModel extends GetxController {
 
     print('🔍 Getting employer summaries for status: $status');
     print('🔍 taskStatusSummary keys: ${taskStatusSummary.keys}');
+    print('🔍 Full taskStatusSummary: $taskStatusSummary');
 
-    // Use employer_all_summary data directly from API response
+    // Use employer_all_summary data which contains both completed and ongoing counts
     if (taskStatusSummary['employer_all_summary'] != null) {
       List<dynamic> allSummaries = taskStatusSummary['employer_all_summary'];
       print('🔍 Total employer summaries from API: ${allSummaries.length}');
 
       for (var summary in allSummaries) {
+        print('🔍 Processing summary: $summary');
+
         final employerName = summary['employer_name'] ?? 'Unknown Employer';
         final totalTasks = summary['total'] ?? 0;
-        final completedTasks = summary['completed'] ?? 0;
-        final ongoingTasks = summary['ongoing'] ?? 0;
-        final pendingTasks = summary['pending'] ?? 0; // Keep for total count
-        final percentage = summary['percentage'] ?? 0.0;
+        final completedTasks =
+            summary['completed'] ?? 0; // Direct completed count
+        final ongoingTasks = summary['ongoing'] ?? 0; // Direct ongoing count
+        final percentage = summary['percentage'] ?? 0;
         final summaryText = summary['summary_text'] ?? '';
         final fromDate = summary['from_date'];
         final toDate = summary['to_date'];
@@ -194,7 +197,7 @@ class GetTaskViewModel extends GetxController {
         // Filter based on status
         bool shouldInclude = false;
         if (status == 'Ongoing') {
-          // Show employers that have ongoing tasks (exclude pending)
+          // Show employers that have ongoing tasks
           shouldInclude = ongoingTasks > 0;
         } else if (status == 'Completed') {
           // Show employers that have completed tasks
@@ -205,20 +208,19 @@ class GetTaskViewModel extends GetxController {
           employerSummaries.add({
             'employer_name': employerName,
             'employer_id': employerId,
-            'total': totalTasks, // Total includes pending tasks
+            'total': totalTasks,
             'completed': completedTasks,
-            'ongoing': ongoingTasks, // Only actual ongoing tasks
-            'pending': pendingTasks,
-            'percentage': percentage,
+            'ongoing': ongoingTasks,
+            'percentage': percentage.toString(),
             'summary_text': summaryText,
             'from_date': fromDate,
             'to_date': toDate,
-            'status': status,
+            'status': status, // Use the requested status
             'has_entry': completedTasks > 0,
           });
 
           print(
-            '🔍 Employer: $employerName - Total: $totalTasks, Completed: $completedTasks, Ongoing: $ongoingTasks, Pending: $pendingTasks, Percentage: $percentage%',
+            '🔍 Added Employer: $employerName - Total: $totalTasks, Completed: $completedTasks, Ongoing: $ongoingTasks, Percentage: $percentage',
           );
         }
       }
@@ -228,6 +230,7 @@ class GetTaskViewModel extends GetxController {
       );
     } else {
       print('🔍 No employer_all_summary data available in taskStatusSummary');
+      print('🔍 Available keys: ${taskStatusSummary.keys.toList()}');
     }
 
     return employerSummaries;
@@ -245,16 +248,22 @@ class GetTaskViewModel extends GetxController {
 
       if (response != null) {
         if (response['status'] == true) {
-          // Store the full response to access employer_all_summary and employer_status_summary arrays
+          // Store the full response to access employer_status_summary array
           Map<String, dynamic> fullData = Map<String, dynamic>.from(response);
           fullData.remove('status'); // Remove non-data fields
           fullData.remove('message');
 
           taskStatusSummary.value = fullData;
-          print('✅ Task status loaded successfully: $taskStatusSummary');
-          print('📊 employer_all_summary: ${response['employer_all_summary']}');
+          print('✅ Task status loaded successfully');
+          print('📊 Full taskStatusSummary: $taskStatusSummary');
           print(
             '📊 employer_status_summary: ${response['employer_status_summary']}',
+          );
+          print(
+            '📊 employer_status_summary type: ${response['employer_status_summary'].runtimeType}',
+          );
+          print(
+            '📊 employer_status_summary length: ${response['employer_status_summary']?.length}',
           );
         } else {
           taskStatusSummary.value = {};

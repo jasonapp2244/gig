@@ -71,17 +71,6 @@ class TaskBlock extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (employer != null && employer!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text(
-                            '👤 $employer',
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),

@@ -6,6 +6,7 @@ import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
 import '../../../../res/components/employer_dropdown.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
+import '../../../../view_models/controller/home/home_view_model.dart';
 import '../../../../utils/utils.dart';
 
 class AddTaskScreen extends StatefulWidget {
@@ -114,7 +115,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: InkWell(
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                // Clear the override screen to go back to the main screen
+                try {
+                  final HomeViewModel homeController =
+                      Get.find<HomeViewModel>();
+                  homeController.overrideScreen.value = null;
+                } catch (e) {
+                  // Fallback to regular navigation if HomeViewModel not found
+                  Navigator.pop(context);
+                }
+              },
               child: Icon(Icons.arrow_back, color: AppColor.primeColor),
             ),
           ),
@@ -308,7 +319,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
             if (_formKey.currentState!.validate()) {
               addTaskVM.addTaskApi();
-              Get.back();
+              // Remove Get.back() - let the view model handle navigation after API response
             }
           },
         ),

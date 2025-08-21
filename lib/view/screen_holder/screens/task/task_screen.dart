@@ -25,9 +25,10 @@ class _TaskScreenState extends State<TaskScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Only refresh tasks when screen becomes visible and tasks list is empty
+    // Always refresh task status data when screen becomes visible
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && taskViewModel.tasks.isEmpty && !_isInitialized) {
+      if (mounted && !_isInitialized) {
+        print('🔄 TaskScreen - Initializing data');
         taskViewModel.refreshData();
         _isInitialized = true;
       }
@@ -40,8 +41,9 @@ class _TaskScreenState extends State<TaskScreen>
         final route = ModalRoute.of(context);
         if (route != null && route.isCurrent) {
           // Screen is currently visible - refresh data silently
-          print('🔄 Screen focused - refreshing task data');
-          taskViewModel.refreshData(silent: true);
+          print('🔄 TaskScreen - Screen focused, refreshing task status data');
+          taskViewModel
+              .fetchTaskStatus(); // Only fetch task status, not full refresh
         }
       }
     });
@@ -54,15 +56,14 @@ class _TaskScreenState extends State<TaskScreen>
     super.initState();
     _tabController = TabController(length: tabs.length, vsync: this);
 
-    // Initialize data
+    // Initialize data immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_isInitialized) {
-        taskViewModel.refreshData();
+        print('🔄 TaskScreen - initState: Initializing task status data');
+        taskViewModel.fetchTaskStatus(); // Fetch task status data immediately
         _isInitialized = true;
       }
     });
-
-    // Listen for screen focus changes
   }
 
   @override
@@ -263,15 +264,39 @@ class _TaskScreenState extends State<TaskScreen>
     );
     print('🔍 Tasks: $taskList');
     print('🔍 taskStatusSummary: ${taskViewModel.taskStatusSummary}');
+    print(
+      '🔍 taskStatusSummary.isEmpty: ${taskViewModel.taskStatusSummary.isEmpty}',
+    );
+    print('🔍 taskStatusSummary.keys: ${taskViewModel.taskStatusSummary.keys}');
 
     // Use the filtered task list directly
     List<Map<String, dynamic>> tasksToShow = taskList;
 
     if (tasksToShow.isEmpty) {
       return Center(
-        child: Text(
-          'No tasks found.',
-          style: GoogleFonts.poppins(color: AppColor.whiteColor),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'No tasks found.',
+              style: GoogleFonts.poppins(color: AppColor.whiteColor),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Status: ${taskViewModel.statusLoading.value ? "Loading..." : "No data"}',
+              style: GoogleFonts.poppins(
+                color: AppColor.whiteColor.withOpacity(0.7),
+              ),
+            ),
+            if (!taskViewModel.statusLoading.value)
+              ElevatedButton(
+                onPressed: () {
+                  print('🔄 Manual refresh triggered');
+                  taskViewModel.fetchTaskStatus();
+                },
+                child: Text('Refresh'),
+              ),
+          ],
         ),
       );
     }

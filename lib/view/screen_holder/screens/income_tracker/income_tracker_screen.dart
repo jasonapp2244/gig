@@ -45,18 +45,36 @@ class _IncomeTrackerState extends State<IncomeTracker> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: AppColor.secondColor),
-            onPressed: controller.refreshPaymentTitles,
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.refresh, color: AppColor.secondColor),
+        //     onPressed: controller.refreshPaymentTitles,
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: Obx(() {
           if (controller.loading.value) {
             return Center(
-              child: CircularProgressIndicator(color: AppColor.primeColor),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: AppColor.primeColor),
+                  SizedBox(height: 16),
+                  Obx(() {
+                    if (controller.isRetrying.value) {
+                      return Text(
+                        'Retrying connection...',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      );
+                    }
+                    return Text(
+                      'Loading payment titles...',
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    );
+                  }),
+                ],
+              ),
             );
           }
 
@@ -82,9 +100,22 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: controller.refreshPaymentTitles,
-                    child: Text('Retry'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: controller.refreshPaymentTitles,
+                        child: Text('Retry'),
+                      ),
+                      SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: controller.forceRefreshPaymentTitles,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                        child: Text('Force Refresh'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -174,72 +205,72 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                   const SizedBox(height: 20),
                 ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Column(
-                    children: [
-                      Obx(
-                        () => ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: controller.paymentList.length,
-                          itemBuilder: (context, index) {
-                            if (kDebugMode) {
-                              print("");
-                            }
-                            print("");
-                            final payment = controller.paymentList[index];
-                            return Card(
-                              color: Colors.grey.shade900.withValues(
-                                alpha: 0.6,
-                              ),
-                              margin: EdgeInsets.symmetric(
-                                vertical: 6,
-                                horizontal: 16,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  payment['name'] ?? '',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Amount: ${payment['amount']}",
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                    Text(
-                                      "Date: ${payment['date']}",
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                    Text(
-                                      "Status: ${payment['status']}",
-                                      style: TextStyle(color: Colors.white70),
-                                    ),
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.redAccent,
-                                  ),
-                                  onPressed: () =>
-                                      controller.deletePayment(index),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: SingleChildScrollView(
+              //     padding: const EdgeInsets.only(bottom: 20),
+              //     child: Column(
+              //       children: [
+              //         Obx(
+              //           () => ListView.builder(
+              //             shrinkWrap: true,
+              //             physics: NeverScrollableScrollPhysics(),
+              //             itemCount: controller.paymentList.length,
+              //             itemBuilder: (context, index) {
+              //               if (kDebugMode) {
+              //                 print("");
+              //               }
+              //               print("");
+              //               final payment = controller.paymentList[index];
+              //               return Card(
+              //                 color: Colors.grey.shade900.withValues(
+              //                   alpha: 0.6,
+              //                 ),
+              //                 margin: EdgeInsets.symmetric(
+              //                   vertical: 6,
+              //                   horizontal: 16,
+              //                 ),
+              //                 shape: RoundedRectangleBorder(
+              //                   borderRadius: BorderRadius.circular(12),
+              //                 ),
+              //                 child: ListTile(
+              //                   title: Text(
+              //                     payment['name'] ?? '',
+              //                     style: TextStyle(color: Colors.white),
+              //                   ),
+              //                   subtitle: Column(
+              //                     crossAxisAlignment: CrossAxisAlignment.start,
+              //                     children: [
+              //                       Text(
+              //                         "Amount: ${payment['amount']}",
+              //                         style: TextStyle(color: Colors.white70),
+              //                       ),
+              //                       Text(
+              //                         "Date: ${payment['date']}",
+              //                         style: TextStyle(color: Colors.white70),
+              //                       ),
+              //                       Text(
+              //                         "Status: ${payment['status']}",
+              //                         style: TextStyle(color: Colors.white70),
+              //                       ),
+              //                     ],
+              //                   ),
+              //                   trailing: IconButton(
+              //                     icon: Icon(
+              //                       Icons.delete,
+              //                       color: Colors.redAccent,
+              //                     ),
+              //                     onPressed: () =>
+              //                         controller.deletePayment(index),
+              //                   ),
+              //                 ),
+              //               );
+              //             },
+              //           ),
+              //         ),
+              //    ],
+              //   ),
+              //  ),
+              /////  ),
             ],
           );
         }),

@@ -44,15 +44,15 @@ class AddTaskViewModel extends GetxController {
     // Handle null selectedDate by using current date as default
     DateTime taskDate = selectedDate ?? DateTime.now();
 
-    // Create a DateTime with the selected date and a default time (9:00 AM)
-    // This ensures we only use the date part and set a consistent time
+    // Create a DateTime with the selected date and current time
+    DateTime now = DateTime.now();
     DateTime taskDateTime = DateTime(
       taskDate.year,
       taskDate.month,
       taskDate.day,
-      9, // Default hour: 9 AM
-      0, // Default minute: 0
-      0, // Default second: 0
+      now.hour, // Use current hour
+      now.minute, // Use current minute
+      now.second, // Use current second
     );
 
     print('🔍 Original selectedDate: $selectedDate');
@@ -109,10 +109,12 @@ class AddTaskViewModel extends GetxController {
           print('⚠️ Could not refresh home calendar: $e');
         }
 
-        // Navigate to Tasks tab in bottom navigation instead of creating new route
+        // Navigate to Tasks tab in bottom navigation (this will clear the override screen)
         try {
           final HomeViewModel homeController = Get.find<HomeViewModel>();
-          homeController.changeTab(1); // Switch to Tasks tab (index 1)
+          homeController.changeTab(
+            1,
+          ); // Switch to Tasks tab (index 1) - this also clears override screen
           print('✅ Navigated to Tasks tab');
         } catch (e) {
           print('⚠️ Could not navigate to Tasks tab: $e');
@@ -121,8 +123,12 @@ class AddTaskViewModel extends GetxController {
         }
       } else {
         print("Task Add failed: $value");
-        print("Task Add failed: ${value['errors']}");
-        Utils.snakBar('Task Add', value['errors'] ?? 'Something went wrong');
+        print("Task Add failed: ${value['message']}");
+        print("Task Add failed - Full response: $value");
+        String errorMessage = value['message'] ?? 'Something went wrong';
+        print("Task Add failed - Error message to display: $errorMessage");
+        Utils.snakBar('Task Add', errorMessage);
+        // Don't navigate away on error - let user see the error and try again
       }
     } catch (error) {
       loading.value = false;
