@@ -18,7 +18,7 @@ class GetTaskRepository {
     return response;
   }
 
-  Future<dynamic> getTaskStatusAPI() async {
+  Future<dynamic> getTaskStatusAPI({String? status}) async {
     // Get auth token from secure storage
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'auth_token');
@@ -27,8 +27,11 @@ class GetTaskRepository {
       throw Exception('Authentication token not found');
     }
 
-    // Use getTaskStatusApi method to fetch task status summary
-    dynamic response = await _apiServices.getTaskStatusApi(token);
+    // Use getTaskStatusApi method to fetch task status summary with optional status parameter
+    dynamic response = await _apiServices.getTaskStatusApi(
+      token,
+      status: status,
+    );
     return response;
   }
 }

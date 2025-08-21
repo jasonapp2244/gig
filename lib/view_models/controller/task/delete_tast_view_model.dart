@@ -45,7 +45,7 @@ class DeleteTaskViewModel extends GetxController {
             print('🗑️ After deletion: ${taskViewModel.tasks.length} tasks');
 
             // Force UI update by triggering a rebuild
-            taskViewModel.tasks.refresh();
+            await taskViewModel.refreshData();
 
             // Also refresh home screen calendar data
             try {

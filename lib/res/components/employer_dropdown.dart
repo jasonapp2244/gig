@@ -27,35 +27,72 @@ class EmployerDropdown extends StatefulWidget {
 class _EmployerDropdownState extends State<EmployerDropdown> {
   final TextEditingController searchController = TextEditingController();
   bool showResults = false;
+  bool _disposed = false;
 
   @override
   void initState() {
     super.initState();
-    searchController.addListener(() {
+
+    // Initialize searchController with the main controller's value
+    if (widget.controller.text.isNotEmpty) {
+      searchController.text = widget.controller.text;
+    }
+
+    // Listen to changes in the main controller
+    widget.controller.addListener(_onMainControllerChanged);
+
+    searchController.addListener(_onSearchControllerChanged);
+  }
+
+  void _onMainControllerChanged() {
+    if (!_disposed &&
+        mounted &&
+        widget.controller.text != searchController.text) {
+      searchController.text = widget.controller.text;
+    }
+  }
+
+  void _onSearchControllerChanged() {
+    if (!_disposed && mounted) {
       widget.onSearchChanged(searchController.text);
       setState(() {
         showResults = searchController.text.isNotEmpty;
       });
-    });
+    }
   }
 
   void _selectEmployer(String employerName) {
-    widget.controller.text = employerName;
-    searchController.text = employerName;
-    setState(() {
-      showResults = false;
-    });
+    if (!_disposed && mounted) {
+      // Ensure both controllers are updated
+      widget.controller.text = employerName;
+      searchController.text = employerName;
+      setState(() {
+        showResults = false;
+      });
+      print('✅ Employer selected: $employerName');
+      print('🔍 Main controller value: "${widget.controller.text}"');
+    }
   }
 
   void _useCustomEmployer() {
-    final customEmployer = searchController.text.trim();
-    if (customEmployer.isNotEmpty) {
-      widget.controller.text = customEmployer;
+    if (!_disposed && mounted) {
+      final customEmployer = searchController.text.trim();
+      if (customEmployer.isNotEmpty) {
+        widget.controller.text = customEmployer;
+        setState(() {
+          showResults = false;
+        });
+        print('✅ Custom employer set: $customEmployer');
+        print('🔍 Main controller value: "${widget.controller.text}"');
+      }
     }
   }
 
   @override
   void dispose() {
+    _disposed = true;
+    widget.controller.removeListener(_onMainControllerChanged);
+    searchController.removeListener(_onSearchControllerChanged);
     searchController.dispose();
     super.dispose();
   }
@@ -113,6 +150,12 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
           onSubmitted: (value) {
             if (value.trim().isNotEmpty) {
               _useCustomEmployer();
+            }
+          },
+          onChanged: (value) {
+            // Update main controller when user types
+            if (!_disposed && mounted && value.trim().isNotEmpty) {
+              widget.controller.text = value;
             }
           },
 

@@ -389,8 +389,8 @@ class _HomeScreenState extends State<HomeScreen> {
       print(
         '📅 HomeScreen - Arguments being passed: ${{'selectedDate': selectedDate}}',
       );
-              final homeVM = Get.find<HomeViewModel>();
-        homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
+      final homeVM = Get.find<HomeViewModel>();
+      homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
     }
   }
 
@@ -424,7 +424,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                     final homeVM = Get.find<HomeViewModel>();
-                    homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
+                    homeVM.openScreen(
+                      AddTaskScreen(selectedDate: selectedDate),
+                    );
                   },
                   icon: Icon(Icons.add, color: Colors.white),
                   label: Text('Add New Task'),

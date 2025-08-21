@@ -33,21 +33,62 @@ class AddTaskViewModel extends GetxController {
   Future<void> addTaskApi() async {
     loading.value = true;
 
+    // Validate employer field
+    final employerText = employerController.value.text.trim();
+    if (employerText.isEmpty) {
+      loading.value = false;
+      Utils.snakBar('Error', 'Please select or enter an employer name');
+      return;
+    }
+
     // Handle null selectedDate by using current date as default
     DateTime taskDate = selectedDate ?? DateTime.now();
 
+    // Create a DateTime with the selected date and a default time (9:00 AM)
+    // This ensures we only use the date part and set a consistent time
+    DateTime taskDateTime = DateTime(
+      taskDate.year,
+      taskDate.month,
+      taskDate.day,
+      9, // Default hour: 9 AM
+      0, // Default minute: 0
+      0, // Default second: 0
+    );
+
+    print('🔍 Original selectedDate: $selectedDate');
+    print('🔍 Original taskDate: $taskDate');
+    print('🔍 New taskDateTime: $taskDateTime');
+
+    // Format the date time properly - simple format without timezone
+    String formattedDateTime =
+        "${taskDateTime.year.toString().padLeft(4, '0')}-${taskDateTime.month.toString().padLeft(2, '0')}-${taskDateTime.day.toString().padLeft(2, '0')}T${taskDateTime.hour.toString().padLeft(2, '0')}:${taskDateTime.minute.toString().padLeft(2, '0')}:${taskDateTime.second.toString().padLeft(2, '0')}";
+
+    print('🔍 Formatted string: $formattedDateTime');
+    print('🔍 Expected format: 2025-08-21T09:00:00');
+
     Map data = {
-      'employer': employerController.value.text,
+      'employer': employerText,
       'job_title': jobTypeController.value.text,
       'location': locationController.value.text,
       'supervisorContactNumber': supervisorController.value.text,
       //  'workingHoursController': workingHoursController.value.text,
-      'task_date_time':
-          "${taskDate.year.toString().padLeft(4, '0')}-${taskDate.month.toString().padLeft(2, '0')}-${taskDate.day.toString().padLeft(2, '0')}T${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}:${DateTime.now().second.toString().padLeft(2, '0')}.${DateTime.now().millisecond.toString().padLeft(3, '0')}Z",
+      'task_date_time': formattedDateTime,
       'pay': wagesController.value.text,
       'workingHours': straightTimeController.value.text,
       'notes': notesController.value.text,
     };
+
+    print('📋 Task data being sent: $data');
+    print('🕐 Task date time: ${data['task_date_time']}');
+    print('📅 Selected date: $taskDate');
+    print(
+      '📅 Selected date hour: ${taskDate.hour}, minute: ${taskDate.minute}',
+    );
+    print('⏰ Created date time: $taskDateTime');
+    print('🕐 Formatted date time: $formattedDateTime');
+    print(
+      '🔍 Hour: ${taskDateTime.hour}, Minute: ${taskDateTime.minute}, Second: ${taskDateTime.second}',
+    );
 
     try {
       dynamic value = await _api.addTaskAPI(data);
@@ -57,7 +98,7 @@ class AddTaskViewModel extends GetxController {
         Utils.snakBar('Success', 'Task added successfully!');
 
         // Refresh both task list and home calendar data
-        await taskViewModel.refreshTasks();
+        await taskViewModel.refreshData();
 
         // Also refresh home screen calendar data
         try {
@@ -68,7 +109,16 @@ class AddTaskViewModel extends GetxController {
           print('⚠️ Could not refresh home calendar: $e');
         }
 
-        Get.toNamed(RoutesName.taskScreen);
+        // Navigate to Tasks tab in bottom navigation instead of creating new route
+        try {
+          final HomeViewModel homeController = Get.find<HomeViewModel>();
+          homeController.changeTab(1); // Switch to Tasks tab (index 1)
+          print('✅ Navigated to Tasks tab');
+        } catch (e) {
+          print('⚠️ Could not navigate to Tasks tab: $e');
+          // Fallback to regular navigation if HomeViewModel not found
+          Get.toNamed(RoutesName.screenHolderScreen);
+        }
       } else {
         print("Task Add failed: $value");
         print("Task Add failed: ${value['errors']}");
@@ -85,6 +135,13 @@ class AddTaskViewModel extends GetxController {
   void onInit() {
     super.onInit();
     fetchEmployers();
+
+    // Add listener to employer controller to ensure proper synchronization
+    employerController.value.addListener(() {
+      print(
+        '🔍 Employer controller changed: "${employerController.value.text}"',
+      );
+    });
   }
 
   Future<void> fetchEmployers() async {

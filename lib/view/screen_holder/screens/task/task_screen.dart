@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/task_block.dart';
 import '../../../../view_models/controller/task/get_task_view_model.dart';
+import '../../../../view_models/controller/home/home_view_model.dart';
+import 'dart:async';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -22,11 +24,25 @@ class _TaskScreenState extends State<TaskScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     // Only refresh tasks when screen becomes visible and tasks list is empty
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && taskViewModel.tasks.isEmpty && !_isInitialized) {
-        taskViewModel.fetchTaskStatus();
+        taskViewModel.refreshData();
         _isInitialized = true;
+      }
+    });
+
+    // Add focus listener to refresh when screen comes into focus
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Listen for when this screen becomes visible
+        final route = ModalRoute.of(context);
+        if (route != null && route.isCurrent) {
+          // Screen is currently visible - refresh data silently
+          print('🔄 Screen focused - refreshing task data');
+          taskViewModel.refreshData(silent: true);
+        }
       }
     });
   }
@@ -35,16 +51,18 @@ class _TaskScreenState extends State<TaskScreen>
 
   @override
   void initState() {
-    _tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
-    // Only refresh if tasks list is empty and not already initialized
+    _tabController = TabController(length: tabs.length, vsync: this);
+
+    // Initialize data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && taskViewModel.tasks.isEmpty && !_isInitialized) {
-        taskViewModel.fetchTasks();
+      if (mounted && !_isInitialized) {
+        taskViewModel.refreshData();
         _isInitialized = true;
-        taskViewModel.fetchTaskStatus(); // Fetch employer summaries
       }
     });
+
+    // Listen for screen focus changes
   }
 
   @override
@@ -56,8 +74,45 @@ class _TaskScreenState extends State<TaskScreen>
   List<Map<String, dynamic>> get filteredTasks =>
       taskViewModel.getFilteredTasks(searchText);
 
+  // Updated method to get tasks filtered by status using employer_status_summary
   List<Map<String, dynamic>> getFilteredTasksByTab(String status) {
-    return taskViewModel.getTasksByStatus(status);
+    print('🔍 getFilteredTasksByTab called with status: $status');
+
+    // Get employer summaries grouped by employer instead of individual tasks
+    List<Map<String, dynamic>> employerSummaries = taskViewModel
+        .getEmployerSummariesByStatus(status);
+
+    print('🔍 Employer summaries count: ${employerSummaries.length}');
+
+    // Apply search filter on top of employer summaries
+    if (searchText.isEmpty) {
+      print('🔍 No search text, returning all employer summaries');
+      return employerSummaries;
+    }
+
+    print('🔍 Applying search filter with text: $searchText');
+
+    List<Map<String, dynamic>> searchFilteredSummaries = employerSummaries
+        .where((summary) {
+          final employerName = (summary['employer_name'] ?? '')
+              .toString()
+              .toLowerCase();
+          final summaryText = (summary['summary_text'] ?? '')
+              .toString()
+              .toLowerCase();
+          final status = (summary['status'] ?? '').toString().toLowerCase();
+          final searchLower = searchText.toLowerCase();
+
+          return employerName.contains(searchLower) ||
+              summaryText.contains(searchLower) ||
+              status.contains(searchLower);
+        })
+        .toList();
+
+    print(
+      '🔍 Search filtered employer summaries count: ${searchFilteredSummaries.length}',
+    );
+    return searchFilteredSummaries;
   }
 
   String _formatDate(String? dateString) {
@@ -176,15 +231,17 @@ class _TaskScreenState extends State<TaskScreen>
                 return TabBarView(
                   controller: _tabController,
                   children: [
-                    // Ongoing - Show summaries + ongoing tasks
+                    // Ongoing - Show ongoing tasks from employer_status_summary
                     _buildTaskList(
                       getFilteredTasksByTab('Ongoing'),
-                      showSummaries: true,
+                      showSummaries: false,
+                      currentTabStatus: 'Ongoing',
                     ),
-                    // Completed - Show only completed tasks
+                    // Completed - Show completed tasks from employer_status_summary
                     _buildTaskList(
                       getFilteredTasksByTab('Completed'),
                       showSummaries: false,
+                      currentTabStatus: 'Completed',
                     ),
                   ],
                 );
@@ -199,29 +256,18 @@ class _TaskScreenState extends State<TaskScreen>
   Widget _buildTaskList(
     List<Map<String, dynamic>> taskList, {
     bool showSummaries = false,
+    String? currentTabStatus, // Add current tab status parameter
   }) {
     print(
-      '🔍 _buildTaskList called with ${taskList.length} tasks, showSummaries: $showSummaries',
+      '🔍 _buildTaskList called with ${taskList.length} tasks, showSummaries: $showSummaries, currentTabStatus: $currentTabStatus',
     );
     print('🔍 Tasks: $taskList');
     print('🔍 taskStatusSummary: ${taskViewModel.taskStatusSummary}');
 
-    // For completed tab, we want to show ALL completed tasks, not just filtered ones
+    // Use the filtered task list directly
     List<Map<String, dynamic>> tasksToShow = taskList;
 
-    if (!showSummaries) {
-      // If this is the completed tab, show all completed tasks from the full task list
-      tasksToShow = taskViewModel.tasks.where((task) {
-        final taskStatus = task['status'] ?? '';
-        final hasEntry = task['has_entry'] ?? false;
-        // Show completed tasks (either marked as completed or has entry)
-        return taskStatus == 'completed' || hasEntry == true;
-      }).toList();
-
-      print('🔍 All completed tasks: ${tasksToShow.length}');
-    }
-
-    if (tasksToShow.isEmpty && !showSummaries) {
+    if (tasksToShow.isEmpty) {
       return Center(
         child: Text(
           'No tasks found.',
@@ -232,61 +278,57 @@ class _TaskScreenState extends State<TaskScreen>
 
     return RefreshIndicator(
       onRefresh: () async {
-        await taskViewModel.fetchTasks(); // Fetch individual tasks
-        await taskViewModel.fetchTaskStatus(); // Fetch employer summaries
+        await taskViewModel.refreshData(); // Use the new refresh method
       },
       child: ListView(
         children: [
-          // Show employer summaries at the top (only for Ongoing tab)
-          if (showSummaries &&
-              taskViewModel.taskStatusSummary['employer_all_summary'] != null)
-            ...List<Map<String, dynamic>>.from(
-              taskViewModel.taskStatusSummary['employer_all_summary'],
-            ).map((employerData) {
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: TaskBlock(
-                  id: int.tryParse(employerData['employer_id'].toString()),
-                  title:
-                      '📊 ${employerData['employer_name'] ?? 'Unknown Employer'}',
-                  startDate: _formatDate(employerData['from_date']),
-                  status: 'Summary',
-                  count: employerData['completed'] ?? 0,
-                  endDate: _formatDate(employerData['to_date']),
-                  profileImage: 'https://i.pravatar.cc/300',
-                  progress:
-                      (double.tryParse(employerData['percentage'].toString()) ??
-                          0.0) /
-                      100.0,
-                  totalTasks: employerData['total'] ?? 0,
-                  onTap: () {
-                    print(
-                      'Employer summary tapped: ${employerData['employer_name']}',
-                    );
-                  },
-                ),
-              );
-            }).toList(),
-
-          // Show individual tasks for this tab
-          ...tasksToShow.map((task) {
+          // Show employer summaries grouped by employer
+          ...tasksToShow.map((summaryData) {
             String taskStatus = _formatTaskStatus(
-              task['status'],
-              task['has_entry'],
+              summaryData['status'],
+              summaryData['has_entry'],
             );
+
+            // Determine the correct count based on the current tab, not the task status
+            int displayCount;
+            if (currentTabStatus == 'Ongoing') {
+              displayCount =
+                  int.tryParse(summaryData['ongoing']?.toString() ?? '0') ?? 0;
+            } else {
+              displayCount =
+                  int.tryParse(summaryData['completed']?.toString() ?? '0') ??
+                  0;
+            }
+
+            // Debug logging to see what values we're getting
+            print('🔍 DEBUG - Employer: ${summaryData['employer_name']}');
+            print('🔍 DEBUG - Current Tab: $currentTabStatus');
+            print('🔍 DEBUG - Ongoing count: ${summaryData['ongoing']}');
+            print('🔍 DEBUG - Completed count: ${summaryData['completed']}');
+            print('🔍 DEBUG - Total count: ${summaryData['total']}');
+            print('🔍 DEBUG - Display count: $displayCount');
+            print('🔍 DEBUG - Full summaryData: $summaryData');
+
             return TaskBlock(
-              id: int.tryParse(task['id'].toString()),
-              title: task['job_title'] ?? 'Untitled Task',
-              startDate: _formatDate(task['task_date_time']),
+              id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
+              title: '📊 ${summaryData['employer_name'] ?? 'Unknown Employer'}',
+              startDate: _formatDate(summaryData['from_date']),
               status: taskStatus,
-              count: task['has_entry'] == true ? 1 : 0,
-              endDate: _formatDate(task['task_end_date_time']),
+              count: displayCount, // Use the correct count based on current tab
+              endDate: _formatDate(summaryData['to_date']),
               profileImage: 'https://i.pravatar.cc/300',
-              progress: task['has_entry'] == true ? 1.0 : 0.0,
-              totalTasks: 1,
+              progress:
+                  (double.tryParse(
+                        summaryData['percentage']?.toString() ?? '0',
+                      ) ??
+                      0.0) /
+                  100.0,
+              totalTasks:
+                  int.tryParse(summaryData['total']?.toString() ?? '1') ?? 1,
+              employer: summaryData['employer_name'] ?? '',
               onTap: () {
                 print(
-                  'Task tapped: ${task['job_title']} - Status: $taskStatus',
+                  'Employer summary tapped: ${summaryData['employer_name']}',
                 );
               },
             );

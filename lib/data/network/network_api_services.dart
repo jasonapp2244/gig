@@ -320,16 +320,24 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-  Future<dynamic> getTaskStatusApi(String token) async {
+  Future<dynamic> getTaskStatusApi(String token, {String? status}) async {
     dynamic responseJson;
     try {
+      // Prepare request body with optional status parameter
+      Map<String, dynamic> requestBody = {};
+      if (status != null) {
+        requestBody['status'] = status.toLowerCase();
+      }
+
       final response = await http
           .post(
             Uri.parse(AppUrl.taskStatusAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
             },
+            body: jsonEncode(requestBody),
           )
           .timeout(const Duration(seconds: 15));
 

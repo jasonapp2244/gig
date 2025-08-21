@@ -6,10 +6,11 @@ import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
 import '../../../../res/components/employer_dropdown.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
+import '../../../../utils/utils.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final DateTime? selectedDate;
-  
+
   const AddTaskScreen({super.key, this.selectedDate});
 
   @override
@@ -24,10 +25,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Use constructor parameter first, then fallback to Get.arguments
     DateTime? dateToUse;
-    
+
     if (widget.selectedDate != null) {
       dateToUse = widget.selectedDate;
       print('🔍 AddTaskScreen - Using constructor selectedDate: $dateToUse');
@@ -178,15 +179,34 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget _buildEmployerDropdown() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Obx(
-        () => EmployerDropdown(
-          controller: addTaskVM.employerController.value,
-          employers: addTaskVM.employers,
-          filteredEmployers: addTaskVM.filteredEmployers,
-          onSearchChanged: addTaskVM.filterEmployers,
-          onDeleteEmployer: addTaskVM.deleteEmployer,
-          isLoading: addTaskVM.employerLoading.value,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Obx(
+            () => EmployerDropdown(
+              controller: addTaskVM.employerController.value,
+              employers: addTaskVM.employers,
+              filteredEmployers: addTaskVM.filteredEmployers,
+              onSearchChanged: addTaskVM.filterEmployers,
+              onDeleteEmployer: addTaskVM.deleteEmployer,
+              isLoading: addTaskVM.employerLoading.value,
+            ),
+          ),
+          // Validation error message
+          Obx(() {
+            final employerText = addTaskVM.employerController.value.text.trim();
+            if (employerText.isEmpty && addTaskVM.loading.value) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 8, left: 12),
+                child: Text(
+                  'Employer is required',
+                  style: TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
       ),
     );
   }
@@ -274,6 +294,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           loading: addTaskVM.loading.value,
           buttonColor: AppColor.primeColor,
           onPress: () {
+            // Additional validation for employer field
+            final employerText = addTaskVM.employerController.value.text.trim();
+            print('🔍 Submit button pressed - Employer text: "$employerText"');
+            print(
+              '🔍 Employer controller value: "${addTaskVM.employerController.value.text}"',
+            );
+
+            if (employerText.isEmpty) {
+              Utils.snakBar('Error', 'Please select or enter an employer name');
+              return;
+            }
+
             if (_formKey.currentState!.validate()) {
               addTaskVM.addTaskApi();
               Get.back();

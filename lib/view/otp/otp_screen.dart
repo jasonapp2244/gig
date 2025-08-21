@@ -96,6 +96,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       '$userEmail',
                       style: TextStyle(
                         fontSize: 16,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

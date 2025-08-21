@@ -14,6 +14,7 @@ class TaskBlock extends StatelessWidget {
   final String endDate;
   final String profileImage;
   final double progress; // 0.0 to 1.0
+  final String? employer; // Add employer field
 
   final int totalTasks;
   final int count;
@@ -28,6 +29,7 @@ class TaskBlock extends StatelessWidget {
     required this.endDate,
     required this.profileImage,
     required this.progress,
+    this.employer,
 
     required this.totalTasks,
     required this.status,
@@ -57,12 +59,30 @@ class TaskBlock extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (employer != null && employer!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            '👤 $employer',
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 CircleAvatar(
@@ -144,6 +164,7 @@ class TaskBlock extends StatelessWidget {
                                   btnText2: 'Cancel',
                                   onFirstTap: () async {
                                     await deleteTaskVM.deleteTask(id ?? 0);
+
                                     // The DeleteTaskViewModel will handle the refresh automatically
                                     print('Deleted!');
                                   },
