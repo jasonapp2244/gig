@@ -33,4 +33,7 @@ class AppUrl {
   static const String deleteEmployeerApi = "$baseUrl/delete-employer/";
 
   static const String addmployeerApi = "$baseUrl/employers/";
+
+  static const String paymentApi = '$baseUrl/get_tasks';
+  static const String taskPaymentApi = '$baseUrl/task-payment';
 }

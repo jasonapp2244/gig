@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../res/colors/app_color.dart';
+import '../../../../view_models/controller/income/income_tracker_view_model.dart';
 
 class IncomeTracker extends StatefulWidget {
   const IncomeTracker({super.key});
@@ -11,39 +13,7 @@ class IncomeTracker extends StatefulWidget {
 }
 
 class _IncomeTrackerState extends State<IncomeTracker> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController amountController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  String selectedStatus = 'paid';
-
-  List<Map<String, String>> paymentList = [];
-
-  void addPayment() {
-    if (nameController.text.isNotEmpty &&
-        amountController.text.isNotEmpty &&
-        dateController.text.isNotEmpty &&
-        selectedStatus.isNotEmpty) {
-      setState(() {
-        paymentList.insert(0, {
-          'name': nameController.text,
-          'amount': amountController.text,
-          'date': dateController.text,
-          'status': selectedStatus,
-        });
-
-        nameController.clear();
-        amountController.clear();
-        dateController.clear();
-        selectedStatus = 'paid';
-      });
-    }
-  }
-
-  void deletePayment(int index) {
-    setState(() {
-      paymentList.removeAt(index);
-    });
-  }
+  final IncomeTrackerViewModel controller = Get.put(IncomeTrackerViewModel());
 
   Future<void> pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -55,9 +25,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
 
     if (picked != null) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(picked);
-      setState(() {
-        dateController.text = formattedDate;
-      });
+      controller.dateController.text = formattedDate;
     }
   }
 
@@ -77,133 +45,237 @@ class _IncomeTrackerState extends State<IncomeTracker> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: AppColor.secondColor),
+            onPressed: controller.refreshPaymentTitles,
+          ),
+        ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Stack(
-            //   children: [
-            //     Padding(
-            //       padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
-            //       child: Align(
-            //         alignment: Alignment.centerLeft,
-            //         child: InkWell(
-            //           onTap: () => Navigator.pop(context),
-            //           child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-            //         ),
-            //       ),
-            //     ),
-            //     Positioned(
-            //       top: 10,
-            //       right: 35,
-            //       left: 35,
-            //       child: Text(
-            //         'Income Tracker',
-            //         style: TextStyle(
-            //           fontSize: 18,
-            //           color: AppColor.secondColor,
-            //           fontWeight: FontWeight.bold,
-            //         ),
-            //         textAlign: TextAlign.center,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            Column(
-              children: [
-                buildInputField("Name", nameController),
-                buildInputField(
-                  "Payment amount",
-                  amountController,
-                  isNumber: true,
-                ),
-                buildDatePickerField("Date", dateController),
-                buildStatusDropdown(),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GestureDetector(
-                    onTap: addPayment,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(
-                        color: AppColor.primeColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Add Payment",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+        child: Obx(() {
+          if (controller.loading.value) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColor.primeColor),
+            );
+          }
+
+          if (controller.error.value.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, color: Colors.red, size: 64),
+                  SizedBox(height: 16),
+                  Text(
+                    'Error loading payment titles',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: paymentList.length,
-                      itemBuilder: (context, index) {
-                        if (kDebugMode) {
-                          print("");
-                        }
-                        print("");
-                        final payment = paymentList[index];
-                        return Card(
-                          color: Colors.grey.shade900.withValues(alpha: 0.6),
-                          margin: EdgeInsets.symmetric(
-                            vertical: 6,
-                            horizontal: 16,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              payment['name'] ?? '',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Amount: ${payment['amount']}",
-                                  style: TextStyle(color: Colors.white70),
+                  SizedBox(height: 8),
+                  Text(
+                    controller.error.value,
+                    style: TextStyle(color: Colors.white70),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: controller.refreshPaymentTitles,
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              Column(
+                children: [
+                  buildPaymentTitleDropdown(),
+                  buildInputField(
+                    "Payment amount",
+                    controller.amountController,
+                    isNumber: true,
+                  ),
+                  buildDatePickerField("Date", controller.dateController),
+                  buildStatusDropdown(),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(
+                            () => GestureDetector(
+                              onTap: controller.loading.value
+                                  ? null
+                                  : controller.addPayment,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: controller.loading.value
+                                      ? Colors.grey.shade600
+                                      : AppColor.primeColor,
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                Text(
-                                  "Date: ${payment['date']}",
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                                Text(
-                                  "Status: ${payment['status']}",
-                                  style: TextStyle(color: Colors.white70),
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.redAccent),
-                              onPressed: () => deletePayment(index),
+                                alignment: Alignment.center,
+                                child: controller.loading.value
+                                    ? SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      )
+                                    : Text(
+                                        "Add Payment",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
                             ),
                           ),
-                        );
-                      },
+                        ),
+                        SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: controller.clearForm,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 14,
+                              horizontal: 20,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade700,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Clear",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Column(
+                    children: [
+                      Obx(
+                        () => ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: controller.paymentList.length,
+                          itemBuilder: (context, index) {
+                            if (kDebugMode) {
+                              print("");
+                            }
+                            print("");
+                            final payment = controller.paymentList[index];
+                            return Card(
+                              color: Colors.grey.shade900.withValues(
+                                alpha: 0.6,
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                vertical: 6,
+                                horizontal: 16,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ListTile(
+                                title: Text(
+                                  payment['name'] ?? '',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Amount: ${payment['amount']}",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                    Text(
+                                      "Date: ${payment['date']}",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                    Text(
+                                      "Status: ${payment['status']}",
+                                      style: TextStyle(color: Colors.white70),
+                                    ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.redAccent,
+                                  ),
+                                  onPressed: () =>
+                                      controller.deletePayment(index),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget buildPaymentTitleDropdown() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.1),
+        border: Border.all(color: Colors.grey.shade600),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: Obx(
+          () => DropdownButton<String>(
+            isExpanded: true,
+            value: controller.selectedPaymentTitle.value.isEmpty
+                ? null
+                : controller.selectedPaymentTitle.value,
+            hint: Text('Payment Title', style: TextStyle(color: Colors.grey)),
+            dropdownColor: Colors.grey.shade900,
+            style: TextStyle(color: Colors.white),
+            iconEnabledColor: Colors.white,
+            items: controller.paymentTitles.map((title) {
+              return DropdownMenuItem(value: title, child: Text(title));
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.setSelectedPaymentTitle(value);
+              }
+            },
+          ),
         ),
       ),
     );
@@ -252,20 +324,22 @@ class _IncomeTrackerState extends State<IncomeTracker> {
         border: Border.all(color: Colors.grey.shade600),
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          isExpanded: true, // 👈 full width dropdown
-          value: selectedStatus,
-          dropdownColor: Colors.grey.shade900,
-          style: TextStyle(color: Colors.white),
-          iconEnabledColor: Colors.white,
-          items: ['paid', 'pending'].map((status) {
-            return DropdownMenuItem(value: status, child: Text(status));
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              selectedStatus = value!;
-            });
-          },
+        child: Obx(
+          () => DropdownButton<String>(
+            isExpanded: true,
+            value: controller.selectedStatus.value,
+            dropdownColor: Colors.grey.shade900,
+            style: TextStyle(color: Colors.white),
+            iconEnabledColor: Colors.white,
+            items: ['paid', 'pending'].map((status) {
+              return DropdownMenuItem(value: status, child: Text(status));
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.selectedStatus.value = value;
+              }
+            },
+          ),
         ),
       ),
     );
