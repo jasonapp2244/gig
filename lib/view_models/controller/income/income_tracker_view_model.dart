@@ -9,6 +9,7 @@ class IncomeTrackerViewModel extends GetxController {
   final _paymentApi = TaskPaymentRepository();
 
   RxBool loading = false.obs;
+  RxBool buttonLoading = false.obs;
   RxList<String> paymentTitles = <String>[].obs;
   RxString selectedPaymentTitle = ''.obs;
   RxString error = ''.obs;
@@ -96,7 +97,7 @@ class IncomeTrackerViewModel extends GetxController {
         selectedStatus.value.isNotEmpty &&
         selectedTaskId.value > 0) {
       try {
-        loading.value = true;
+        buttonLoading.value = true;
 
         // Prepare data for API
         Map<String, dynamic> paymentData = {
@@ -138,7 +139,7 @@ class IncomeTrackerViewModel extends GetxController {
         print('❌ Error adding payment: $e');
         Utils.snakBar('Error', 'Failed to add payment: $e');
       } finally {
-        loading.value = false;
+        buttonLoading.value = false;
       }
     } else {
       if (selectedTaskId.value == 0) {

@@ -111,19 +111,19 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                         Expanded(
                           child: Obx(
                             () => GestureDetector(
-                              onTap: controller.loading.value
+                              onTap: controller.buttonLoading.value
                                   ? null
                                   : controller.addPayment,
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 14),
                                 decoration: BoxDecoration(
-                                  color: controller.loading.value
+                                  color: controller.buttonLoading.value
                                       ? Colors.grey.shade600
                                       : AppColor.primeColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 alignment: Alignment.center,
-                                child: controller.loading.value
+                                child: controller.buttonLoading.value
                                     ? SizedBox(
                                         height: 20,
                                         width: 20,
