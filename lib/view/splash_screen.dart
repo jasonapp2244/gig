@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // Initialize the splash controller which will handle authentication check
-    Get.put(SplashController());
+    Get.put(SplashController(),permanent: true);
   }
 
   @override

@@ -650,9 +650,10 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icons.logout,
             text: "Logout",
             route: "",
-            onTap: () {
+            onTap: () async {
               logoutController.logout(); // Call logout API
-              Navigator.pop(context); // Close drawer first
+              await Navigator.pushNamed(context, RoutesName.loginScreen);
+
               // Show confirmation dialog
             },
           ),

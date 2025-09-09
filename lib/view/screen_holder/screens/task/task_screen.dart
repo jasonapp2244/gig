@@ -101,7 +101,7 @@ class _TaskScreenState extends State<TaskScreen>
           final summaryText = (summary['summary_text'] ?? '')
               .toString()
               .toLowerCase();
-          final status = (summary['status'] ?? '').toString().toLowerCase();
+          final status = (summary['status'].toLowe ?? '').toString().toLowerCase();
           final searchLower = searchText.toLowerCase();
 
           return employerName.contains(searchLower) ||

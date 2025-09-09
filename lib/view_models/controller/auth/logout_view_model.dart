@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 import 'package:gig/repository/auth_repository/logout_repository.dart';
 import '../../../res/routes/routes_name.dart';
@@ -29,13 +28,12 @@ class LogoutViewModel extends GetxController {
           loading.value = false;
 
           if (value['status'] == true) {
+            // Clear all stored data
+            await Utils().clearUserData();
             Utils.snakBar(
               'Logout',
               value['message'] ?? 'Logged out successfully',
             );
-
-            // Clear all stored data
-            await Utils().clearUserData();
 
             // Navigate to login screen
             Get.offAllNamed(RoutesName.loginScreen);
