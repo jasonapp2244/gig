@@ -45,9 +45,9 @@ class HomeViewModel extends GetxController {
         profileImage.value = avatar;
       }
 
-      print('✅ Loaded user data: $name, $email');
+      print(' Loaded user data: $name, $email');
     } catch (e) {
-      print('❌ Error loading user data: $e');
+      print(' Error loading user data: $e');
     }
   }
 
@@ -71,10 +71,10 @@ class HomeViewModel extends GetxController {
       _processTasksForCalendar();
 
       print(
-        '✅ Calendar tasks loaded: ${tasks.length} tasks, ${taskDates.length} unique dates',
+        ' Calendar tasks loaded: ${tasks.length} tasks, ${taskDates.length} unique dates',
       );
     } catch (e) {
-      print('❌ Error fetching tasks for calendar: $e');
+      print(' Error fetching tasks for calendar: $e');
       tasks.value = [];
       taskDates.clear();
       tasksByDate.clear();
@@ -111,7 +111,7 @@ class HomeViewModel extends GetxController {
           tasksByDate[normalizedDate]!.add(task);
         }
       } catch (e) {
-        print('⚠️ Error processing task date: $e for task: ${task['id']}');
+        print(' Error processing task date: $e for task: ${task['id']}');
       }
     }
 
