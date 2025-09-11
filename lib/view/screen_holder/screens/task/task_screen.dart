@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/components/all_tasks_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/task_block.dart';
@@ -101,7 +102,9 @@ class _TaskScreenState extends State<TaskScreen>
           final summaryText = (summary['summary_text'] ?? '')
               .toString()
               .toLowerCase();
-          final status = (summary['status'].toLowercase() ?? '').toString().toLowerCase();
+          final status = (summary['status'].toLowercase() ?? '')
+              .toString()
+              .toLowerCase();
           final searchLower = searchText.toLowerCase();
 
           return employerName.contains(searchLower) ||
@@ -271,6 +274,7 @@ class _TaskScreenState extends State<TaskScreen>
 
     // Use the filtered task list directly
     List<Map<String, dynamic>> tasksToShow = taskList;
+    taskViewModel.status.value =currentTabStatus.toString() ;
 
     if (tasksToShow.isEmpty) {
       return Center(
@@ -326,13 +330,6 @@ class _TaskScreenState extends State<TaskScreen>
             }
 
             // Debug logging to see what values we're getting
-            print('🔍 DEBUG - Employer: ${summaryData['employer_name']}');
-            print('🔍 DEBUG - Current Tab: $currentTabStatus');
-            print('🔍 DEBUG - Ongoing count: ${summaryData['ongoing']}');
-            print('🔍 DEBUG - Completed count: ${summaryData['completed']}');
-            print('🔍 DEBUG - Total count: ${summaryData['total']}');
-            print('🔍 DEBUG - Display count: $displayCount');
-            print('🔍 DEBUG - Full summaryData: $summaryData');
 
             return TaskBlock(
               id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
@@ -352,12 +349,22 @@ class _TaskScreenState extends State<TaskScreen>
                   int.tryParse(summaryData['total']?.toString() ?? '1') ?? 1,
               employer: summaryData['employer_name'] ?? '',
               onTap: () {
-                print(
-                  'Employer summary tapped: ${summaryData['employer_name']}',
+                final employerId =
+                    int.tryParse(summaryData['employer_id'].toString()) ?? 0;
+                final status = currentTabStatus ?? "Ongoing";
+                var model = Get.find<GetTaskViewModel>();
+
+                Get.to(
+                  () => EmployerTaskListScreen(
+                    employerId: employerId,
+                    status: status,
+                    employerName: summaryData['employer_name'] ?? "Employer",
+                    model: model,
+                  ),
                 );
               },
             );
-          }).toList(),
+          }),
         ],
       ),
     );

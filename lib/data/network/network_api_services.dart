@@ -320,13 +320,21 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-  Future<dynamic> getTaskStatusApi(String token, {String? status}) async {
+  Future<dynamic> getTaskStatusApi(
+    String token, {
+    String? status,
+    String? employerId,
+  }) async {
     dynamic responseJson;
     try {
-      // Prepare request body with optional status parameter
+      // Prepare request body with optional parameters
       Map<String, dynamic> requestBody = {};
+
       if (status != null) {
         requestBody['status'] = status.toLowerCase();
+      }
+      if (employerId != null) {
+        requestBody['employer_id'] = employerId;
       }
 
       final response = await http
