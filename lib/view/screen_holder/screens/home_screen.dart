@@ -41,6 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         final HomeViewModel homeController = Get.find<HomeViewModel>();
         homeController.silentRefreshTasksForCalendar();
+
+        // Force calendar to refresh its state
+        setState(() {
+          // This will trigger a rebuild and refresh the calendar markers
+        });
       }
     });
   }
@@ -410,7 +415,6 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime selectedDate,
     HomeViewModel homeController,
   ) {
-    
     List<Map<String, dynamic>> tasksForDate = homeController.getTasksForDate(
       selectedDate,
     );

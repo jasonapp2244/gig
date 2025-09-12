@@ -88,8 +88,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       _buildSupervisor(),
                       const SizedBox(height: 15),
                       _buildWages(),
-                      const SizedBox(height: 15),
-                      _buildStraightTime(),
+                      //const SizedBox(height: 15),
+                      //   _buildStraightTime(),
                       const SizedBox(height: 15),
                       _buildNotes(),
                       const SizedBox(height: 15),
@@ -265,20 +265,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  Widget _buildStraightTime() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: CustomInputField(
-        controller: addTaskVM.straightTimeController.value,
-        fieldType: 'number',
-        hintText: "Straight time",
-        requiredField: true,
-        validator: (value) => (value == null || value.isEmpty)
-            ? 'Straight time is required'
-            : null,
-      ),
-    );
-  }
+  // Widget _buildStraightTime() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     child: CustomInputField(
+  //       controller: addTaskVM.straightTimeController.value,
+  //       fieldType: 'number',
+  //       hintText: "Straight time",
+  //       requiredField: true,
+  //       validator: (value) => (value == null || value.isEmpty)
+  //           ? 'Straight time is required'
+  //           : null,
+  //     ),
+  //   );
+  // }
 
   Widget _buildNotes() {
     return Padding(

@@ -93,13 +93,34 @@ class HomeViewModel extends GetxController {
         // Extract task date from task_date_time
         String? taskDateTimeStr = task['task_date_time'];
         if (taskDateTimeStr != null && taskDateTimeStr.isNotEmpty) {
-          DateTime taskDate = DateTime.parse(taskDateTimeStr);
-          // Normalize to date only (remove time)
+          // Parse as local time to avoid timezone conversion issues
+          DateTime taskDate;
+          try {
+            // If the string contains 'T' or 'Z', handle it carefully
+            if (taskDateTimeStr.contains('T')) {
+              // Remove 'Z' if present and parse as local time
+              String localDateStr = taskDateTimeStr.replaceAll('Z', '');
+              taskDate = DateTime.parse(localDateStr);
+            } else {
+              taskDate = DateTime.parse(taskDateTimeStr);
+            }
+          } catch (e) {
+            print('⚠️ Error parsing date: $taskDateTimeStr, error: $e');
+            continue; // Skip this task if date parsing fails
+          }
+          
+          // Normalize to date only (remove time) - ensure we keep the same date
           DateTime normalizedDate = DateTime(
             taskDate.year,
             taskDate.month,
             taskDate.day,
           );
+
+          print('📅 Processing task: ${task['job_title'] ?? 'Unknown'}');
+          print('📅 Original date string: $taskDateTimeStr');
+          print('📅 Parsed taskDate: $taskDate');
+          print('📅 Normalized date: $normalizedDate');
+          print('📅 Normalized date components: ${normalizedDate.year}-${normalizedDate.month}-${normalizedDate.day}');
 
           // Add to set of unique dates
           taskDates.add(normalizedDate);

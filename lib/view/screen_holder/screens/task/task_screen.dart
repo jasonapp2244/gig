@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/task_block.dart';
 import '../../../../view_models/controller/task/get_task_view_model.dart';
-import '../../../../view_models/controller/home/home_view_model.dart';
-import 'dart:async';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});

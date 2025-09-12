@@ -277,13 +277,13 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
     try {
       // Build URL with taskId
-      final apiUrl = url ?? "${AppUrl.baseUrl}/$taskId";
+      final apiUrl = "${url}/$taskId";
       // 👆 change this if your endpoint is different
 
       print("🔍 Fetching Task details from: $apiUrl");
 
       final response = await http
-          .get(
+          .post(
             Uri.parse(apiUrl),
             headers: {
               'Accept': 'application/json',
@@ -380,6 +380,48 @@ class NetworkApiServices extends BaseApiServices {
       final response = await http
           .post(
             Uri.parse(AppUrl.taskStatusAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getEachTask(
+    String token, {
+    String? status,
+    String? employerId,
+  }) async {
+    dynamic responseJson;
+    try {
+      // Prepare request body with optional parameters
+      Map<String, dynamic> requestBody = {};
+
+      if (status != null) {
+        requestBody['status'] = status.toLowerCase();
+      }
+      if (employerId != null) {
+        requestBody['employer_id'] = employerId;
+      }
+
+      final response = await http
+          .post(
+            Uri.parse(AppUrl.showspecTaskAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',

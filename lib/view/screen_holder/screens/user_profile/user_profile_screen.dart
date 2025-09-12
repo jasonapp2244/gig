@@ -8,7 +8,6 @@ import '../../../../res/colors/app_color.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../res/components/custom_photo_widget.dart';
 import '../../../../view_models/controller/profile/get_profile_view_model.dart';
-import 'package:http/http.dart' as http;
 
 
 class UserProfileScreen extends StatefulWidget {

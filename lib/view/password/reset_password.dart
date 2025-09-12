@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../res/components/round_button.dart';
-import '../../utils/utils.dart';
 import '../../view_models/controller/password/reset_password_view_model.dart';
 
 class ResetPassword extends StatefulWidget {

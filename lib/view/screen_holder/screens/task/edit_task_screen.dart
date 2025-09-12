@@ -43,8 +43,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       _buildWorkingHours(),
                       const SizedBox(height: 15),
                       _buildWages(),
-                      const SizedBox(height: 15),
-                      _buildStraightTime(),
+                      //  const SizedBox(height: 15),
+                      //   _buildStraightTime(),
                       const SizedBox(height: 15),
                       _buildNotes(),
                       const SizedBox(height: 15),
@@ -53,7 +53,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
               ),
             ),
-            _buildSubmitButton(),
           ],
         ),
       ),
@@ -97,6 +96,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
+
         controller: editTaskVM.employerController.value,
         fieldType: 'text',
         hintText: "Task Name",
@@ -111,6 +112,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.jobTypeController.value,
         fieldType: 'number',
         hintText: "Income",
@@ -125,6 +127,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.locationController.value,
         fieldType: 'text',
         hintText: "Location",
@@ -139,6 +142,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.supervisorController.value,
         fieldType: 'text',
         hintText: "Supervisor & their contact",
@@ -154,6 +158,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.workingHoursController.value,
         fieldType: 'number',
         hintText: "Working Hours",
@@ -169,6 +174,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.wagesController.value,
         fieldType: 'number',
         hintText: "Wages",
@@ -179,20 +185,20 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     );
   }
 
-  Widget _buildStraightTime() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: CustomInputField(
-        controller: editTaskVM.straightTimeController.value,
-        fieldType: 'number',
-        hintText: "Straight Time",
-        requiredField: true,
-        validator: (value) => (value == null || value.isEmpty)
-            ? 'Straight time is required'
-            : null,
-      ),
-    );
-  }
+  // Widget _buildStraightTime() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     child: CustomInputField(
+  //       controller: editTaskVM.straightTimeController.value,
+  //       fieldType: 'number',
+  //       hintText: "Straight Time",
+  //       requiredField: true,
+  //       validator: (value) => (value == null || value.isEmpty)
+  //           ? 'Straight time is required'
+  //           : null,
+  //     ),
+  //   );
+  // }
 
   Widget _buildNotes() {
     return Padding(
@@ -208,24 +214,24 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     );
   }
 
-  Widget _buildSubmitButton() {
-    return Container(
-      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-      child: Obx(
-        () => RoundButton(
-          width: double.infinity,
-          height: 50,
-          title: 'Save Changes',
-          loading: editTaskVM.loading.value,
-          buttonColor: AppColor.primeColor,
-          onPress: () {
-            if (_formKey.currentState!.validate()) {
-              editTaskVM.editTaskApi();
-              Get.toNamed(RoutesName.taskScreen);
-            }
-          },
-        ),
-      ),
-    );
-  }
+  // Widget _buildSubmitButton() {
+  //   return Container(
+  //     padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+  //     child: Obx(
+  //       () => RoundButton(
+  //         width: double.infinity,
+  //         height: 50,
+  //         title: 'Save Changes',
+  //         loading: editTaskVM.loading.value,
+  //         buttonColor: AppColor.primeColor,
+  //         onPress: () {
+  //           if (_formKey.currentState!.validate()) {
+  //             editTaskVM.editTaskApi();
+  //             Get.toNamed(RoutesName.taskScreen);
+  //           }
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 }
