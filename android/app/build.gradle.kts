@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "com.craftech.gig"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion   // ✅ fixed
         targetSdk = 34
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName

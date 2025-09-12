@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import '../../../repository/task/get_task_repository.dart';
 import '../../../utils/utils.dart';
 
 class GetTaskViewModel extends GetxController {
   final _api = GetTaskRepository();
+  RxString status = "".obs;
 
   RxBool loading = false.obs;
   RxList<Map<String, dynamic>> tasks = <Map<String, dynamic>>[].obs;
@@ -281,9 +284,21 @@ class GetTaskViewModel extends GetxController {
     }
   }
 
-  Future<void> refreshTasks() async {
-    await fetchTasks();
-    await fetchTaskStatus(); // Also refresh status summary
-    Utils.snakBar('Success', 'Tasks refreshed successfully!');
+  Future<List<Map<String, dynamic>>> fetchTasksByEmployer({
+    required int employerId,
+    required String status,
+  }) async {
+    try {
+      final tasks = await _api.getSpecficTasks(
+        status: status,
+        employerId: employerId.toString(),
+      );
+      return tasks;
+    } catch (e) {
+      print("❌ Error fetching tasks: $e");
+      return [];
+    }
   }
+
+
 }

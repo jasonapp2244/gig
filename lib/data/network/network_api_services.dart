@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -268,6 +269,45 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> getTaskDetailsApi(
+    String token, {
+    required String taskId,
+    String? url,
+  }) async {
+    dynamic responseJson;
+    try {
+      // Build URL with taskId
+      final apiUrl = url ?? "${AppUrl.baseUrl}/$taskId";
+      // 👆 change this if your endpoint is different
+
+      print("🔍 Fetching Task details from: $apiUrl");
+
+      final response = await http
+          .get(
+            Uri.parse(apiUrl),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print("📡 Response Status: ${response.statusCode}");
+      print("📋 Response Body: ${response.body}");
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on TimeoutException {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getEmployerApi(String token) async {
     dynamic responseJson;
     try {
@@ -320,13 +360,21 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-  Future<dynamic> getTaskStatusApi(String token, {String? status}) async {
+  Future<dynamic> getTaskStatusApi(
+    String token, {
+    String? status,
+    String? employerId,
+  }) async {
     dynamic responseJson;
     try {
-      // Prepare request body with optional status parameter
+      // Prepare request body with optional parameters
       Map<String, dynamic> requestBody = {};
+
       if (status != null) {
         requestBody['status'] = status.toLowerCase();
+      }
+      if (employerId != null) {
+        requestBody['employer_id'] = employerId;
       }
 
       final response = await http

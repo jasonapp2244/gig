@@ -410,12 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime selectedDate,
     HomeViewModel homeController,
   ) {
-    print('📅 HomeScreen - Date selected: $selectedDate');
-    print('📅 HomeScreen - Date type: ${selectedDate.runtimeType}');
-    print(
-      '📅 HomeScreen - Date components: ${selectedDate.year}-${selectedDate.month}-${selectedDate.day}',
-    );
-
+    
     List<Map<String, dynamic>> tasksForDate = homeController.getTasksForDate(
       selectedDate,
     );
@@ -650,9 +645,10 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icons.logout,
             text: "Logout",
             route: "",
-            onTap: () {
+            onTap: () async {
               logoutController.logout(); // Call logout API
-              Navigator.pop(context); // Close drawer first
+              await Navigator.pushNamed(context, RoutesName.loginScreen);
+
               // Show confirmation dialog
             },
           ),

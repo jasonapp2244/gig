@@ -36,4 +36,5 @@ class AppUrl {
 
   static const String paymentApi = '$baseUrl/get_tasks';
   static const String taskPaymentApi = '$baseUrl/task-payment';
+  static const String showTasksApi = '$baseUrl/show-task';
 }

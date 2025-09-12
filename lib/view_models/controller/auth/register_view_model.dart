@@ -71,7 +71,7 @@ class RegisterVewModel extends GetxController {
     int maxRetries = 3;
     int retryCount = 0;
 
-    while (retryCount < maxRetries) {
+   // while (retryCount < maxRetries) {
       try {
         print('🔄 Register attempt ${retryCount + 1} of $maxRetries');
 
@@ -204,4 +204,4 @@ class RegisterVewModel extends GetxController {
       }
     }
   }
-}
+//}
