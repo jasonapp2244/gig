@@ -135,7 +135,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           right: 35,
           left: 35,
           child: Text(
-            'Add Task',
+            'Business',
             style: TextStyle(
               fontSize: 18,
               color: AppColor.secondColor,
