@@ -24,8 +24,6 @@ class AppUrl {
   static const String deleteTaskAPI = "$baseUrl/tasks-delete/";
   static const String taskStatusAPI = "$baseUrl/tasks-status";
 
-
-
   // PROFILE API
   static const String updateProfileApi = "$baseUrl/update-profile";
   static const String getProfileApi = "$baseUrl/get-user";
@@ -38,4 +36,5 @@ class AppUrl {
 
   static const String paymentApi = '$baseUrl/get_tasks';
   static const String taskPaymentApi = '$baseUrl/task-payment';
+  static const String showTasksApi = '$baseUrl/show-task';
 }

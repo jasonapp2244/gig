@@ -274,7 +274,7 @@ class _TaskScreenState extends State<TaskScreen>
 
     // Use the filtered task list directly
     List<Map<String, dynamic>> tasksToShow = taskList;
-    taskViewModel.status.value =currentTabStatus.toString() ;
+    taskViewModel.status.value = currentTabStatus.toString();
 
     if (tasksToShow.isEmpty) {
       return Center(
@@ -333,7 +333,7 @@ class _TaskScreenState extends State<TaskScreen>
 
             return TaskBlock(
               id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
-              title: '📊 ${summaryData['employer_name'] ?? 'Unknown Employer'}',
+              title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
               startDate: _formatDate(summaryData['from_date']),
               status: taskStatus,
               count: displayCount, // Use the correct count based on current tab

@@ -66,8 +66,6 @@ class EmployerTaskListScreen extends StatelessWidget {
                 status: task['status'] ?? "Unknown",
                 totalTasks: 1,
                 count: 1,
-              
-                
               );
             },
           );

@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/state_manager.dart';
 import 'package:gig/res/components/bottom_sheet.dart';
+import 'package:gig/view/screen_holder/screens/task/edit_task_screen.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
+import 'package:gig/view_models/controller/task/edit_task_view_model.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -42,9 +45,7 @@ class TaskSpecficBlock extends StatelessWidget {
     final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
 
     return InkWell(
-     onTap: (){
-      
-     },
+      onTap: () {},
       borderRadius: BorderRadius.circular(16),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -75,11 +76,21 @@ class TaskSpecficBlock extends StatelessWidget {
                     ],
                   ),
                 ),
+
                 CircleAvatar(
                   radius: 18,
                   backgroundImage: NetworkImage(profileImage),
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              employer ?? '',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
             // Dates row
@@ -113,11 +124,40 @@ class TaskSpecficBlock extends StatelessWidget {
                 child: Row(
                   spacing: 20,
                   children: [
-                    Icon(
-                      LucideIcons.squarePen400,
-                      color: Colors.green,
-                      size: 20,
+                    GestureDetector(
+                      onTap: () async{
+                   
+  final editTaskVM = Get.put(EditTaskViewModel());
+
+  // 1. Fetch details
+  final taskData = await editTaskVM.getTasksDetails(taskId: id.toString());
+
+  if (taskData.isNotEmpty) {
+    final task = taskData.first;
+
+    // 2. Set values into controllers
+    editTaskVM.employerController.value.text = task['task_name'] ?? '';
+    editTaskVM.jobTypeController.value.text = task['income']?.toString() ?? '';
+    editTaskVM.locationController.value.text = task['location'] ?? '';
+    editTaskVM.supervisorController.value.text = task['supervisor'] ?? '';
+    editTaskVM.workingHoursController.value.text = task['working_hours']?.toString() ?? '';
+    editTaskVM.wagesController.value.text = task['wages']?.toString() ?? '';
+    editTaskVM.straightTimeController.value.text = task['straight_time']?.toString() ?? '';
+    editTaskVM.notesController.value.text = task['notes'] ?? '';
+
+    // 3. Navigate to EditTaskScreen
+    Get.to(() => const EditTaskScreen());
+  } else {
+    Get.snackbar("Error", "Task details not found");
+  }
+                      },
+                      child: Icon(
+                        LucideIcons.squarePen,
+                        color: Colors.green,
+                        size: 20,
+                      ),
                     ),
+
                     Obx(
                       () => InkWell(
                         onTap: deleteTaskVM.loading.value

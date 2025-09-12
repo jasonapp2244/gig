@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:gig/repository/task/edit_task_repository.dart';
 import '../../../utils/utils.dart';
@@ -52,5 +53,19 @@ class EditTaskViewModel extends GetxController {
           print('Task Add API error: ${error.toString()}');
           Utils.snakBar('Error', error.toString());
         });
+  }
+
+  Future<dynamic> getTasksDetails({String? taskId, String? token}) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'auth_token');
+
+    if (token == null) {
+      throw Exception('Authentication token not found');
+    }
+
+    final response = await _api.getSpecificTasks(taskId ?? '', token);
+
+    final List data = response['task'] ?? [];
+    return data.map((e) => Map<String, dynamic>.from(e)).toList();
   }
 }
