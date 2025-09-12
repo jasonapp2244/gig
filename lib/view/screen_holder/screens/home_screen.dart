@@ -68,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
             top:
                 MediaQuery.of(context).padding.top +
                 (Responsive.isTablet(context) ? 20 : 10),
-            left: Responsive.width(4, context),
-            right: Responsive.width(4, context),
+            left: Responsive.width(2, context),
+            right: Responsive.width(2, context),
             bottom: Responsive.height(1, context),
           ),
           decoration: BoxDecoration(
