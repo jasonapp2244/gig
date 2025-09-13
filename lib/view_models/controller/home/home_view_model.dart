@@ -3,10 +3,15 @@ import 'package:get/get.dart';
 import 'package:gig/utils/utils.dart';
 import '../auth/logout_view_model.dart';
 import '../task/get_task_view_model.dart';
+import '../../../data/network/network_api_services.dart';
+import '../../../res/app_url/app_url.dart';
+import '../user_preference/user_preference_view_model.dart';
 
 class HomeViewModel extends GetxController {
   final LogoutViewModel logoutViewModel = Get.put(LogoutViewModel());
   final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+  final NetworkApiServices _apiServices = NetworkApiServices();
+  final UserPreference _userPreference = UserPreference();
   RxInt selectedIndex = 0.obs;
   RxString userName = 'User'.obs;
   RxString userEmail = 'user@example.com'.obs;
@@ -18,6 +23,10 @@ class HomeViewModel extends GetxController {
   RxMap<DateTime, List<Map<String, dynamic>>> tasksByDate =
       <DateTime, List<Map<String, dynamic>>>{}.obs;
   RxBool tasksLoading = false.obs;
+  
+  // Tasks by specific date (for API call)
+  RxList<Map<String, dynamic>> tasksBySpecificDate = <Map<String, dynamic>>[].obs;
+  RxBool tasksByDateLoading = false.obs;
 
   @override
   void onInit() {
@@ -217,5 +226,75 @@ class HomeViewModel extends GetxController {
 
   void openScreen(Widget screen) {
     overrideScreen.value = screen; // set special screen
+  }
+
+  /// Fetch tasks for a specific date using the API
+  Future<void> fetchTasksByDate(DateTime selectedDate) async {
+    try {
+      tasksByDateLoading.value = true;
+      tasksBySpecificDate.clear();
+      
+      print('🔴 DEBUG: fetchTasksByDate called with: $selectedDate');
+      
+      // Get user token
+      final userData = await _userPreference.getUser();
+      final token = userData.token ?? '';
+      
+      print('🔴 DEBUG: Token length: ${token.length}');
+      print('🔴 DEBUG: Token preview: ${token.isEmpty ? 'EMPTY' : token.substring(0, 10)}...');
+      
+      if (token.isEmpty) {
+        print('❌ No token found, cannot fetch tasks by date');
+        return;
+      }
+      
+      // Format date as required by API (YYYY-MM-DD)
+      String formattedDate = "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+      
+      print('🔴 DEBUG: Formatted date for API: $formattedDate');
+      print('🔴 DEBUG: Full API URL will be: ${AppUrl.taskByDate}/$formattedDate');
+      print('🔴 DEBUG: Calling getTaskByDate...');
+      
+      // Use the existing getTaskByDate method from NetworkApiServices
+      print('🔴 DEBUG: About to call API with:');
+      print('🔴 DEBUG: - Token: ${token.substring(0, 10)}...');
+      print('🔴 DEBUG: - TaskId (date): $formattedDate');  
+      print('🔴 DEBUG: - URL: ${AppUrl.taskByDate}');
+      print('🔴 DEBUG: - Full URL will be: ${AppUrl.taskByDate}/$formattedDate');
+      
+      dynamic response = await _apiServices.getTaskByDate(
+        token,
+        taskId: formattedDate, // Using taskId parameter for the date
+        url: AppUrl.taskByDate,
+      );
+      
+      print('🔴 DEBUG: API Response received: $response');
+      print('🔴 DEBUG: Response type: ${response.runtimeType}');
+      
+      if (response != null && response['status'] == true) {
+        // Handle the response data
+        List<dynamic> tasksData = response['data'] ?? response['tasks'] ?? [];
+        
+        tasksBySpecificDate.value = tasksData.map((task) {
+          return Map<String, dynamic>.from(task);
+        }).toList();
+        
+        print('✅ Successfully fetched ${tasksBySpecificDate.length} tasks for date: $formattedDate');
+      } else {
+        print('❌ Failed to fetch tasks by date: ${response?['message'] ?? 'Unknown error'}');
+        tasksBySpecificDate.clear();
+      }
+      
+    } catch (e) {
+      print('❌ Error fetching tasks by date: $e');
+      tasksBySpecificDate.clear();
+    } finally {
+      tasksByDateLoading.value = false;
+    }
+  }
+
+  /// Format date for display
+  String formatDisplayDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

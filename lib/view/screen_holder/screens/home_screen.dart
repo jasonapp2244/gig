@@ -8,6 +8,7 @@ import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../view_models/controller/home/home_view_model.dart';
+import '../../../res/components/specific_task_block.dart';
 
 import '../../../res/colors/app_color.dart';
 
@@ -414,28 +415,22 @@ class _HomeScreenState extends State<HomeScreen> {
   void _handleDateSelection(
     DateTime selectedDate,
     HomeViewModel homeController,
-  ) {
-    List<Map<String, dynamic>> tasksForDate = homeController.getTasksForDate(
-      selectedDate,
-    );
-
-    if (tasksForDate.isNotEmpty) {
-      // Show existing tasks for this date
-      print(
-        '📅 HomeScreen - Found ${tasksForDate.length} existing tasks for this date',
-      );
-      _showTasksForDateDialog(selectedDate, tasksForDate, homeController);
-    } else {
-      // No tasks for this date, go to add task screen
-      print(
-        '📅 HomeScreen - No existing tasks, navigating to AddTaskScreen with date: $selectedDate',
-      );
-      print(
-        '📅 HomeScreen - Arguments being passed: ${{'selectedDate': selectedDate}}',
-      );
-      final homeVM = Get.find<HomeViewModel>();
-      homeVM.openScreen(AddTaskScreen(selectedDate: selectedDate));
-    }
+  ) async {
+    print('🔴 DEBUG: Calendar date clicked: $selectedDate');
+    print('🔴 DEBUG: Starting API call for tasks by date...');
+    
+    // First, fetch tasks for this specific date using the API
+    await homeController.fetchTasksByDate(selectedDate);
+    
+    print('🔴 DEBUG: API call completed. Tasks found: ${homeController.tasksBySpecificDate.length}');
+    print('🔴 DEBUG: Task data: ${homeController.tasksBySpecificDate}');
+    
+    // Always try to show the API dialog first, regardless of whether we have tasks
+    print('🔴 DEBUG: Showing API dialog...');
+    _showTasksByDateDialog(selectedDate, homeController);
+    
+    // Note: Removed the fallback logic to simplify debugging
+    // We'll always show the API dialog, even if empty, to see what's happening
   }
 
   /// Show dialog with tasks for selected date
@@ -568,6 +563,136 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  /// Show dialog with tasks fetched from API for selected date (as cards)
+  void _showTasksByDateDialog(
+    DateTime selectedDate,
+    HomeViewModel homeController,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.appBodyBG,
+          title: Text(
+            'Tasks for ${homeController.formatDisplayDate(selectedDate)}',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            height: MediaQuery.of(context).size.height * 0.6, // Fixed height
+            child: Column(
+              children: [
+                // Loading indicator
+                Obx(() {
+                  if (homeController.tasksByDateLoading.value) {
+                    return Container(
+                      height: 100,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColor.primeColor,
+                        ),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
+                
+                // Task list as cards
+                Expanded(
+                  child: Obx(() {
+                    if (homeController.tasksBySpecificDate.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No tasks found for this date',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                      );
+                    }
+                    
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: homeController.tasksBySpecificDate.length,
+                      itemBuilder: (context, index) {
+                        final task = homeController.tasksBySpecificDate[index];
+                        return _buildTaskCard(task, homeController);
+                      },
+                    );
+                  }),
+                ),
+                
+                SizedBox(height: 20),
+                // Add new task button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    final homeVM = Get.find<HomeViewModel>();
+                    homeVM.openScreen(
+                      AddTaskScreen(selectedDate: selectedDate),
+                    );
+                  },
+                  icon: Icon(Icons.add, color: Colors.white),
+                  label: Text('Add New Task'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primeColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Close',
+                style: TextStyle(color: AppColor.primeColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Build task card for the dialog
+  Widget _buildTaskCard(
+    Map<String, dynamic> task,
+    HomeViewModel homeController,
+  ) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      child: TaskSpecficBlock(
+        id: int.tryParse(task['id']?.toString() ?? '0'),
+        title: task['job_title'] ?? 'Untitled Task',
+        startDate: _formatTaskDate(task['task_date_time']) ?? 'N/A',
+        endDate: _formatTaskDate(task['task_end_date_time']) ?? 'N/A',
+        profileImage: 'https://i.pravatar.cc/300',
+        employer: task['employer'] ?? 'Unknown Employer',
+        status: _mapTaskStatus(task['status'], task['has_entry']),
+        totalTasks: 1,
+        count: 1,
+      ),
+    );
+  }
+
+  /// Format task date for display
+  String _formatTaskDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
+  /// Map task status for display
+  String _mapTaskStatus(String? status, bool? hasEntry) {
+    if (hasEntry == true) return 'Completed';
+    if (status == 'ongoing') return 'Ongoing';
+    return status ?? 'Unknown';
   }
 
   Widget _buildDrawer(BuildContext context) {

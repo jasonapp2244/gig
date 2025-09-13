@@ -308,6 +308,48 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+
+  
+  Future<dynamic> getTaskByDate(
+    String token, {
+    required String taskId,
+    String? url,
+  }) async {
+    dynamic responseJson;
+    try {
+      // Build URL with taskId
+      final apiUrl = "${url}/$taskId";
+      // 👆 change this if your endpoint is different
+
+      print("🔍 Fetching Task details from: $apiUrl");
+
+      final response = await http
+          .post(
+            Uri.parse(apiUrl),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print("📡 Response Status: ${response.statusCode}");
+      print("📋 Response Body: ${response.body}");
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on TimeoutException {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+
   Future<dynamic> getEmployerApi(String token) async {
     dynamic responseJson;
     try {
