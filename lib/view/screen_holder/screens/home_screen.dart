@@ -376,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             InkWell(
               onTap: () {
-                Get.toNamed(RoutesName.marketPlaceScreen);
+                Get.toNamed(RoutesName.detailScreenView);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),

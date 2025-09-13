@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gig/test.dart';
+import 'package:gig/view/screen_holder/screens/adds/crate_a_add_screen.dart';
+import 'package:gig/view/screen_holder/screens/adds/market_place.dart';
+import 'package:gig/view/screen_holder/screens/market_place_screen/market_place_screen.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
@@ -74,7 +78,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSwatch(primarySwatch: primeSwatch),
             useMaterial3: true,
           ),
-          home: const SplashScreen(),
+          home: const MarketPlaceView(),
         );
       },
     );

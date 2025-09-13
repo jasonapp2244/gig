@@ -1,4 +1,3 @@
-import 'package:get/state_manager.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/utils.dart';
