@@ -33,7 +33,7 @@ class RoutesName {
   static const String incomeTracker = '/income_tracker';
 
   //////////// MARKET PLACE ROUTES
-  static const String marketPlaceScreen = '/market_place_screen';
+  static const String detailScreenView = '/detail_screen_view';
   static const String singleProductScreen = '/single_product_screen';
 
   //////////// CREATE ADDS ROUTES

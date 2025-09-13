@@ -359,7 +359,7 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
-
+//API Call For Get Task StatusApi Task
   Future<dynamic> getTaskStatusApi(
     String token, {
     String? status,
@@ -402,6 +402,8 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+
+//API Call For Deleting Employer
   Future<dynamic> deleteEmployerApi(String employerId, String token) async {
     dynamic responseJson;
     try {
@@ -479,6 +481,8 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+
+//API Call For Deleting Task
   Future<dynamic> deleteTaskApi(int taskId, String token, String url) async {
     dynamic responseJson;
     try {

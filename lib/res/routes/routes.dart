@@ -6,7 +6,7 @@ import 'package:gig/view/password/reset_password.dart';
 import 'package:gig/view/payment/payment_method_screen.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view/screen_holder/screens/adds/add_payement_screen.dart';
-import 'package:gig/view/screen_holder/screens/adds/create_adds_screen.dart';
+import 'package:gig/view/screen_holder/screens/adds/market_place.dart';
 import 'package:gig/view/screen_holder/screens/employer/employer_detail_screen.dart';
 import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_screen.dart';
 import 'package:gig/view/screen_holder/screens/market_place_screen/market_place_screen.dart';
@@ -130,22 +130,27 @@ class AppRoutes {
 
     ////////// MARKET PLACE ROUTES
     GetPage(
-      name: RoutesName.marketPlaceScreen,
-      page: () => MarketPplaceScreen(),
-      transitionDuration: Duration(milliseconds: 300),
-      transition: Transition.rightToLeft,
-    ),
-    GetPage(
-      name: RoutesName.singleProductScreen,
+      name: RoutesName.detailScreenView,
       page: () => SingleProductScreen(),
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),
+    // GetPage(
+    //   name: RoutesName.singleProductScreen,
+    //   page: () => SingleProductScreen(),
+    // ),
+
+    // GetPage(
+    //   name: RoutesName.singleProductScreen,
+    //   // page: () => SingleProductScreen(),
+    //   transitionDuration: Duration(milliseconds: 300),
+    //   transition: Transition.rightToLeft,
+    // ),
 
     ////////// CREATE ADDS ROUTES
     GetPage(
       name: RoutesName.createAddsScreen,
-      page: () => CreateAddsScreen(),
+      page: () => MarketPlaceView(),
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),
