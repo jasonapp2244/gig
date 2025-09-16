@@ -308,8 +308,6 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-
-  
   Future<dynamic> getTaskByDate(
     String token, {
     required String taskId,
@@ -349,7 +347,6 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-
   Future<dynamic> getEmployerApi(String token) async {
     dynamic responseJson;
     try {
@@ -388,6 +385,37 @@ class NetworkApiServices extends BaseApiServices {
             },
           )
           .timeout(const Duration(seconds: 30));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getEarningSummaryApi(String token) async {
+    dynamic responseJson;
+    try {
+      print('🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}');
+
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.earningSummaryApi),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print('📡 Earning Summary Response Status: ${response.statusCode}');
+      print('📋 Earning Summary Response Body: ${response.body}');
 
       responseJson = returnResponse(response);
     } on SocketException {

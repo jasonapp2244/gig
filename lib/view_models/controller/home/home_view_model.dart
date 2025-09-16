@@ -23,9 +23,10 @@ class HomeViewModel extends GetxController {
   RxMap<DateTime, List<Map<String, dynamic>>> tasksByDate =
       <DateTime, List<Map<String, dynamic>>>{}.obs;
   RxBool tasksLoading = false.obs;
-  
+
   // Tasks by specific date (for API call)
-  RxList<Map<String, dynamic>> tasksBySpecificDate = <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> tasksBySpecificDate =
+      <Map<String, dynamic>>[].obs;
   RxBool tasksByDateLoading = false.obs;
 
   @override
@@ -117,7 +118,7 @@ class HomeViewModel extends GetxController {
             print('⚠️ Error parsing date: $taskDateTimeStr, error: $e');
             continue; // Skip this task if date parsing fails
           }
-          
+
           // Normalize to date only (remove time) - ensure we keep the same date
           DateTime normalizedDate = DateTime(
             taskDate.year,
@@ -129,7 +130,9 @@ class HomeViewModel extends GetxController {
           print('📅 Original date string: $taskDateTimeStr');
           print('📅 Parsed taskDate: $taskDate');
           print('📅 Normalized date: $normalizedDate');
-          print('📅 Normalized date components: ${normalizedDate.year}-${normalizedDate.month}-${normalizedDate.day}');
+          print(
+            '📅 Normalized date components: ${normalizedDate.year}-${normalizedDate.month}-${normalizedDate.day}',
+          );
 
           // Add to set of unique dates
           taskDates.add(normalizedDate);
@@ -233,58 +236,68 @@ class HomeViewModel extends GetxController {
     try {
       tasksByDateLoading.value = true;
       tasksBySpecificDate.clear();
-      
+
       print('🔴 DEBUG: fetchTasksByDate called with: $selectedDate');
-      
+
       // Get user token
       final userData = await _userPreference.getUser();
       final token = userData.token ?? '';
-      
+
       print('🔴 DEBUG: Token length: ${token.length}');
-      print('🔴 DEBUG: Token preview: ${token.isEmpty ? 'EMPTY' : token.substring(0, 10)}...');
-      
+      print(
+        '🔴 DEBUG: Token preview: ${token.isEmpty ? 'EMPTY' : token.substring(0, 10)}...',
+      );
+
       if (token.isEmpty) {
         print('❌ No token found, cannot fetch tasks by date');
         return;
       }
-      
+
       // Format date as required by API (YYYY-MM-DD)
-      String formattedDate = "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-      
+      String formattedDate =
+          "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
       print('🔴 DEBUG: Formatted date for API: $formattedDate');
-      print('🔴 DEBUG: Full API URL will be: ${AppUrl.taskByDate}/$formattedDate');
+      print(
+        '🔴 DEBUG: Full API URL will be: ${AppUrl.taskByDate}/$formattedDate',
+      );
       print('🔴 DEBUG: Calling getTaskByDate...');
-      
+
       // Use the existing getTaskByDate method from NetworkApiServices
       print('🔴 DEBUG: About to call API with:');
       print('🔴 DEBUG: - Token: ${token.substring(0, 10)}...');
-      print('🔴 DEBUG: - TaskId (date): $formattedDate');  
+      print('🔴 DEBUG: - TaskId (date): $formattedDate');
       print('🔴 DEBUG: - URL: ${AppUrl.taskByDate}');
-      print('🔴 DEBUG: - Full URL will be: ${AppUrl.taskByDate}/$formattedDate');
-      
+      print(
+        '🔴 DEBUG: - Full URL will be: ${AppUrl.taskByDate}/$formattedDate',
+      );
+
       dynamic response = await _apiServices.getTaskByDate(
         token,
         taskId: formattedDate, // Using taskId parameter for the date
         url: AppUrl.taskByDate,
       );
-      
+
       print('🔴 DEBUG: API Response received: $response');
       print('🔴 DEBUG: Response type: ${response.runtimeType}');
-      
+
       if (response != null && response['status'] == true) {
         // Handle the response data
         List<dynamic> tasksData = response['data'] ?? response['tasks'] ?? [];
-        
+
         tasksBySpecificDate.value = tasksData.map((task) {
           return Map<String, dynamic>.from(task);
         }).toList();
-        
-        print('✅ Successfully fetched ${tasksBySpecificDate.length} tasks for date: $formattedDate');
+
+        print(
+          '✅ Successfully fetched ${tasksBySpecificDate.length} tasks for date: $formattedDate',
+        );
       } else {
-        print('❌ Failed to fetch tasks by date: ${response?['message'] ?? 'Unknown error'}');
+        print(
+          '❌ Failed to fetch tasks by date: ${response?['message'] ?? 'Unknown error'}',
+        );
         tasksBySpecificDate.clear();
       }
-      
     } catch (e) {
       print('❌ Error fetching tasks by date: $e');
       tasksBySpecificDate.clear();

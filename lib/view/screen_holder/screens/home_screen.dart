@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Refresh calendar data when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final HomeViewModel homeController = Get.find<HomeViewModel>();
-      homeController.silentRefreshTasksForCalendar();
     });
   }
 
@@ -411,158 +410,33 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Handle date selection - show existing tasks or go to add task
+  /// Handle date selection - always fetch from tasks-by-date API and show appropriate response
   void _handleDateSelection(
     DateTime selectedDate,
     HomeViewModel homeController,
   ) async {
-    print('🔴 DEBUG: Calendar date clicked: $selectedDate');
-    print('🔴 DEBUG: Starting API call for tasks by date...');
-    
-    // First, fetch tasks for this specific date using the API
+    print('📅 Calendar date clicked: $selectedDate');
+
+    // Format the date for API call verification
+    String formattedDate =
+        "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+    print('📅 Formatted date for API: $formattedDate');
+
+    // Always fetch from tasks-by-date API for the selected date
+    print('🔍 Fetching tasks from tasks-by-date API for date: $formattedDate');
     await homeController.fetchTasksByDate(selectedDate);
-    
-    print('🔴 DEBUG: API call completed. Tasks found: ${homeController.tasksBySpecificDate.length}');
-    print('🔴 DEBUG: Task data: ${homeController.tasksBySpecificDate}');
-    
-    // Always try to show the API dialog first, regardless of whether we have tasks
-    print('🔴 DEBUG: Showing API dialog...');
-    _showTasksByDateDialog(selectedDate, homeController);
-    
-    // Note: Removed the fallback logic to simplify debugging
-    // We'll always show the API dialog, even if empty, to see what's happening
-  }
+    print('🔍 API call completed. Found ${homeController.tasksBySpecificDate.length} tasks');
 
-  /// Show dialog with tasks for selected date
-  void _showTasksForDateDialog(
-    DateTime selectedDate,
-    List<Map<String, dynamic>> tasks,
-    HomeViewModel homeController,
-  ) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColor.appBodyBG,
-          title: Text(
-            'Tasks for ${homeController.formatTaskDate(selectedDate.toString())}',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Task list
-                  ...tasks
-                      .map((task) => _buildTaskItem(task, homeController))
-                      .toList(),
-                  SizedBox(height: 20),
-                  // Add new task button
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      final homeVM = Get.find<HomeViewModel>();
-                      homeVM.openScreen(
-                        AddTaskScreen(selectedDate: selectedDate),
-                      );
-                    },
-                    icon: Icon(Icons.add, color: Colors.white),
-                    label: Text('Add New Task'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primeColor,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Close',
-                style: TextStyle(color: AppColor.primeColor),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Build individual task item for dialog
-  Widget _buildTaskItem(
-    Map<String, dynamic> task,
-    HomeViewModel homeController,
-  ) {
-    String status = homeController.mapTaskStatus(
-      task['status'],
-      task['has_entry'],
-    );
-    Color statusColor = status == 'Completed'
-        ? Colors.green
-        : AppColor.primeColor;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColor.inputBGColor100,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  task['job_title'] ?? 'Untitled Task',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  status,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          if (task['location'] != null &&
-              task['location'].toString().isNotEmpty)
-            Text(
-              '📍 ${task['location']}',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-          if (task['employer'] != null &&
-              task['employer'].toString().isNotEmpty)
-            Text(
-              '👤 ${task['employer']}',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-        ],
-      ),
-    );
+    // Check if API returned any tasks
+    if (homeController.tasksBySpecificDate.isNotEmpty) {
+      // Show dialog with tasks from API
+      print('🔍 Showing dialog with ${homeController.tasksBySpecificDate.length} tasks from API');
+      _showTasksByDateDialog(selectedDate, homeController);
+    } else {
+      // No tasks found from API - go directly to AddTaskScreen
+      print('🔍 No tasks found from API, navigating to AddTaskScreen...');
+      homeController.openScreen(AddTaskScreen(selectedDate: selectedDate));
+    }
   }
 
   /// Show dialog with tasks fetched from API for selected date (as cards)
@@ -598,10 +472,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   return SizedBox.shrink();
                 }),
-                
+
                 // Task list as cards
                 Expanded(
                   child: Obx(() {
+                    print('🔍 Dialog: tasksBySpecificDate length: ${homeController.tasksBySpecificDate.length}');
+                    print('🔍 Dialog: tasksBySpecificDate data: ${homeController.tasksBySpecificDate}');
+                    
                     if (homeController.tasksBySpecificDate.isEmpty) {
                       return Center(
                         child: Text(
@@ -610,18 +487,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     }
-                    
+
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: homeController.tasksBySpecificDate.length,
                       itemBuilder: (context, index) {
                         final task = homeController.tasksBySpecificDate[index];
+                        print('🔍 Dialog: Building card for task: ${task['job_title']}');
                         return _buildTaskCard(task, homeController);
                       },
                     );
                   }),
                 ),
-                
+
                 SizedBox(height: 20),
                 // Add new task button
                 ElevatedButton.icon(
@@ -656,23 +534,33 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Build task card for the dialog
   Widget _buildTaskCard(
     Map<String, dynamic> task,
     HomeViewModel homeController,
   ) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
-      child: TaskSpecficBlock(
-        id: int.tryParse(task['id']?.toString() ?? '0'),
-        title: task['job_title'] ?? 'Untitled Task',
-        startDate: _formatTaskDate(task['task_date_time']) ?? 'N/A',
-        endDate: _formatTaskDate(task['task_end_date_time']) ?? 'N/A',
-        profileImage: 'https://i.pravatar.cc/300',
-        employer: task['employer'] ?? 'Unknown Employer',
-        status: _mapTaskStatus(task['status'], task['has_entry']),
-        totalTasks: 1,
-        count: 1,
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            task['job_title'] ?? 'Untitled Task',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 4),
+          Text(
+            _mapTaskStatus(task['status'], task['has_entry']),
+            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+          ),
+        ],
       ),
     );
   }

@@ -44,12 +44,6 @@ class _IncomeTrackerState extends State<IncomeTracker> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.refresh, color: AppColor.secondColor),
-        //     onPressed: controller.refreshPaymentTitles,
-        //   ),
-        // ],
       ),
       body: SafeArea(
         child: Obx(() {
@@ -121,156 +115,96 @@ class _IncomeTrackerState extends State<IncomeTracker> {
             );
           }
 
-          return Column(
-            children: [
-              Column(
-                children: [
-                  buildPaymentTitleDropdown(),
-                  buildInputField(
-                    "Payment amount",
-                    controller.amountController,
-                    isNumber: true,
-                  ),
-                  buildDatePickerField("Date", controller.dateController),
-                  buildStatusDropdown(),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Obx(
-                            () => GestureDetector(
-                              onTap: controller.buttonLoading.value
-                                  ? null
-                                  : controller.addPayment,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 14),
-                                decoration: BoxDecoration(
-                                  color: controller.buttonLoading.value
-                                      ? Colors.grey.shade600
-                                      : AppColor.primeColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                alignment: Alignment.center,
-                                child: controller.buttonLoading.value
-                                    ? SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                        ),
-                                      )
-                                    : Text(
-                                        "Add Payment",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        GestureDetector(
-                          onTap: controller.clearForm,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 14,
-                              horizontal: 20,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade700,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Clear",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Earnings Summary Section
+                _buildEarningsSummary(),
+                const SizedBox(height: 20),
+
+                Column(
+                  children: [
+                    buildPaymentTitleDropdown(),
+                    buildInputField(
+                      "Payment amount",
+                      controller.amountController,
+                      isNumber: true,
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     padding: const EdgeInsets.only(bottom: 20),
-              //     child: Column(
-              //       children: [
-              //         Obx(
-              //           () => ListView.builder(
-              //             shrinkWrap: true,
-              //             physics: NeverScrollableScrollPhysics(),
-              //             itemCount: controller.paymentList.length,
-              //             itemBuilder: (context, index) {
-              //               if (kDebugMode) {
-              //                 print("");
-              //               }
-              //               print("");
-              //               final payment = controller.paymentList[index];
-              //               return Card(
-              //                 color: Colors.grey.shade900.withValues(
-              //                   alpha: 0.6,
-              //                 ),
-              //                 margin: EdgeInsets.symmetric(
-              //                   vertical: 6,
-              //                   horizontal: 16,
-              //                 ),
-              //                 shape: RoundedRectangleBorder(
-              //                   borderRadius: BorderRadius.circular(12),
-              //                 ),
-              //                 child: ListTile(
-              //                   title: Text(
-              //                     payment['name'] ?? '',
-              //                     style: TextStyle(color: Colors.white),
-              //                   ),
-              //                   subtitle: Column(
-              //                     crossAxisAlignment: CrossAxisAlignment.start,
-              //                     children: [
-              //                       Text(
-              //                         "Amount: ${payment['amount']}",
-              //                         style: TextStyle(color: Colors.white70),
-              //                       ),
-              //                       Text(
-              //                         "Date: ${payment['date']}",
-              //                         style: TextStyle(color: Colors.white70),
-              //                       ),
-              //                       Text(
-              //                         "Status: ${payment['status']}",
-              //                         style: TextStyle(color: Colors.white70),
-              //                       ),
-              //                     ],
-              //                   ),
-              //                   trailing: IconButton(
-              //                     icon: Icon(
-              //                       Icons.delete,
-              //                       color: Colors.redAccent,
-              //                     ),
-              //                     onPressed: () =>
-              //                         controller.deletePayment(index),
-              //                   ),
-              //                 ),
-              //               );
-              //             },
-              //           ),
-              //         ),
-              //    ],
-              //   ),
-              //  ),
-              /////  ),
-            ],
+                    buildDatePickerField("Date", controller.dateController),
+                    buildStatusDropdown(),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Obx(
+                              () => GestureDetector(
+                                onTap: controller.buttonLoading.value
+                                    ? null
+                                    : controller.addPayment,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: controller.buttonLoading.value
+                                        ? Colors.grey.shade600
+                                        : AppColor.primeColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: controller.buttonLoading.value
+                                      ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
+                                      : Text(
+                                          "Add Payment",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: controller.clearForm,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 14,
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade700,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Clear",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ],
+            ),
           );
         }),
       ),
@@ -372,6 +306,154 @@ class _IncomeTrackerState extends State<IncomeTracker> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildEarningsSummary() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Tab headers
+          Row(
+            children: [
+              Expanded(child: _buildTabHeader('Total Earning', true)),
+              Expanded(child: _buildTabHeader('Pending payments', false)),
+              Expanded(child: _buildTabHeader('Net earnings', false)),
+            ],
+          ),
+
+          // Content container
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: _buildEarningsItem(
+                        'Balance available for use',
+                        Color(0xffFFA500),
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildEarningsItem(
+                        'Payments being cleared',
+                        Color(0xffFFA500),
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildEarningsItem(
+                        'Earnings this year',
+                        Color(0xffFFA500),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Obx(() {
+                  if (controller.earningsLoading.value) {
+                    return Container(
+                      height: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColor.primeColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: _buildAmountDisplay(
+                          controller.formatCurrency(
+                            controller.balanceAvailable.value,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildAmountDisplay(
+                          controller.formatCurrency(
+                            controller.paymentsBeingCleared.value,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildAmountDisplay(
+                          controller.formatCurrency(
+                            controller.earningsThisYear.value,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabHeader(String title, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Color(0xff848A94),
+          fontSize: 14,
+          fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildEarningsItem(String label, Color labelColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: labelColor,
+            fontSize: 12,
+
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAmountDisplay(String amount) {
+    return Text(
+      amount,
+      style: TextStyle(
+        color: AppColor.secondColor,
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+      ),
+      textAlign: TextAlign.center,
     );
   }
 }
