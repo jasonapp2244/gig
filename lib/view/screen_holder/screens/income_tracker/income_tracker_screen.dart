@@ -29,6 +29,13 @@ class _IncomeTrackerState extends State<IncomeTracker> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    controller.fetchPaymentTitles();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
@@ -66,50 +73,6 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     );
                   }),
-                ],
-              ),
-            );
-          }
-
-          if (controller.error.value.isNotEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, color: Colors.red, size: 64),
-                  SizedBox(height: 16),
-                  Text(
-                    'Error loading payment titles',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    controller.error.value,
-                    style: TextStyle(color: Colors.white70),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: controller.refreshPaymentTitles,
-                        child: Text('Retry'),
-                      ),
-                      SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: controller.forceRefreshPaymentTitles,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                        ),
-                        child: Text('Force Refresh'),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             );
@@ -291,11 +254,11 @@ class _IncomeTrackerState extends State<IncomeTracker> {
         child: Obx(
           () => DropdownButton<String>(
             isExpanded: true,
-            value: controller.selectedStatus.value,
+            value: controller.selectedStatus.value ?? 'pending',
             dropdownColor: Colors.grey.shade900,
             style: TextStyle(color: Colors.white),
             iconEnabledColor: Colors.white,
-            items: ['paid', 'pending'].map((status) {
+            items: ['pending', 'paid'].map((status) {
               return DropdownMenuItem(value: status, child: Text(status));
             }).toList(),
             onChanged: (value) {

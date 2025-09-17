@@ -68,7 +68,7 @@ class IncomeTrackerViewModel extends GetxController {
 
       if (response != null) {
         if (response['status'] == true) {
-          List<dynamic> tasksList = response['tasks'] ?? [];
+          List<dynamic> tasksList = response['data'] ?? [];
 
           // Store full task data for auto-filling
           List<Map<String, dynamic>> tasks = tasksList.map((task) {
@@ -84,10 +84,10 @@ class IncomeTrackerViewModel extends GetxController {
           List<String> titles = tasksList
               .where(
                 (task) =>
-                    task['job_title'] != null &&
-                    task['job_title'].toString().isNotEmpty,
+                    task['payment_title'] != null &&
+                    task['payment_title'].toString().isNotEmpty,
               )
-              .map((task) => task['job_title'].toString())
+              .map((task) => task['payment_title'].toString())
               .toSet() // Remove duplicates
               .toList();
 
@@ -192,6 +192,7 @@ class IncomeTrackerViewModel extends GetxController {
           // Schedule earnings summary refresh for next frame
           SchedulerBinding.instance.addPostFrameCallback((_) {
             fetchEarningSummary();
+            fetchPaymentTitles();
           });
 
           Utils.snakBar(
@@ -228,7 +229,7 @@ class IncomeTrackerViewModel extends GetxController {
 
     // Find the corresponding task and auto-fill amount and date
     final selectedTask = allTasks.firstWhere(
-      (task) => task['job_title'] == title,
+      (task) => task['payment_title'] == title,
       orElse: () => <String, dynamic>{},
     );
 
@@ -240,15 +241,15 @@ class IncomeTrackerViewModel extends GetxController {
       }
 
       // Auto-fill payment amount (wages)
-      if (selectedTask['pay'] != null &&
-          selectedTask['pay'].toString().isNotEmpty) {
-        amountController.text = selectedTask['pay'].toString();
+      if (selectedTask['payment'] != null &&
+          selectedTask['payment'].toString().isNotEmpty) {
+        amountController.text = selectedTask['payment'].toString();
       }
 
       // Auto-fill date (task_date_time)
-      if (selectedTask['task_date_time'] != null &&
-          selectedTask['task_date_time'].toString().isNotEmpty) {
-        String taskDateTime = selectedTask['task_date_time'].toString();
+      if (selectedTask['created_at'] != null &&
+          selectedTask['created_at'].toString().isNotEmpty) {
+        String taskDateTime = selectedTask['created_at'].toString();
 
         // Parse the date and format it for display
         try {
@@ -388,10 +389,10 @@ class IncomeTrackerViewModel extends GetxController {
             double.tryParse(response['total_balance']?.toString() ?? '0') ??
             0.0;
         availableEarning.value =
-            double.tryParse(response['available_earning']?.toString() ?? '0') ??
+            double.tryParse(response['pending_earning']?.toString() ?? '0') ??
             0.0;
         pendingEarning.value =
-            double.tryParse(response['pending_earning']?.toString() ?? '0') ??
+            double.tryParse(response['new_year_earning']?.toString() ?? '0') ??
             0.0;
 
         // Map to display values according to your requirements:

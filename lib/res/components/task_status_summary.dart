@@ -32,10 +32,7 @@ class TaskStatusSummary extends StatelessWidget {
       );
     }
 
-    // Debug: Show data keys even if empty
-    print('🎨 TaskStatusSummary - statusData: $statusData');
-    print('🎨 TaskStatusSummary - statusData.isEmpty: ${statusData.isEmpty}');
-    print('🎨 TaskStatusSummary - statusData.keys: ${statusData.keys}');
+
 
     if (statusData.isEmpty) {
       // Show debug info instead of hiding completely

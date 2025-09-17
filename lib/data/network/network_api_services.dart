@@ -378,7 +378,7 @@ class NetworkApiServices extends BaseApiServices {
     try {
       final response = await http
           .get(
-            Uri.parse(AppUrl.getTaskAPI),
+            Uri.parse(AppUrl.addTaskAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',
@@ -398,6 +398,33 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
+
+    Future<dynamic> getPaymentPending(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.getPaymentTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
 
   Future<dynamic> getEarningSummaryApi(String token) async {
     dynamic responseJson;
@@ -602,7 +629,7 @@ class NetworkApiServices extends BaseApiServices {
       print('🔍 Fetching task data for ID: $taskId');
       final taskResponse = await http
           .get(
-            Uri.parse(AppUrl.getTaskAPI),
+            Uri.parse(AppUrl.addTaskAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',

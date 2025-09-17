@@ -14,7 +14,7 @@ class PaymentTitleRepository {
     }
 
     // Use getTasksApi method to fetch payment titles
-    dynamic response = await _apiServices.getTasksApi(token);
+    dynamic response = await _apiServices.getPaymentPending(token);
     return response;
   }
 }
