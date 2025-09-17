@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
+import 'package:gig/utils/utils.dart';
 import 'package:gig/view/screen_holder/screens/task/add_task_screen.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -23,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   CalendarFormat _calendarFormat = CalendarFormat.month;
+  bool _isDialogOpen = false;
+  bool _isLoadingTasks = false;
 
   @override
   void initState() {
@@ -415,27 +418,55 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime selectedDate,
     HomeViewModel homeController,
   ) async {
+    // Prevent multiple concurrent requests or dialog openings
+    if (_isLoadingTasks || _isDialogOpen) {
+      print('🚫 Already loading tasks or dialog is open, ignoring tap');
+      return;
+    }
+
     print('📅 Calendar date clicked: $selectedDate');
+    _isLoadingTasks = true;
 
     // Format the date for API call verification
     String formattedDate =
         "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
     print('📅 Formatted date for API: $formattedDate');
 
-    // Always fetch from tasks-by-date API for the selected date
-    print('🔍 Fetching tasks from tasks-by-date API for date: $formattedDate');
-    await homeController.fetchTasksByDate(selectedDate);
-    print('🔍 API call completed. Found ${homeController.tasksBySpecificDate.length} tasks');
+    String? token = await Utils.readSecureData('auth_token');
 
-    // Check if API returned any tasks
-    if (homeController.tasksBySpecificDate.isNotEmpty) {
-      // Show dialog with tasks from API
-      print('🔍 Showing dialog with ${homeController.tasksBySpecificDate.length} tasks from API');
-      _showTasksByDateDialog(selectedDate, homeController);
-    } else {
-      // No tasks found from API - go directly to AddTaskScreen
-      print('🔍 No tasks found from API, navigating to AddTaskScreen...');
-      homeController.openScreen(AddTaskScreen(selectedDate: selectedDate));
+    if (token == null || token.isEmpty) {
+      _isLoadingTasks = false;
+      if (mounted) {
+        Utils.snakBar('Error', 'No authentication token found');
+      }
+      return;
+    }
+
+    try {
+      await homeController.fetchTasksByDate(selectedDate, token);
+
+      // Check if widget is still mounted before proceeding
+      if (!mounted) {
+        _isLoadingTasks = false;
+        return;
+      }
+
+      // Check if API returned any tasks
+      if (homeController.tasksBySpecificDate.isNotEmpty) {
+        // Show dialog with tasks from API
+        _showTasksByDateDialog(selectedDate, homeController);
+      } else {
+        // No tasks found from API - go directly to AddTaskScreen
+        print('🔍 No tasks found from API, navigating to AddTaskScreen...');
+        homeController.openScreen(AddTaskScreen(selectedDate: selectedDate));
+      }
+    } catch (e) {
+      print('❌ Error in _handleDateSelection: $e');
+      if (mounted) {
+        Utils.snakBar('Error', 'Failed to fetch tasks for selected date');
+      }
+    } finally {
+      _isLoadingTasks = false;
     }
   }
 
@@ -444,8 +475,16 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime selectedDate,
     HomeViewModel homeController,
   ) {
+    if (_isDialogOpen) {
+      print('🚫 Dialog is already open, ignoring request');
+      return;
+    }
+
+    _isDialogOpen = true;
+
     showDialog(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: AppColor.appBodyBG,
@@ -476,9 +515,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Task list as cards
                 Expanded(
                   child: Obx(() {
-                    print('🔍 Dialog: tasksBySpecificDate length: ${homeController.tasksBySpecificDate.length}');
-                    print('🔍 Dialog: tasksBySpecificDate data: ${homeController.tasksBySpecificDate}');
-                    
+                    print(
+                      '🔍 Dialog: tasksBySpecificDate length: ${homeController.tasksBySpecificDate.length}',
+                    );
+                    print(
+                      '🔍 Dialog: tasksBySpecificDate data: ${homeController.tasksBySpecificDate}',
+                    );
+
                     if (homeController.tasksBySpecificDate.isEmpty) {
                       return Center(
                         child: Text(
@@ -493,7 +536,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: homeController.tasksBySpecificDate.length,
                       itemBuilder: (context, index) {
                         final task = homeController.tasksBySpecificDate[index];
-                        print('🔍 Dialog: Building card for task: ${task['job_title']}');
+                        print(
+                          '🔍 Dialog: Building card for task: ${task['job_title']}',
+                        );
                         return _buildTaskCard(task, homeController);
                       },
                     );
@@ -504,6 +549,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Add new task button
                 ElevatedButton.icon(
                   onPressed: () {
+                    _isDialogOpen = false;
                     Navigator.pop(context);
                     final homeVM = Get.find<HomeViewModel>();
                     homeVM.openScreen(
@@ -522,7 +568,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                _isDialogOpen = false;
+                Navigator.pop(context);
+              },
               child: Text(
                 'Close',
                 style: TextStyle(color: AppColor.primeColor),
@@ -531,7 +580,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         );
       },
-    );
+    ).then((_) {
+      // Reset dialog flag when dialog is dismissed (including back button/barrier tap)
+      _isDialogOpen = false;
+    });
   }
 
   Widget _buildTaskCard(
@@ -540,25 +592,95 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(12),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Job Title (Header)
           Text(
             task['job_title'] ?? 'Untitled Task',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColor.primeColor,
+            ),
           ),
-          SizedBox(height: 4),
-          Text(
-            _mapTaskStatus(task['status'], task['has_entry']),
-            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+          SizedBox(height: 12),
+
+          // Employer Information
+          _buildTaskDetailRow(
+            'Employer ID:',
+            task['employer_id']?.toString() ?? 'N/A',
+            Icons.business,
+          ),
+          _buildTaskDetailRow(
+            'Employer:',
+            task['employer'] ?? 'N/A',
+            Icons.apartment,
+          ),
+
+          // Job Details
+          _buildTaskDetailRow(
+            'Job Type:',
+            task['job_type'] ?? 'N/A',
+            Icons.work,
+          ),
+          _buildTaskDetailRow(
+            'Job Category:',
+            task['job_category'] ?? 'N/A',
+            Icons.category,
+          ),
+
+          // Location
+          _buildTaskDetailRow(
+            'Location:',
+            task['location'] ?? 'N/A',
+            Icons.location_on,
+          ),
+
+          // Contact Information
+          _buildTaskDetailRow(
+            'Supervisor Contact:',
+            task['supervisor_contact_number'] ?? 'N/A',
+            Icons.phone,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper method to build consistent detail rows
+  Widget _buildTaskDetailRow(String label, String value, IconData icon) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey[600]),
+          SizedBox(width: 8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.black87, fontSize: 14),
+                children: [
+                  TextSpan(
+                    text: '$label ',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  TextSpan(
+                    text: value,
+                    style: TextStyle(fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

@@ -310,13 +310,13 @@ class NetworkApiServices extends BaseApiServices {
 
   Future<dynamic> getTaskByDate(
     String token, {
-    required String taskId,
+    required String date,
     String? url,
   }) async {
     dynamic responseJson;
     try {
       // Build URL with taskId
-      final apiUrl = "${url}/$taskId";
+      final apiUrl = "${url}";
       // 👆 change this if your endpoint is different
 
       print("🔍 Fetching Task details from: $apiUrl");
@@ -324,8 +324,10 @@ class NetworkApiServices extends BaseApiServices {
       final response = await http
           .post(
             Uri.parse(apiUrl),
+            body: jsonEncode({'date': date}),
             headers: {
               'Accept': 'application/json',
+              'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
             },
           )
@@ -399,7 +401,7 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-    Future<dynamic> getPaymentPending(String token) async {
+  Future<dynamic> getPaymentPending(String token) async {
     dynamic responseJson;
     try {
       final response = await http
@@ -424,7 +426,6 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
-
 
   Future<dynamic> getEarningSummaryApi(String token) async {
     dynamic responseJson;

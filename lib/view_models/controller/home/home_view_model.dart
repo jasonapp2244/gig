@@ -232,7 +232,7 @@ class HomeViewModel extends GetxController {
   }
 
   /// Fetch tasks for a specific date using the API
-  Future<void> fetchTasksByDate(DateTime selectedDate) async {
+  Future<void> fetchTasksByDate(DateTime selectedDate, String tokenId) async {
     try {
       tasksByDateLoading.value = true;
       tasksBySpecificDate.clear();
@@ -241,14 +241,12 @@ class HomeViewModel extends GetxController {
 
       // Get user token
       final userData = await _userPreference.getUser();
-      final token = userData.token ?? '';
 
-      print('🔴 DEBUG: Token length: ${token.length}');
       print(
-        '🔴 DEBUG: Token preview: ${token.isEmpty ? 'EMPTY' : token.substring(0, 10)}...',
+        '🔴 DEBUG: Token preview: ${tokenId.isEmpty ? 'EMPTY' : tokenId.substring(0, 10)}...',
       );
 
-      if (token.isEmpty) {
+      if (tokenId.isEmpty) {
         print('❌ No token found, cannot fetch tasks by date');
         return;
       }
@@ -265,7 +263,7 @@ class HomeViewModel extends GetxController {
 
       // Use the existing getTaskByDate method from NetworkApiServices
       print('🔴 DEBUG: About to call API with:');
-      print('🔴 DEBUG: - Token: ${token.substring(0, 10)}...');
+      print('🔴 DEBUG: - Token: ${tokenId.substring(0, 10)}...');
       print('🔴 DEBUG: - TaskId (date): $formattedDate');
       print('🔴 DEBUG: - URL: ${AppUrl.taskByDate}');
       print(
@@ -273,8 +271,8 @@ class HomeViewModel extends GetxController {
       );
 
       dynamic response = await _apiServices.getTaskByDate(
-        token,
-        taskId: formattedDate, // Using taskId parameter for the date
+        tokenId,
+        date: formattedDate, // Using taskId parameter for the date
         url: AppUrl.taskByDate,
       );
 
@@ -283,7 +281,7 @@ class HomeViewModel extends GetxController {
 
       if (response != null && response['status'] == true) {
         // Handle the response data
-        List<dynamic> tasksData = response['data'] ?? response['tasks'] ?? [];
+        List<dynamic> tasksData = response['tasks'] ?? [];
 
         tasksBySpecificDate.value = tasksData.map((task) {
           return Map<String, dynamic>.from(task);
