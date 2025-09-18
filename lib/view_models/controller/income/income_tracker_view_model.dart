@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import '../../../repository/payment/payment_title_repository.dart';
 import '../../../repository/payment/task_payment_repository.dart';
+import '../../../repository/payment/earning_summary_repository.dart';
 import '../../../utils/utils.dart';
 
 class IncomeTrackerViewModel extends GetxController {
   final _api = PaymentTitleRepository();
   final _paymentApi = TaskPaymentRepository();
+  final _earningSummaryApi = EarningSummaryRepository();
 
   RxBool loading = false.obs;
   RxBool buttonLoading = false.obs;
@@ -28,16 +31,28 @@ class IncomeTrackerViewModel extends GetxController {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
-  RxString selectedStatus = 'paid'.obs;
+  RxString selectedStatus = 'pending'.obs;
 
   // Payment list
   RxList<Map<String, String>> paymentList = <Map<String, String>>[].obs;
 
+  // Earnings from API
+  RxBool earningsLoading = false.obs;
+  RxDouble totalBalance = 0.0.obs; // total_balance from API
+  RxDouble availableEarning = 0.0.obs; // available_earning from API
+  RxDouble pendingEarning = 0.0.obs; // pending_earning from API
+
+  // Additional calculated values for display
+  RxDouble balanceAvailable = 0.0.obs;
+  RxDouble paymentsBeingCleared = 0.0.obs;
+  RxDouble earningsThisYear = 0.0.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Fetch payment titles when controller is initialized
+    // Fetch payment titles and earnings summary when controller is initialized
     fetchPaymentTitles();
+    fetchEarningSummary();
   }
 
   Future<void> fetchPaymentTitles() async {
@@ -53,7 +68,7 @@ class IncomeTrackerViewModel extends GetxController {
 
       if (response != null) {
         if (response['status'] == true) {
-          List<dynamic> tasksList = response['tasks'] ?? [];
+          List<dynamic> tasksList = response['data'] ?? [];
 
           // Store full task data for auto-filling
           List<Map<String, dynamic>> tasks = tasksList.map((task) {
@@ -69,10 +84,10 @@ class IncomeTrackerViewModel extends GetxController {
           List<String> titles = tasksList
               .where(
                 (task) =>
-                    task['job_title'] != null &&
-                    task['job_title'].toString().isNotEmpty,
+                    task['payment_title'] != null &&
+                    task['payment_title'].toString().isNotEmpty,
               )
-              .map((task) => task['job_title'].toString())
+              .map((task) => task['payment_title'].toString())
               .toSet() // Remove duplicates
               .toList();
 
@@ -148,9 +163,9 @@ class IncomeTrackerViewModel extends GetxController {
 
         // Prepare data for API
         Map<String, dynamic> paymentData = {
-          'task_id': selectedTaskId.value,
-          'payment_title': nameController.text,
-          'payment': amountController.text,
+          'id': selectedTaskId.value,
+          //'payment_title': nameController.text,
+          //  'payment': amountController.text,
           'payment_status': selectedStatus.value,
         };
 
@@ -173,6 +188,12 @@ class IncomeTrackerViewModel extends GetxController {
           // Clear form
           clearForm();
           selectedTaskId.value = 0;
+
+          // Schedule earnings summary refresh for next frame
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            fetchEarningSummary();
+            fetchPaymentTitles();
+          });
 
           Utils.snakBar(
             'Success',
@@ -208,7 +229,7 @@ class IncomeTrackerViewModel extends GetxController {
 
     // Find the corresponding task and auto-fill amount and date
     final selectedTask = allTasks.firstWhere(
-      (task) => task['job_title'] == title,
+      (task) => task['payment_title'] == title,
       orElse: () => <String, dynamic>{},
     );
 
@@ -220,15 +241,15 @@ class IncomeTrackerViewModel extends GetxController {
       }
 
       // Auto-fill payment amount (wages)
-      if (selectedTask['pay'] != null &&
-          selectedTask['pay'].toString().isNotEmpty) {
-        amountController.text = selectedTask['pay'].toString();
+      if (selectedTask['payment'] != null &&
+          selectedTask['payment'].toString().isNotEmpty) {
+        amountController.text = selectedTask['payment'].toString();
       }
 
       // Auto-fill date (task_date_time)
-      if (selectedTask['task_date_time'] != null &&
-          selectedTask['task_date_time'].toString().isNotEmpty) {
-        String taskDateTime = selectedTask['task_date_time'].toString();
+      if (selectedTask['created_at'] != null &&
+          selectedTask['created_at'].toString().isNotEmpty) {
+        String taskDateTime = selectedTask['created_at'].toString();
 
         // Parse the date and format it for display
         try {
@@ -344,5 +365,64 @@ class IncomeTrackerViewModel extends GetxController {
     _cachedTasks = tasks;
     _lastCacheTime = DateTime.now();
     print('💾 Cache updated with ${tasks.length} tasks');
+
+    // Schedule earnings summary refresh for next frame to avoid build-time setState
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      fetchEarningSummary();
+    });
+  }
+
+  // Fetch earnings summary from API
+  Future<void> fetchEarningSummary() async {
+    try {
+      earningsLoading.value = true;
+
+      print('🔄 Fetching earnings summary from API...');
+
+      dynamic response = await _earningSummaryApi.getEarningSummaryAPI();
+
+      print('📋 Earnings summary response: $response');
+
+      if (response != null && response['status'] == true) {
+        // Parse API response according to your structure
+        totalBalance.value =
+            double.tryParse(response['total_balance']?.toString() ?? '0') ??
+            0.0;
+        availableEarning.value =
+            double.tryParse(response['pending_earning']?.toString() ?? '0') ??
+            0.0;
+        pendingEarning.value =
+            double.tryParse(response['new_year_earning']?.toString() ?? '0') ??
+            0.0;
+
+        // Map to display values according to your requirements:
+        // total earning = total_balance
+        // pending payments = available_earning
+        // net earnings = pending_earning
+        balanceAvailable.value = totalBalance.value;
+        paymentsBeingCleared.value = availableEarning.value;
+        earningsThisYear.value = pendingEarning.value;
+
+        print('✅ Earnings summary loaded successfully');
+        print('💰 Total Balance: \$${totalBalance.value}');
+        print('💰 Available Earning: \$${availableEarning.value}');
+        print('💰 Pending Earning: \$${pendingEarning.value}');
+      } else {
+        print(
+          '❌ Failed to load earnings summary: ${response?['message'] ?? 'Unknown error'}',
+        );
+        // Keep default values (0.0) if API fails
+      }
+    } catch (e) {
+      print('❌ Error fetching earnings summary: $e');
+      // Keep default values (0.0) if error occurs
+    } finally {
+      earningsLoading.value = false;
+    }
+  }
+
+  // Format currency for display
+  String formatCurrency(double amount) {
+    return 'US\$${amount.toStringAsFixed(2)}';
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/components/specific_task_block.dart';
-import 'package:gig/res/components/task_block.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 
 class EmployerTaskListScreen extends StatelessWidget {
@@ -11,7 +10,7 @@ class EmployerTaskListScreen extends StatelessWidget {
   final String employerName;
   GetTaskViewModel? model;
 
-  EmployerTaskListScreen({
+ EmployerTaskListScreen({
     required this.employerId,
     required this.status,
     required this.employerName,

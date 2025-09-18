@@ -26,20 +26,28 @@ class LogoutViewModel extends GetxController {
         .logoutApi(data)
         .then((value) async {
           loading.value = false;
+          try {
+            if (value['status'] == true) {
+              // Clear all stored data
+              await Utils().clearUserData();
+              Utils.snakBar(
+                'Logout',
+                value['message'] ?? 'Logged out successfully',
+              );
 
-          if (value['status'] == true) {
-            // Clear all stored data
+              // Navigate to login screen
+              Get.offAllNamed(RoutesName.loginScreen);
+            } else {
+              await Utils().clearUserData();
+              print("Logout failed: $value");
+              Utils.snakBar(
+                'Logout Error',
+                value['message'] ?? 'Logout failed',
+              );
+            }
+          } catch (e) {
             await Utils().clearUserData();
-            Utils.snakBar(
-              'Logout',
-              value['message'] ?? 'Logged out successfully',
-            );
-
-            // Navigate to login screen
-            Get.offAllNamed(RoutesName.loginScreen);
-          } else {
-            print("Logout failed: $value");
-            Utils.snakBar('Logout Error', value['message'] ?? 'Logout failed');
+            print("error of logout $e");
           }
         })
         .onError((error, stackTrace) {

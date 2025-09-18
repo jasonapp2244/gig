@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/get_instance.dart';
-import 'package:get/state_manager.dart';
 import 'package:gig/res/components/bottom_sheet.dart';
 import 'package:gig/view/screen_holder/screens/task/edit_task_screen.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
@@ -125,31 +121,37 @@ class TaskSpecficBlock extends StatelessWidget {
                   spacing: 20,
                   children: [
                     GestureDetector(
-                      onTap: () async{
-                   
-  final editTaskVM = Get.put(EditTaskViewModel());
+                      onTap: () async {
+                        final editTaskVM = Get.put(EditTaskViewModel());
 
-  // 1. Fetch details
-  final taskData = await editTaskVM.getTasksDetails(taskId: id.toString());
+                        // 1. Fetch details
+                        final taskData = await editTaskVM.getTasksDetails(
+                          taskId: id.toString(),
+                        );
 
-  if (taskData.isNotEmpty) {
-    final task = taskData.first;
+                        // 2. Set values into controllers
+                        editTaskVM.employerController.value.text =
+                            taskData['employer'];
+                        editTaskVM.jobTypeController.value.text =
+                            taskData['job_title'] ?? '';
 
-    // 2. Set values into controllers
-    editTaskVM.employerController.value.text = task['task_name'] ?? '';
-    editTaskVM.jobTypeController.value.text = task['income']?.toString() ?? '';
-    editTaskVM.locationController.value.text = task['location'] ?? '';
-    editTaskVM.supervisorController.value.text = task['supervisor'] ?? '';
-    editTaskVM.workingHoursController.value.text = task['working_hours']?.toString() ?? '';
-    editTaskVM.wagesController.value.text = task['wages']?.toString() ?? '';
-    editTaskVM.straightTimeController.value.text = task['straight_time']?.toString() ?? '';
-    editTaskVM.notesController.value.text = task['notes'] ?? '';
+                        editTaskVM.locationController.value.text =
+                            taskData['location'] ?? '';
+                        editTaskVM.supervisorController.value.text =
+                            taskData['supervisor'] ?? '';
+                        editTaskVM.workingHoursController.value.text =
+                            taskData['working_hours']?.toString() ?? '';
+                        editTaskVM.wagesController.value.text =
+                            taskData['pay']?.toString() ?? '';
+                        editTaskVM.straightTimeController.value.text =
+                            taskData['working_hours']?.toString() ?? '';
+                        editTaskVM.notesController.value.text =
+                            taskData['notes'] ?? '';
+                        editTaskVM.supervisorController.value.text =
+                            taskData['supervisor_contact_number'] ?? '';
 
-    // 3. Navigate to EditTaskScreen
-    Get.to(() => const EditTaskScreen());
-  } else {
-    Get.snackbar("Error", "Task details not found");
-  }
+                        // 3. Navigate to EditTaskScreen
+                        Get.to(() => const EditTaskScreen());
                       },
                       child: Icon(
                         LucideIcons.squarePen,

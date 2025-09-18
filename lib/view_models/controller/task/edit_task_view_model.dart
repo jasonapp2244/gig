@@ -55,17 +55,24 @@ class EditTaskViewModel extends GetxController {
         });
   }
 
-  Future<dynamic> getTasksDetails({String? taskId, String? token}) async {
+  Future<Map<String, dynamic>> getTasksDetails({
+    String? taskId,
+    String? token,
+  }) async {
     const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: 'auth_token');
+    String? storedToken = token ?? await storage.read(key: 'auth_token');
 
-    if (token == null) {
+    if (storedToken == null) {
       throw Exception('Authentication token not found');
     }
 
-    final response = await _api.getSpecificTasks(taskId ?? '', token);
+    final response = await _api.getSpecificTasks(taskId ?? '', storedToken);
 
-    final List data = response['task'] ?? [];
-    return data.map((e) => Map<String, dynamic>.from(e)).toList();
+    // Make sure the 'task' field is a Map
+    final Map<String, dynamic> data = Map<String, dynamic>.from(
+      response['task'] ?? {},
+    );
+
+    return data;
   }
 }

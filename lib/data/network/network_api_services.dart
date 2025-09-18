@@ -277,16 +277,57 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
     try {
       // Build URL with taskId
-      final apiUrl = url ?? "${AppUrl.baseUrl}/$taskId";
+      final apiUrl = "${url}/$taskId";
       // 👆 change this if your endpoint is different
 
       print("🔍 Fetching Task details from: $apiUrl");
 
       final response = await http
-          .get(
+          .post(
             Uri.parse(apiUrl),
             headers: {
               'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print("📡 Response Status: ${response.statusCode}");
+      print("📋 Response Body: ${response.body}");
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on TimeoutException {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getTaskByDate(
+    String token, {
+    required String date,
+    String? url,
+  }) async {
+    dynamic responseJson;
+    try {
+      // Build URL with taskId
+      final apiUrl = "${url}";
+      // 👆 change this if your endpoint is different
+
+      print("🔍 Fetching Task details from: $apiUrl");
+
+      final response = await http
+          .post(
+            Uri.parse(apiUrl),
+            body: jsonEncode({'date': date}),
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
             },
           )
@@ -339,7 +380,7 @@ class NetworkApiServices extends BaseApiServices {
     try {
       final response = await http
           .get(
-            Uri.parse(AppUrl.getTaskAPI),
+            Uri.parse(AppUrl.addTaskAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',
@@ -359,7 +400,64 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
-//API Call For Get Task StatusApi Task
+
+  Future<dynamic> getPaymentPending(String token) async {
+    dynamic responseJson;
+    try {
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.getPaymentTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 30));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> getEarningSummaryApi(String token) async {
+    dynamic responseJson;
+    try {
+      print('🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}');
+
+      final response = await http
+          .get(
+            Uri.parse(AppUrl.earningSummaryApi),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print('📡 Earning Summary Response Status: ${response.statusCode}');
+      print('📋 Earning Summary Response Body: ${response.body}');
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getTaskStatusApi(
     String token, {
     String? status,
@@ -402,8 +500,48 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> getEachTask(
+    String token, {
+    String? status,
+    String? employerId,
+  }) async {
+    dynamic responseJson;
+    try {
+      // Prepare request body with optional parameters
+      Map<String, dynamic> requestBody = {};
 
-//API Call For Deleting Employer
+      if (status != null) {
+        requestBody['status'] = status.toLowerCase();
+      }
+      if (employerId != null) {
+        requestBody['employer_id'] = employerId;
+      }
+
+      final response = await http
+          .post(
+            Uri.parse(AppUrl.showspecTaskAPI),
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding, please try again later');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> deleteEmployerApi(String employerId, String token) async {
     dynamic responseJson;
     try {
@@ -481,8 +619,6 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-
-//API Call For Deleting Task
   Future<dynamic> deleteTaskApi(int taskId, String token, String url) async {
     dynamic responseJson;
     try {
@@ -494,7 +630,7 @@ class NetworkApiServices extends BaseApiServices {
       print('🔍 Fetching task data for ID: $taskId');
       final taskResponse = await http
           .get(
-            Uri.parse(AppUrl.getTaskAPI),
+            Uri.parse(AppUrl.addTaskAPI),
             headers: {
               'Accept': 'application/json',
               'Authorization': 'Bearer $token',

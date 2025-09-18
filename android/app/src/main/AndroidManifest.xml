@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.craftech.gig">
+    package="com.craftech1.gig">
 
     <!-- Required permissions for FCM -->
     <uses-permission android:name="android.permission.INTERNET" />

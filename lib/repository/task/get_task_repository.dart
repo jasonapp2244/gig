@@ -46,7 +46,7 @@ class GetTaskRepository {
     }
 
     // Call API service
-    final response = await _apiServices.getTaskStatusApi(
+    final response = await _apiServices.getEachTask(
       token,
       status: status,
       employerId: employerId ?? '',
@@ -56,5 +56,4 @@ class GetTaskRepository {
     final List data = response['tasks'] ?? [];
     return data.map((e) => Map<String, dynamic>.from(e)).toList();
   }
-
 }

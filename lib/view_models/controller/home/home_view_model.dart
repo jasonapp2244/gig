@@ -3,10 +3,15 @@ import 'package:get/get.dart';
 import 'package:gig/utils/utils.dart';
 import '../auth/logout_view_model.dart';
 import '../task/get_task_view_model.dart';
+import '../../../data/network/network_api_services.dart';
+import '../../../res/app_url/app_url.dart';
+import '../user_preference/user_preference_view_model.dart';
 
 class HomeViewModel extends GetxController {
   final LogoutViewModel logoutViewModel = Get.put(LogoutViewModel());
   final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+  final NetworkApiServices _apiServices = NetworkApiServices();
+  final UserPreference _userPreference = UserPreference();
   RxInt selectedIndex = 0.obs;
   RxString userName = 'User'.obs;
   RxString userEmail = 'user@example.com'.obs;
@@ -18,6 +23,11 @@ class HomeViewModel extends GetxController {
   RxMap<DateTime, List<Map<String, dynamic>>> tasksByDate =
       <DateTime, List<Map<String, dynamic>>>{}.obs;
   RxBool tasksLoading = false.obs;
+
+  // Tasks by specific date (for API call)
+  RxList<Map<String, dynamic>> tasksBySpecificDate =
+      <Map<String, dynamic>>[].obs;
+  RxBool tasksByDateLoading = false.obs;
 
   @override
   void onInit() {
@@ -93,12 +103,35 @@ class HomeViewModel extends GetxController {
         // Extract task date from task_date_time
         String? taskDateTimeStr = task['task_date_time'];
         if (taskDateTimeStr != null && taskDateTimeStr.isNotEmpty) {
-          DateTime taskDate = DateTime.parse(taskDateTimeStr);
-          // Normalize to date only (remove time)
+          // Parse as local time to avoid timezone conversion issues
+          DateTime taskDate;
+          try {
+            // If the string contains 'T' or 'Z', handle it carefully
+            if (taskDateTimeStr.contains('T')) {
+              // Remove 'Z' if present and parse as local time
+              String localDateStr = taskDateTimeStr.replaceAll('Z', '');
+              taskDate = DateTime.parse(localDateStr);
+            } else {
+              taskDate = DateTime.parse(taskDateTimeStr);
+            }
+          } catch (e) {
+            print('⚠️ Error parsing date: $taskDateTimeStr, error: $e');
+            continue; // Skip this task if date parsing fails
+          }
+
+          // Normalize to date only (remove time) - ensure we keep the same date
           DateTime normalizedDate = DateTime(
             taskDate.year,
             taskDate.month,
             taskDate.day,
+          );
+
+          print('📅 Processing task: ${task['job_title'] ?? 'Unknown'}');
+          print('📅 Original date string: $taskDateTimeStr');
+          print('📅 Parsed taskDate: $taskDate');
+          print('📅 Normalized date: $normalizedDate');
+          print(
+            '📅 Normalized date components: ${normalizedDate.year}-${normalizedDate.month}-${normalizedDate.day}',
           );
 
           // Add to set of unique dates
@@ -196,5 +229,83 @@ class HomeViewModel extends GetxController {
 
   void openScreen(Widget screen) {
     overrideScreen.value = screen; // set special screen
+  }
+
+  /// Fetch tasks for a specific date using the API
+  Future<void> fetchTasksByDate(DateTime selectedDate, String tokenId) async {
+    try {
+      tasksByDateLoading.value = true;
+      tasksBySpecificDate.clear();
+
+      print('🔴 DEBUG: fetchTasksByDate called with: $selectedDate');
+
+      // Get user token
+      final userData = await _userPreference.getUser();
+
+      print(
+        '🔴 DEBUG: Token preview: ${tokenId.isEmpty ? 'EMPTY' : tokenId.substring(0, 10)}...',
+      );
+
+      if (tokenId.isEmpty) {
+        print('❌ No token found, cannot fetch tasks by date');
+        return;
+      }
+
+      // Format date as required by API (YYYY-MM-DD)
+      String formattedDate =
+          "${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
+      print('🔴 DEBUG: Formatted date for API: $formattedDate');
+      print(
+        '🔴 DEBUG: Full API URL will be: ${AppUrl.taskByDate}/$formattedDate',
+      );
+      print('🔴 DEBUG: Calling getTaskByDate...');
+
+      // Use the existing getTaskByDate method from NetworkApiServices
+      print('🔴 DEBUG: About to call API with:');
+      print('🔴 DEBUG: - Token: ${tokenId.substring(0, 10)}...');
+      print('🔴 DEBUG: - TaskId (date): $formattedDate');
+      print('🔴 DEBUG: - URL: ${AppUrl.taskByDate}');
+      print(
+        '🔴 DEBUG: - Full URL will be: ${AppUrl.taskByDate}/$formattedDate',
+      );
+
+      dynamic response = await _apiServices.getTaskByDate(
+        tokenId,
+        date: formattedDate, // Using taskId parameter for the date
+        url: AppUrl.taskByDate,
+      );
+
+      print('🔴 DEBUG: API Response received: $response');
+      print('🔴 DEBUG: Response type: ${response.runtimeType}');
+
+      if (response != null && response['status'] == true) {
+        // Handle the response data
+        List<dynamic> tasksData = response['tasks'] ?? [];
+
+        tasksBySpecificDate.value = tasksData.map((task) {
+          return Map<String, dynamic>.from(task);
+        }).toList();
+
+        print(
+          '✅ Successfully fetched ${tasksBySpecificDate.length} tasks for date: $formattedDate',
+        );
+      } else {
+        print(
+          '❌ Failed to fetch tasks by date: ${response?['message'] ?? 'Unknown error'}',
+        );
+        tasksBySpecificDate.clear();
+      }
+    } catch (e) {
+      print('❌ Error fetching tasks by date: $e');
+      tasksBySpecificDate.clear();
+    } finally {
+      tasksByDateLoading.value = false;
+    }
+  }
+
+  /// Format date for display
+  String formatDisplayDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   }
 }

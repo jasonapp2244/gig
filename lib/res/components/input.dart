@@ -11,8 +11,9 @@ class CustomInputField extends StatefulWidget {
   final Icon? prefixIcon;
   final bool? requiredField;
   final String? Function(String?)? validator;
+  bool? isEdit;
 
-  const CustomInputField({
+  CustomInputField({
     super.key,
     required this.controller,
     required this.fieldType,
@@ -21,6 +22,7 @@ class CustomInputField extends StatefulWidget {
     this.prefixIcon,
     this.requiredField,
     this.validator,
+    this.isEdit,
   });
 
   @override
@@ -56,17 +58,20 @@ class _CustomInputFieldState extends State<CustomInputField> {
     }
 
     return TextFormField(
+      enabled: widget.isEdit ?? true,
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
       controller: widget.controller,
-      validator: widget.validator ?? (value) {
-        if (widget.requiredField == true) {
-          if (value == null || value.isEmpty) {
-            return 'This field is required';
-          }
-        }
-        return null;
-      },
+      validator:
+          widget.validator ??
+          (value) {
+            if (widget.requiredField == true) {
+              if (value == null || value.isEmpty) {
+                return 'This field is required';
+              }
+            }
+            return null;
+          },
       obscureText: isPassword ? _obscureText : false,
       obscuringCharacter: '*',
       keyboardType: keyboardType,

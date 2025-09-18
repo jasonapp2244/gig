@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:gig/repository/profile/profile_repository.dart';
-import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/data/app_exceptions.dart';
 import 'package:path_provider/path_provider.dart';
