@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           getPages: AppRoutes.appRoutes(),
           debugShowCheckedModeBanner: false,
-          title: 'Reigns',
+          title: 'GIG',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSwatch(primarySwatch: primeSwatch),
             useMaterial3: true,
