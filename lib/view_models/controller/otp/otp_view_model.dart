@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -14,20 +16,30 @@ class OtpViewModel extends GetxController {
   UserPreference userPreference = UserPreference();
 
   RxBool loading = false.obs;
+  String? _fcmToken;
+  Future<String?> _getToken() async {
+    await FirebaseMessaging.instance.requestPermission();
+
+    String? token = await FirebaseMessaging.instance.getToken();
+    _fcmToken = token;
+
+    print("✅ FCM Token: $token");
+    return token;
+  }
 
   Future<void> otpApi(String email) async {
     loading.value = true;
-
+    String? token = await _getToken();
     Map<String, String> data = {
       'email': email,
       'otp': otpVerificationController.value.text,
+      'fcm_token': token.toString(),
     };
 
     _api
         .otpApi(data)
         .then((value) async {
           loading.value = false;
-         
 
           if (value['status'] == true) {
             Utils.snakBar(
@@ -73,8 +85,7 @@ class OtpViewModel extends GetxController {
             await userPreference.saveUser(UserModel.fromJson(value));
 
             // Navigate to home screen
-            Get.to(ScreenHolderScreen
-            ());
+            Get.to(ScreenHolderScreen());
           } else {
             Utils.snakBar(
               'OTP Error',

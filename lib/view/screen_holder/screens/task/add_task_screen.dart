@@ -33,6 +33,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (widget.selectedDate != null) {
       dateToUse = widget.selectedDate;
       print('🔍 AddTaskScreen - Using constructor selectedDate: $dateToUse');
+      print('🔍 AddTaskScreen - Constructor date components: ${widget.selectedDate!.year}-${widget.selectedDate!.month}-${widget.selectedDate!.day}');
     } else {
       final args = Get.arguments;
       print('🔍 AddTaskScreen - Received arguments: $args');
@@ -265,20 +266,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  // Widget _buildStraightTime() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 20),
-  //     child: CustomInputField(
-  //       controller: addTaskVM.straightTimeController.value,
-  //       fieldType: 'number',
-  //       hintText: "Straight time",
-  //       requiredField: true,
-  //       validator: (value) => (value == null || value.isEmpty)
-  //           ? 'Straight time is required'
-  //           : null,
-  //     ),
-  //   );
-  // }
+
 
   Widget _buildNotes() {
     return Padding(

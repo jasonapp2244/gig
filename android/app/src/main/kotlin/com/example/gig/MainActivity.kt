@@ -1,4 +1,4 @@
-package com.craftech1.gig
+package com.craftech.gig
 
 import io.flutter.embedding.android.FlutterActivity
 

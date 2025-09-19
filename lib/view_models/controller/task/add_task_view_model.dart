@@ -42,7 +42,10 @@ class AddTaskViewModel extends GetxController {
     }
 
     // Handle null selectedDate by using current date as default
+    print('🔍 AddTaskAPI - selectedDate before assignment: $selectedDate');
+    print('🔍 AddTaskAPI - selectedDate is null: ${selectedDate == null}');
     DateTime taskDate = selectedDate ?? DateTime.now();
+    print('🔍 AddTaskAPI - taskDate after assignment: $taskDate');
 
     // Create a DateTime with the selected date and current time
     DateTime now = DateTime.now();

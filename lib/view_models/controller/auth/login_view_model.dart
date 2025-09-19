@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../repository/auth_repository/login_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
@@ -92,13 +94,45 @@ class LoginVewModel extends GetxController {
   //         Utils.snakBar('Error', error.toString());
   //       });
   // }
+  Future<String?> _getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // On Android 13+ and iOS: ask user for notification permission
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print('🔥 FCM Permission Status: ${settings.authorizationStatus}');
+
+    if (settings.authorizationStatus == AuthorizationStatus.denied) {
+      // Extra fallback using permission_handler (some OEMs block by default)
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+
+      if (await Permission.notification.isDenied) {
+        print('🚫 Notification permission denied');
+        return null;
+      }
+    }
+
+    // ✅ Always try to get the token if not denied
+    String? token = await messaging.getToken();
+    print("✅ FCM Token: $token");
+    return token;
+  }
+
   void loginApi() async {
     try {
       loading.value = true;
 
+      String token = await _getToken() ?? '';
       Map data = {
         'email': emailController.value.text,
         'password': passwordController.value.text,
+        'fcm_token': token,
       };
 
       // Await the API call only once

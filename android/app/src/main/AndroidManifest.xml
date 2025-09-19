@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.craftech1.gig">
+    package="com.craftech.gig">
 
     <!-- Required permissions for FCM -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -46,6 +46,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        
     </application>
 
     <!-- Package visibility for PROCESS_TEXT -->
