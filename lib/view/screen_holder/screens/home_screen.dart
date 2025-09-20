@@ -9,7 +9,6 @@ import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../view_models/controller/home/home_view_model.dart';
-import '../../../res/components/specific_task_block.dart';
 
 import '../../../res/colors/app_color.dart';
 

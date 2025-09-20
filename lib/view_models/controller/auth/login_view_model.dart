@@ -94,6 +94,67 @@ class LoginVewModel extends GetxController {
   //         Utils.snakBar('Error', error.toString());
   //       });
   // }
+  //   Future<Map<String, dynamic>?> signInWithGoogle() async {
+  //   try {
+  //     // 1. Trigger Google Sign-In
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     if (googleUser == null) {
+  //       print("🚫 Google Sign-In canceled by user");
+  //       return null;
+  //     }
+
+  //     // 2. Get authentication details
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+
+  //     // 3. Create Firebase credential
+  //     final OAuth credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     // 4. Sign in to Firebase
+  //     final UserCredential userCredential =
+  //         await _auth.signInWithCredential(credential);
+
+  //     final User? user = userCredential.user;
+
+  //     if (user == null) return null;
+
+  //     // 🔥 Extract provider info
+  //     final providerData = user.providerData.first;
+  //     final String providerId = providerData.providerId; // "google.com"
+  //     final String serviceId = providerData.uid;         // Google account ID
+
+  //     print("✅ Google Sign-In successful: ${user.displayName}");
+  //     print("📧 Email: ${user.email}");
+  //     print("🆔 Firebase UID: ${user.uid}");
+  //     print("🌐 Provider: $providerId");
+  //     print("🆔 Service ID: $serviceId");
+
+  //     // Return a structured object you can send to your backend
+  //     return {
+  //       "firebase_uid": user.uid,
+  //       "email": user.email,
+  //       "name": user.displayName,
+  //       "photo": user.photoURL,
+  //       "provider_id": providerId, // "google.com"
+  //       "service_id": serviceId,   // Google account ID
+  //     };
+  //   } catch (e, stack) {
+  //     print("❌ Google Sign-In failed: $e");
+  //     print(stack);
+  //     return null;
+  //   }
+  // }
+
+  // /// Sign out from Google + Firebase
+  // Future<void> signOut() async {
+  //   await _googleSignIn.signOut();
+  //   await _auth.signOut();
+  //   print("👋 Signed out from Google and Firebase");
+  // }
+
   Future<String?> _getToken() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 

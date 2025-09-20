@@ -2,15 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:gig/view_models/controller/otp/resend_otp_view_model.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/auth/user_model.dart';
 import '../../../repository/auth_repository/register_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterVewModel extends GetxController {
   final _api = RegisterRepository();

@@ -20,7 +20,6 @@ import '../../view/onboarding_screen/onboarding_screen.dart';
 import '../../view/password/forget_password.dart';
 import '../../view/screen_holder/screens/adds/crate_a_add_screen.dart';
 import '../../view/screen_holder/screens/employer/employer_screen.dart';
-import '../../view/screen_holder/screens/market_place_screen/single_product_screen.dart';
 import '../../view/screen_holder/screens/task/add_task_screen.dart';
 import '../../view/screen_holder/screens/task/task_screen.dart';
 

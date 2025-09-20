@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:gig/view_models/controller/task/edit_task_view_model.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
-import '../../../../res/components/round_button.dart';
-import '../../../../res/routes/routes_name.dart';
 
 class EditTaskScreen extends StatefulWidget {
   const EditTaskScreen({super.key});
