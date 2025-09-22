@@ -9,7 +9,6 @@ import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/view_models/controller/profile/add_profile_controller.dart';
 import 'package:gig/view_models/controller/profile/get_profile_view_model.dart';
 
-
 class AddProfileScreen extends StatefulWidget {
   const AddProfileScreen({super.key});
 
@@ -124,10 +123,6 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       fieldType: 'text',
       hintText: "Address",
       requiredField: true,
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Address is required';
-        return null;
-      },
     );
   }
 

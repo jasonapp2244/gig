@@ -48,7 +48,7 @@ class _TaskScreenState extends State<TaskScreen>
     });
   }
 
-  final List<String> tabs = ['Ongoing', 'Completed'];
+  final List<String> tabs = ['Ongoing', 'Incomplete', 'Completed'];
 
   @override
   void initState() {
@@ -100,9 +100,7 @@ class _TaskScreenState extends State<TaskScreen>
           final summaryText = (summary['summary_text'] ?? '')
               .toString()
               .toLowerCase();
-          final status = (summary['status'].toLowercase() ?? '')
-              .toString()
-              .toLowerCase();
+          final status = (summary['status'] ?? '').toString().toLowerCase();
           final searchLower = searchText.toLowerCase();
 
           return employerName.contains(searchLower) ||
@@ -136,8 +134,9 @@ class _TaskScreenState extends State<TaskScreen>
     switch (status?.toLowerCase()) {
       case 'completed':
         return 'Completed';
+      case 'incomplete':
       case 'pending':
-        return 'Ongoing';
+        return 'Incomplete';
       case 'ongoing':
         return 'Ongoing';
       case 'in_progress':
@@ -160,7 +159,7 @@ class _TaskScreenState extends State<TaskScreen>
 
         centerTitle: true,
         title: Text(
-          'Tasks',
+          'Work History',
           style: TextStyle(
             color: AppColor.secondColor,
             fontSize: 18,
@@ -239,6 +238,12 @@ class _TaskScreenState extends State<TaskScreen>
                       showSummaries: false,
                       currentTabStatus: 'Ongoing',
                     ),
+                    _buildTaskList(
+                      getFilteredTasksByTab('pending'),
+                      showSummaries: false,
+                      currentTabStatus: 'Incomplete',
+                    ),
+                    // Com
                     // Completed - Show completed tasks from employer_status_summary
                     _buildTaskList(
                       getFilteredTasksByTab('Completed'),
@@ -321,6 +326,9 @@ class _TaskScreenState extends State<TaskScreen>
             if (currentTabStatus == 'Ongoing') {
               displayCount =
                   int.tryParse(summaryData['ongoing']?.toString() ?? '0') ?? 0;
+            } else if (currentTabStatus == 'Incomplete') {
+              displayCount =
+                  int.tryParse(summaryData['pending']?.toString() ?? '0') ?? 0;
             } else {
               displayCount =
                   int.tryParse(summaryData['completed']?.toString() ?? '0') ??

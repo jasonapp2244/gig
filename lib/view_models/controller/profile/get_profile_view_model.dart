@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:gig/repository/profile/profile_repository.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/data/app_exceptions.dart';
+import 'package:gig/res/app_url/app_url.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 
@@ -31,11 +32,24 @@ class GetProfileViewModel extends GetxController {
       loading.value = true;
       error.value = '';
 
-      print(' Fetching user profile...');
+      print('🔄 Fetching user profile...');
+      
+      // Check if token exists before making API call
+      String? token = await Utils.readSecureData('auth_token');
+      if (token == null || token.isEmpty) {
+        error.value = 'Authentication token not found. Please login again.';
+        Utils.snakBar('Error', error.value);
+        return;
+      }
+      
+      print('🔑 Token exists: ${token.substring(0, 10)}...');
+      print('🌐 API URL: ${AppUrl.getProfileApi}');
 
       dynamic response = await _profileRepository.getProfile();
 
-      print(' Profile response: $response');
+      print('📡 Profile response received');
+      print('📡 Response type: ${response.runtimeType}');
+      print('📡 Profile response: $response');
 
       if (response != null) {
         if (response['status'] == true) {
@@ -58,12 +72,15 @@ class GetProfileViewModel extends GetxController {
           );
           print(' Profile data stored in secure storage');
         } else {
-          error.value = response['message'] ?? 'Failed to load profile';
-          Utils.snakBar('Error', error.value);
+          String apiError = response['message'] ?? 'Failed to load profile';
+          error.value = 'Server Error: $apiError';
+          print('❌ API Error: $apiError');
+          Utils.snakBar('Profile Error', apiError);
         }
       } else {
-        error.value = 'No response from server';
-        Utils.snakBar('Error', error.value);
+        error.value = 'No response from server. Please check your internet connection.';
+        print('❌ No response received from profile API');
+        Utils.snakBar('Network Error', error.value);
       }
     } catch (e) {
       loading.value = false;

@@ -9,7 +9,6 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../../../../res/components/custom_photo_widget.dart';
 import '../../../../view_models/controller/profile/get_profile_view_model.dart';
 
-
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
 
@@ -316,9 +315,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       width: 100,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white24),
+        border: Border.all(color: Colors.white),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +330,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           LinearPercentIndicator(
             lineHeight: 6,
             percent: percent,
-            backgroundColor: Colors.white30,
+            backgroundColor: Colors.white,
             progressColor: Colors.orange,
             barRadius: const Radius.circular(6),
             animation: true,

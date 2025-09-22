@@ -196,12 +196,17 @@ class GetTaskViewModel extends GetxController {
 
         // Filter based on status
         bool shouldInclude = false;
+        final pendingTasks = summary['pending'] ?? 0; // Add pending tasks count
+        
         if (status == 'Ongoing') {
           // Show employers that have ongoing tasks
           shouldInclude = ongoingTasks > 0;
         } else if (status == 'Completed') {
           // Show employers that have completed tasks
           shouldInclude = completedTasks > 0;
+        } else if (status == 'pending' || status == 'Incomplete') {
+          // Show employers that have pending/incomplete tasks
+          shouldInclude = pendingTasks > 0;
         }
 
         if (shouldInclude) {
@@ -211,6 +216,7 @@ class GetTaskViewModel extends GetxController {
             'total': totalTasks,
             'completed': completedTasks,
             'ongoing': ongoingTasks,
+            'pending': pendingTasks, // Add pending tasks count
             'percentage': percentage.toString(),
             'summary_text': summaryText,
             'from_date': fromDate,

@@ -25,9 +25,10 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     TaskScreen(),
-    NotificationScreen(),
+
     IncomeTracker(),
     UserProfileScreen(),
+    Container(),
   ];
   @override
   Widget build(BuildContext context) {

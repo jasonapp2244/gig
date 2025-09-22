@@ -26,12 +26,32 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isDialogOpen = false;
   bool _isLoadingTasks = false;
 
+  /// Refresh calendar and maintain current selection
+  Future<void> _refreshCalendarState([DateTime? maintainSelectedDate]) async {
+    if (!mounted) return;
+    
+    final HomeViewModel homeController = Get.find<HomeViewModel>();
+    await homeController.silentRefreshTasksForCalendar();
+    
+    if (mounted) {
+      setState(() {
+        if (maintainSelectedDate != null) {
+          _selectedDay = maintainSelectedDate;
+          _focusedDay = maintainSelectedDate;
+        }
+        // Force calendar rebuild to show updated markers
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     // Refresh calendar data when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final HomeViewModel homeController = Get.find<HomeViewModel>();
+      // Force initial calendar refresh
+      homeController.silentRefreshTasksForCalendar();
     });
   }
 
@@ -41,13 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // Refresh calendar data when screen becomes visible
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        final HomeViewModel homeController = Get.find<HomeViewModel>();
-        homeController.silentRefreshTasksForCalendar();
-
-        // Force calendar to refresh its state
-        setState(() {
-          // This will trigger a rebuild and refresh the calendar markers
-        });
+        // Use the new refresh method to maintain selected state
+        _refreshCalendarState(_selectedDay);
       }
     });
   }
@@ -201,24 +216,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              return TableCalendar(
+              return TableCalendar<Map<String, dynamic>>(
                 firstDay: DateTime.utc(2020, 1, 1),
                 lastDay: DateTime.utc(2030, 12, 31),
                 focusedDay: _focusedDay,
                 selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                 calendarFormat: _calendarFormat,
                 onFormatChanged: (format) {
-                  setState(() {
-                    _calendarFormat = format;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  }
                 },
                 daysOfWeekVisible: true,
                 onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    _selectedDay = selectedDay;
-                    _focusedDay = focusedDay;
-                  });
-                  _handleDateSelection(selectedDay, homeController);
+                  if (mounted) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                    _handleDateSelection(selectedDay, homeController);
+                  }
+                },
+                onPageChanged: (focusedDay) {
+                  if (mounted) {
+                    setState(() {
+                      _focusedDay = focusedDay;
+                    });
+                  }
                 },
                 // Add event loader to show task indicators
                 eventLoader: (day) {
@@ -458,6 +484,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // No tasks found from API - go directly to AddTaskScreen
         print('🔍 No tasks found from API, navigating to AddTaskScreen...');
         homeController.openScreen(AddTaskScreen(selectedDate: selectedDate));
+        
+        // Keep the selected date marked and refresh calendar
+        await _refreshCalendarState(selectedDate);
       }
     } catch (e) {
       print('❌ Error in _handleDateSelection: $e');
@@ -547,13 +576,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 20),
                 // Add new task button
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
                     _isDialogOpen = false;
                     Navigator.pop(context);
                     final homeVM = Get.find<HomeViewModel>();
                     homeVM.openScreen(
                       AddTaskScreen(selectedDate: selectedDate),
                     );
+                    
+                    // Keep the selected date marked and refresh calendar
+                    await _refreshCalendarState(selectedDate);
                   },
                   icon: Icon(Icons.add, color: Colors.white),
                   label: Text('Add New Task'),

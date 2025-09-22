@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../repository/task/add_task_repository.dart';
 import '../../../repository/employer/employer_repository.dart';
@@ -17,12 +18,15 @@ class AddTaskViewModel extends GetxController {
   final employerController = TextEditingController().obs;
   final jobTypeController = TextEditingController().obs;
   final locationController = TextEditingController().obs;
+  final positionController = TextEditingController().obs;
   final supervisorController = TextEditingController().obs;
   // final workingHoursController = TextEditingController().obs;
   final wagesController = TextEditingController().obs;
   final straightTimeController = TextEditingController().obs;
   final notesController = TextEditingController().obs;
+  final timeController = TextEditingController().obs;
   DateTime? selectedDate;
+  Rx<DateTime?> selectedTime = Rx<DateTime?>(null);
 
   RxBool loading = false.obs;
   RxBool employerLoading = false.obs;
@@ -47,16 +51,35 @@ class AddTaskViewModel extends GetxController {
     DateTime taskDate = selectedDate ?? DateTime.now();
     print('🔍 AddTaskAPI - taskDate after assignment: $taskDate');
 
-    // Create a DateTime with the selected date and current time
+    // Create a DateTime with the selected date and time
     DateTime now = DateTime.now();
-    DateTime taskDateTime = DateTime(
-      taskDate.year,
-      taskDate.month,
-      taskDate.day,
-      now.hour, // Use current hour
-      now.minute, // Use current minute
-      now.second, // Use current second
-    );
+    DateTime taskDateTime;
+
+    if (selectedTime.value != null) {
+      // Use selected time with selected date
+      taskDateTime = DateTime(
+        taskDate.year,
+        taskDate.month,
+        taskDate.day,
+        selectedTime.value!.hour,
+        selectedTime.value!.minute,
+        selectedTime.value!.second,
+      );
+      print(
+        '🕐 Using selected time: ${selectedTime.value!.hour}:${selectedTime.value!.minute}',
+      );
+    } else {
+      // Use current time if no time selected
+      taskDateTime = DateTime(
+        taskDate.year,
+        taskDate.month,
+        taskDate.day,
+        now.hour,
+        now.minute,
+        now.second,
+      );
+      print('🕐 Using current time: ${now.hour}:${now.minute}');
+    }
 
     print('🔍 Original selectedDate: $selectedDate');
     print('🔍 Original taskDate: $taskDate');
@@ -248,5 +271,41 @@ class AddTaskViewModel extends GetxController {
     } finally {
       employerLoading.value = false;
     }
+  }
+
+  DateTime? _countryTime;
+
+  // Method to select time
+  Future<void> selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime.value != null
+          ? TimeOfDay.fromDateTime(selectedTime.value!)
+          : TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      // Create a DateTime with the picked time
+      final now = DateTime.now();
+      selectedTime.value = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        picked.hour,
+        picked.minute,
+      );
+
+      // Update the text field with formatted time
+      timeController.value.text = picked.format(context);
+      print('🕐 Time selected: ${selectedTime.value}');
+      print('🕐 Time field updated: ${timeController.value.text}');
+    }
+  }
+
+  // Method to clear selected time
+  void clearSelectedTime() {
+    selectedTime.value = null;
+    timeController.value.clear();
+    print('🕐 Time cleared');
   }
 }

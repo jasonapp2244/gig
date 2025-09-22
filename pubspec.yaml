@@ -59,6 +59,8 @@ dependencies:
   json_annotation: ^4.9.0
   build_runner: ^2.8.0
   json_serializable: ^6.11.1
+  one_clock: ^2.0.2
+  intl:
 
 
 

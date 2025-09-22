@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
+import 'package:intl/intl.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
@@ -8,6 +9,7 @@ import '../../../../res/components/employer_dropdown.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
 import '../../../../view_models/controller/home/home_view_model.dart';
 import '../../../../utils/utils.dart';
+import 'package:one_clock/one_clock.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final DateTime? selectedDate;
@@ -33,7 +35,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (widget.selectedDate != null) {
       dateToUse = widget.selectedDate;
       print('🔍 AddTaskScreen - Using constructor selectedDate: $dateToUse');
-      print('🔍 AddTaskScreen - Constructor date components: ${widget.selectedDate!.year}-${widget.selectedDate!.month}-${widget.selectedDate!.day}');
+      print(
+        '🔍 AddTaskScreen - Constructor date components: ${widget.selectedDate!.year}-${widget.selectedDate!.month}-${widget.selectedDate!.day}',
+      );
     } else {
       final args = Get.arguments;
       print('🔍 AddTaskScreen - Received arguments: $args');
@@ -86,19 +90,22 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       const SizedBox(height: 15),
                       _buildLocation(),
                       const SizedBox(height: 15),
+                      _buildPosition(),
+                      const SizedBox(height: 15),
+                      _buildTimeSelector(),
+                      const SizedBox(height: 15),
                       _buildSupervisor(),
                       const SizedBox(height: 15),
                       _buildWages(),
-                      //const SizedBox(height: 15),
-                      //   _buildStraightTime(),
                       const SizedBox(height: 15),
                       _buildNotes(),
                       const SizedBox(height: 15),
+                      //const SizedBox(height: 15),
+                      _buildSubmitButton(),
                     ],
                   ),
                 ),
               ),
-              _buildSubmitButton(),
             ],
           ),
         ),
@@ -237,6 +244,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
+  Widget _buildPosition() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.positionController.value,
+        fieldType: 'text',
+        hintText: "Position",
+        requiredField: true,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Position is required' : null,
+      ),
+    );
+  }
+
   Widget _buildSupervisor() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -248,6 +269,36 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         validator: (value) => (value == null || value.isEmpty)
             ? 'Supervisor contact is required'
             : null,
+      ),
+    );
+  }
+
+  Widget _buildTimeSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white24, width: 1.5),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: GestureDetector(
+          onTap: () => addTaskVM.selectTime(context),
+          child: AbsorbPointer(
+            child: Obx(
+              () => CustomInputField(
+                controller: addTaskVM.timeController.value,
+                fieldType: 'text',
+                hintText: "Select Time",
+                requiredField: true,
+                isEdit: false, // This makes it non-editable
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'Time is required'
+                    : null,
+                prefixIcon: Icon(Icons.access_time, color: AppColor.primeColor),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -265,8 +316,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       ),
     );
   }
-
-
 
   Widget _buildNotes() {
     return Padding(
