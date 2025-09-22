@@ -13,6 +13,9 @@ class LoginVewModel extends GetxController {
   UserPreference userPreference = UserPreference();
   final emailController = TextEditingController().obs;
   final passwordController = TextEditingController().obs;
+  // final remeberMe= fa
+
+  final confirmpasswordController = TextEditingController().obs;
 
   RxBool loading = false.obs;
 

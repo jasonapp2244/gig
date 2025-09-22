@@ -5,9 +5,6 @@ import 'package:gig/view_models/controller/password/forget_password_view_model.d
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../res/components/round_button.dart';
-import '../../res/fonts/app_fonts.dart';
-import '../../res/routes/routes_name.dart';
-
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
 
@@ -24,19 +21,8 @@ class _RegisterState extends State<ForgetPassword> {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Positioned(
-              top: 10,
-              left: 20,
-              child: InkWell(
-                onTap: () {
-                  // Get.toNamed(RoutesName.loginScreen);
-                  Navigator.pop(context);
-                },
-                child: Icon(Icons.arrow_back, color: AppColor.primeColor),
-              ),
-            ),
             Container(
               padding: EdgeInsets.only(top: 0, bottom: 0, left: 25, right: 25),
               child: Column(
@@ -53,7 +39,7 @@ class _RegisterState extends State<ForgetPassword> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    'Lorem Ipsum is simply dummy text',
+                    'Your Registered Email',
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColor.whiteColor,
@@ -84,45 +70,47 @@ class _RegisterState extends State<ForgetPassword> {
                           () => RoundButton(
                             width: double.infinity,
                             height: 50,
-                            title: 'Continue',
+                            title: 'Forgot',
                             loading: forgetPasswordVM.loading.value,
                             buttonColor: AppColor.primeColor,
                             onPress: () {
                               if (_formKey.currentState!.validate()) {
                                 forgetPasswordVM.forgetPasswordApi();
+
+                                Navigator.pop(context);
                               }
                             },
                           ),
                         ),
                         SizedBox(height: 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Back to ',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: AppFonts.appFont,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Get.toNamed(RoutesName.loginScreen);
-                              },
-                              child: Text(
-                                'Login',
-                                style: TextStyle(
-                                  color: AppColor.primeColor,
-                                  fontFamily: AppFonts.appFont,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       'Back to ',
+                        //       style: TextStyle(
+                        //         color: Colors.white,
+                        //         fontFamily: AppFonts.appFont,
+                        //         fontSize: 16,
+                        //         fontWeight: FontWeight.w400,
+                        //       ),
+                        //     ),
+                        //     InkWell(
+                        //       onTap: () {
+                        //         Get.toNamed(RoutesName.loginScreen);
+                        //       },
+                        //       child: Text(
+                        //         'Login',
+                        //         style: TextStyle(
+                        //           color: AppColor.primeColor,
+                        //           fontFamily: AppFonts.appFont,
+                        //           fontSize: 16,
+                        //           fontWeight: FontWeight.w900,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),

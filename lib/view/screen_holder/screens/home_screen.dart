@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
@@ -10,7 +11,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../view_models/controller/home/home_view_model.dart';
 
-import '../../../res/colors/app_color.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
