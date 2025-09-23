@@ -152,6 +152,11 @@ class GetTaskViewModel extends GetxController {
               bool isCompleted = hasEntry == true || taskStatus == 'completed';
               print('🔍 Is Completed: $isCompleted');
               return isCompleted;
+            } else if (status == 'Incomplete' || status == 'pending') {
+              // Show tasks that are incomplete/pending (not completed and not ongoing)
+              bool isIncomplete = !hasEntry && (taskStatus == 'pending' || taskStatus == 'incomplete');
+              print('🔍 Is Incomplete: $isIncomplete');
+              return isIncomplete;
             }
 
             return false;

@@ -78,7 +78,43 @@ class _TaskScreenState extends State<TaskScreen>
   List<Map<String, dynamic>> getFilteredTasksByTab(String status) {
     print('🔍 getFilteredTasksByTab called with status: $status');
 
-    // Get employer summaries grouped by employer instead of individual tasks
+    // For Incomplete tab, show individual task cards instead of employer summaries
+    if (status == 'Incomplete' || status == 'pending') {
+      List<Map<String, dynamic>> individualTasks = taskViewModel
+          .getTasksByStatusFromSummary(status);
+
+      print('🔍 Individual tasks count: ${individualTasks.length}');
+
+      // Apply search filter on individual tasks
+      if (searchText.isEmpty) {
+        print('🔍 No search text, returning all individual tasks');
+        return individualTasks;
+      }
+
+      print('🔍 Applying search filter with text: $searchText');
+
+      List<Map<String, dynamic>> searchFilteredTasks = individualTasks.where((
+        task,
+      ) {
+        final jobTitle = (task['job_title'] ?? '').toString().toLowerCase();
+        final employer = (task['employer'] ?? '').toString().toLowerCase();
+        final location = (task['location'] ?? '').toString().toLowerCase();
+        final taskStatus = (task['status'] ?? '').toString().toLowerCase();
+        final searchLower = searchText.toLowerCase();
+
+        return jobTitle.contains(searchLower) ||
+            employer.contains(searchLower) ||
+            location.contains(searchLower) ||
+            taskStatus.contains(searchLower);
+      }).toList();
+
+      print(
+        '🔍 Search filtered individual tasks count: ${searchFilteredTasks.length}',
+      );
+      return searchFilteredTasks;
+    }
+
+    // For other tabs, get employer summaries grouped by employer
     List<Map<String, dynamic>> employerSummaries = taskViewModel
         .getEmployerSummariesByStatus(status);
 
@@ -239,7 +275,7 @@ class _TaskScreenState extends State<TaskScreen>
                       currentTabStatus: 'Ongoing',
                     ),
                     _buildTaskList(
-                      getFilteredTasksByTab('pending'),
+                      getFilteredTasksByTab('Incomplete'),
                       showSummaries: false,
                       currentTabStatus: 'Incomplete',
                     ),
@@ -308,69 +344,105 @@ class _TaskScreenState extends State<TaskScreen>
       );
     }
 
+    // Check if we're showing individual tasks (for Incomplete tab) or employer summaries
+    bool isShowingIndividualTasks =
+        currentTabStatus == 'Incomplete' &&
+        tasksToShow.isNotEmpty &&
+        tasksToShow.first.containsKey('job_title');
+
     return RefreshIndicator(
       onRefresh: () async {
         await taskViewModel.refreshData(); // Use the new refresh method
       },
       child: ListView(
         children: [
-          // Show employer summaries grouped by employer
-          ...tasksToShow.map((summaryData) {
-            String taskStatus = _formatTaskStatus(
-              summaryData['status'],
-              summaryData['has_entry'],
-            );
+          if (isShowingIndividualTasks)
+            // Show individual task cards for Incomplete tab
+            ...tasksToShow.map((taskData) {
+              String taskStatus = _formatTaskStatus(
+                taskData['status'],
+                taskData['has_entry'],
+              );
 
-            // Determine the correct count based on the current tab, not the task status
-            int displayCount;
-            if (currentTabStatus == 'Ongoing') {
-              displayCount =
-                  int.tryParse(summaryData['ongoing']?.toString() ?? '0') ?? 0;
-            } else if (currentTabStatus == 'Incomplete') {
-              displayCount =
-                  int.tryParse(summaryData['pending']?.toString() ?? '0') ?? 0;
-            } else {
-              displayCount =
-                  int.tryParse(summaryData['completed']?.toString() ?? '0') ??
-                  0;
-            }
+              return TaskBlock(
+                id: int.tryParse(taskData['id']?.toString() ?? '0'),
+                title: '${taskData['job_title'] ?? 'Unknown Task'}',
+                startDate: _formatDate(taskData['task_date_time']),
+                status: taskStatus,
+                count: 1, // Individual task, so count is always 1
+                endDate: _formatDate(taskData['task_end_date_time']),
+                profileImage: 'https://i.pravatar.cc/300',
+                progress: taskData['has_entry'] == true ? 1.0 : 0.0,
+                totalTasks: 1,
+                employer: taskData['employer'] ?? '',
+                onTap: () {
+                  // Navigate to task details or edit screen
+                  print('Individual task tapped: ${taskData['id']}');
+                  // You can add navigation to task details here
+                },
+              );
+            })
+          else
+            // Show employer summaries grouped by employer (for Ongoing and Completed tabs)
+            ...tasksToShow.map((summaryData) {
+              String taskStatus = _formatTaskStatus(
+                summaryData['status'],
+                summaryData['has_entry'],
+              );
 
-            // Debug logging to see what values we're getting
+              // Determine the correct count based on the current tab, not the task status
+              int displayCount;
+              if (currentTabStatus == 'Ongoing') {
+                displayCount =
+                    int.tryParse(summaryData['ongoing']?.toString() ?? '0') ??
+                    0;
+              } else if (currentTabStatus == 'Incomplete') {
+                displayCount =
+                    int.tryParse(summaryData['pending']?.toString() ?? '0') ??
+                    0;
+              } else {
+                displayCount =
+                    int.tryParse(summaryData['completed']?.toString() ?? '0') ??
+                    0;
+              }
 
-            return TaskBlock(
-              id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
-              title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
-              startDate: _formatDate(summaryData['from_date']),
-              status: taskStatus,
-              count: displayCount, // Use the correct count based on current tab
-              endDate: _formatDate(summaryData['to_date']),
-              profileImage: 'https://i.pravatar.cc/300',
-              progress:
-                  (double.tryParse(
-                        summaryData['percentage']?.toString() ?? '0',
-                      ) ??
-                      0.0) /
-                  100.0,
-              totalTasks:
-                  int.tryParse(summaryData['total']?.toString() ?? '1') ?? 1,
-              employer: summaryData['employer_name'] ?? '',
-              onTap: () {
-                final employerId =
-                    int.tryParse(summaryData['employer_id'].toString()) ?? 0;
-                final status = currentTabStatus ?? "Ongoing";
-                var model = Get.find<GetTaskViewModel>();
+              // Debug logging to see what values we're getting
 
-                Get.to(
-                  () => EmployerTaskListScreen(
-                    employerId: employerId,
-                    status: status,
-                    employerName: summaryData['employer_name'] ?? "Employer",
-                    model: model,
-                  ),
-                );
-              },
-            );
-          }),
+              return TaskBlock(
+                id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
+                title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
+                startDate: _formatDate(summaryData['from_date']),
+                status: taskStatus,
+                count:
+                    displayCount, // Use the correct count based on current tab
+                endDate: _formatDate(summaryData['to_date']),
+                profileImage: 'https://i.pravatar.cc/300',
+                progress:
+                    (double.tryParse(
+                          summaryData['percentage']?.toString() ?? '0',
+                        ) ??
+                        0.0) /
+                    100.0,
+                totalTasks:
+                    int.tryParse(summaryData['total']?.toString() ?? '1') ?? 1,
+                employer: summaryData['employer_name'] ?? '',
+                onTap: () {
+                  final employerId =
+                      int.tryParse(summaryData['employer_id'].toString()) ?? 0;
+                  final status = currentTabStatus ?? "Ongoing";
+                  var model = Get.find<GetTaskViewModel>();
+
+                  Get.to(
+                    () => EmployerTaskListScreen(
+                      employerId: employerId,
+                      status: status,
+                      employerName: summaryData['employer_name'] ?? "Employer",
+                      model: model,
+                    ),
+                  );
+                },
+              );
+            }),
         ],
       ),
     );
