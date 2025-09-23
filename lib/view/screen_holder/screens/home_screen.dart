@@ -11,7 +11,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../view_models/controller/home/home_view_model.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -29,10 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Refresh calendar and maintain current selection
   Future<void> _refreshCalendarState([DateTime? maintainSelectedDate]) async {
     if (!mounted) return;
-    
+
     final HomeViewModel homeController = Get.find<HomeViewModel>();
     await homeController.silentRefreshTasksForCalendar();
-    
+
     if (mounted) {
       setState(() {
         if (maintainSelectedDate != null) {
@@ -128,11 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    CircleAvatar(
-                      backgroundImage: AssetImage('assets/images/user.png'),
-                      radius: Responsive.isTablet(context)
-                          ? Responsive.width(4, context)
-                          : Responsive.width(5, context),
+                    Obx(
+                      () => _buildTextAvatar(
+                        homeController.userName.value,
+                        Responsive.isTablet(context)
+                            ? Responsive.width(4, context)
+                            : Responsive.width(5, context),
+                      ),
                     ),
                   ],
                 ),
@@ -484,7 +485,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // No tasks found from API - go directly to AddTaskScreen
         print('🔍 No tasks found from API, navigating to AddTaskScreen...');
         homeController.openScreen(AddTaskScreen(selectedDate: selectedDate));
-        
+
         // Keep the selected date marked and refresh calendar
         await _refreshCalendarState(selectedDate);
       }
@@ -583,7 +584,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     homeVM.openScreen(
                       AddTaskScreen(selectedDate: selectedDate),
                     );
-                    
+
                     // Keep the selected date marked and refresh calendar
                     await _refreshCalendarState(selectedDate);
                   },
@@ -849,5 +850,56 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
     );
+  }
+
+  /// Build a text avatar with user initials
+  Widget _buildTextAvatar(String name, double radius) {
+    // Generate initials from name
+    String initials = _getInitials(name);
+
+    // Generate a consistent color based on name
+    Color avatarColor = _getAvatarColor(name);
+
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: avatarColor,
+      child: Text(
+        initials,
+        style: TextStyle(
+          color:Colors.black,
+          fontSize: radius * 0.6, // Scale font size with radius
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  /// Extract initials from name
+  String _getInitials(String name) {
+    if (name.isEmpty) return 'U';
+
+    List<String> words = name.trim().split(' ');
+    if (words.length == 1) {
+      // Single word - take first two characters
+      return words[0].substring(0, words[0].length > 2 ? 2 : 1).toUpperCase();
+    } else {
+      // Multiple words - take first character of first two words
+      String first = words[0].isNotEmpty ? words[0][0] : '';
+      String second = words.length > 1 && words[1].isNotEmpty
+          ? words[1][0]
+          : '';
+      return (first + second).toUpperCase();
+    }
+  }
+
+  /// Generate a consistent color for the avatar based on name
+  Color _getAvatarColor(String name) {
+    if (name.isEmpty) return AppColor.primeColor;
+
+    // Use name hash to generate consistent color
+    int hash = name.hashCode;
+    List<Color> colors = [AppColor.whiteColor];
+
+    return colors[hash.abs() % colors.length];
   }
 }

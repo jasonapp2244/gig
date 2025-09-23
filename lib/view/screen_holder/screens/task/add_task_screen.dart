@@ -129,6 +129,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   final HomeViewModel homeController =
                       Get.find<HomeViewModel>();
                   homeController.overrideScreen.value = null;
+                  Get.back();
                 } catch (e) {
                   // Fallback to regular navigation if HomeViewModel not found
                   Navigator.pop(context);
@@ -143,7 +144,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           right: 35,
           left: 35,
           child: Text(
-            'Business',
+            'Add Task',
             style: TextStyle(
               fontSize: 18,
               color: AppColor.secondColor,

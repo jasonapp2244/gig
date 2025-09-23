@@ -130,7 +130,7 @@ class AppRoutes {
     ////////// MARKET PLACE ROUTES
     GetPage(
       name: RoutesName.detailScreenView,
-      page: () => SingleProductScreen(),
+      page: () => MarketPlaceView(),
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),

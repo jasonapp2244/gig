@@ -98,24 +98,72 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
     );
   }
 
+  /// Extract initials from name
+  String _getInitials(String name) {
+    if (name.isEmpty) return 'U';
+
+    List<String> words = name.trim().split(' ');
+    if (words.length == 1) {
+      // Single word - take first two characters
+      return words[0].substring(0, words[0].length > 2 ? 2 : 1).toUpperCase();
+    } else {
+      // Multiple words - take first character of first two words
+      String first = words[0].isNotEmpty ? words[0][0] : '';
+      String second = words.length > 1 && words[1].isNotEmpty
+          ? words[1][0]
+          : '';
+      return (first + second).toUpperCase();
+    }
+  }
+
+  /// Generate a consistent color for the avatar based on name
+  Color _getAvatarColor(String name) {
+    // Always return white background for screen holder
+    return Colors.white;
+  }
+
+  /// Build a text avatar with user initials
+  Widget _buildTextAvatar(String name, double radius) {
+    // Generate initials from name
+    String initials = _getInitials(name);
+
+    // Generate a consistent color based on name
+    Color avatarColor = _getAvatarColor(name);
+
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: avatarColor,
+      child: Text(
+        initials,
+        style: TextStyle(
+          color: AppColor.primeColor, // Dark text for white background
+          fontSize: radius * 0.6, // Scale font size with radius
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   Widget _buildDrawer(BuildContext context) {
     final bool isTablet = Responsive.isTablet(context);
-
+    final HomeViewModel homeController = Get.find<HomeViewModel>();
     return Drawer(
       width: isTablet ? Responsive.width(40, context) : null,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: AppColor.primeColor),
+            decoration: BoxDecoration(color: AppColor.whiteColor),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/user.png'),
-                  radius: isTablet
-                      ? Responsive.width(5, context)
-                      : Responsive.width(6, context),
+                Obx(
+                  () => _buildTextAvatar(
+                    homeController.userName.value,
+                    isTablet
+                        ? Responsive.width(5, context)
+                        : Responsive.width(6, context),
+                  ),
                 ),
                 SizedBox(height: Responsive.height(1, context)),
                 Text(

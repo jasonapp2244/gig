@@ -7,8 +7,8 @@ import 'package:gig/repository/profile/profile_repository.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/data/app_exceptions.dart';
 import 'package:gig/res/app_url/app_url.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class GetProfileViewModel extends GetxController {
   final ProfileRepository _profileRepository = ProfileRepository();
@@ -33,7 +33,7 @@ class GetProfileViewModel extends GetxController {
       error.value = '';
 
       print('🔄 Fetching user profile...');
-      
+
       // Check if token exists before making API call
       String? token = await Utils.readSecureData('auth_token');
       if (token == null || token.isEmpty) {
@@ -41,7 +41,7 @@ class GetProfileViewModel extends GetxController {
         Utils.snakBar('Error', error.value);
         return;
       }
-      
+
       print('🔑 Token exists: ${token.substring(0, 10)}...');
       print('🌐 API URL: ${AppUrl.getProfileApi}');
 
@@ -78,7 +78,8 @@ class GetProfileViewModel extends GetxController {
           Utils.snakBar('Profile Error', apiError);
         }
       } else {
-        error.value = 'No response from server. Please check your internet connection.';
+        error.value =
+            'No response from server. Please check your internet connection.';
         print('❌ No response received from profile API');
         Utils.snakBar('Network Error', error.value);
       }
@@ -109,47 +110,47 @@ class GetProfileViewModel extends GetxController {
       if (resumeUrl.isEmpty) {
         Get.snackbar(
           'Error',
-          'No resume available for download',
+          'No resume URL provided',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
         return;
       }
 
-      // Get the Downloads directory (works on Android & iOS)
-      Directory? directory;
-      if (Platform.isAndroid) {
-        directory = await getExternalStorageDirectory();
-        // This gives app-specific dir: /Android/data/<pkg>/files/
-      } else if (Platform.isIOS) {
-        directory = await getApplicationDocumentsDirectory();
-      }
-
-      if (directory == null) {
+      // Ask for permission (needed for Android < 11, ignored on 11+)
+      var status = await Permission.storage.request();
+      if (!status.isGranted) {
         Get.snackbar(
           'Error',
-          'Unable to access storage',
+          'Storage permission denied',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
         return;
       }
 
-      String savePath = "${directory.path}/resume.pdf";
+      // Create custom directory inside Downloads
+      final downloadsDir = Directory("/storage/emulated/0/Download/MyApp");
 
-      // Download file using Dio
-      await Dio().download(resumeUrl, savePath);
+      if (!downloadsDir.existsSync()) {
+        downloadsDir.createSync(recursive: true); // make the folder if missing
+      }
+
+      final fileName = "resume_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final filePath = "${downloadsDir.path}/$fileName";
+
+      await Dio().download(resumeUrl, filePath);
 
       Get.snackbar(
         'Success',
-        'Resume downloaded to: $savePath',
+        'Saved in: ${downloadsDir.path}',
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to download resume: $e',
+        'Download failed: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -165,8 +166,22 @@ class GetProfileViewModel extends GetxController {
       profileData['address_one'] ?? profileData['address'] ?? '';
   String get userBio =>
       profileData['bio'] ?? profileData['description'] ?? 'No bio available';
+  String baseUrlResume =
+      'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/app/public/cv/';
 
-  String get resumeUrl => profileData['resume'] ?? profileData['cv'] ?? '';
+  // Fall back to server path from API (just the filename)
+  String get resumeUrl {
+    String? fileName = profileData['resume'] ?? profileData['cv'] ?? '';
+    if (fileName != null && fileName.isNotEmpty) {
+      // Otherwise, prepend base URL with profile_images folder
+      String fullUrl = '$baseUrlResume$fileName';
+      print(' URL: $fullUrl');
+      return fullUrl;
+    }
+    return '';
+  }
+
+  //String get resumeUrl => profileData['resume'] ?? profileData['cv'] ?? '';
   String get resumeName =>
       profileData['resume_name'] ?? profileData['cv_name'] ?? 'resume.pdf';
   String get profileImage {
@@ -175,7 +190,7 @@ class GetProfileViewModel extends GetxController {
 
     // Base URL for server images (includes the profile_images folder)
     const String baseUrl =
-        'http://192.168.18.159/gig_mob_app/public/storage/profile_images/';
+        'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/app/public/profile_images/';
 
     // Fall back to server path from API (just the filename)
     String? fileName = profileData['avatar'] ?? localPath ?? '';

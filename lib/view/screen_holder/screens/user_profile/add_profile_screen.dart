@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/custom_image_picker.dart';
+import 'package:gig/res/components/custom_photo_widget.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/res/components/chip_input_field.dart';
 import 'package:gig/res/components/pdf_picker_widget.dart';
@@ -24,6 +26,12 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final AddProfileController controller = Get.put(AddProfileController());
+
+    // Ensure GetProfileViewModel is loaded to get existing profile data
+    if (Get.isRegistered<GetProfileViewModel>()) {
+      final profileVM = Get.find<GetProfileViewModel>();
+      profileVM.loadFromStoredData();
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -74,7 +82,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
         onPressed: () {
-          controller.refreshStoredData();
+          Get.back();
         },
         tooltip: 'Refresh Profile Data',
       ),
@@ -85,7 +93,25 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   }
 
   Widget _buildPhotoPicker(AddProfileController controller) {
-    return CustomPhotoWidget(controller: controller);
+    return Obx(() {
+      // Get existing profile image from GetProfileViewModel if available
+      String? existingImageUrl;
+      if (Get.isRegistered<GetProfileViewModel>()) {
+        final profileVM = Get.find<GetProfileViewModel>();
+        existingImageUrl = profileVM.profileImage;
+      }
+
+      return CustomPhotoWidget(
+        imageUrl: existingImageUrl,
+        radius: 50,
+        backgroundColor: AppColor.primeColor,
+        onImagePicked: (File? imageFile) {
+          if (imageFile != null) {
+            controller.imageFile.value = imageFile;
+          }
+        },
+      );
+    });
   }
 
   Widget _buildNameField(AddProfileController controller) {
