@@ -96,6 +96,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       const SizedBox(height: 15),
                       _buildSupervisor(),
                       const SizedBox(height: 15),
+                      _buildStraightTime(),
+                      const SizedBox(height: 15),
                       _buildWages(),
                       const SizedBox(height: 15),
                       _buildNotes(),
@@ -266,6 +268,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         controller: addTaskVM.supervisorController.value,
         fieldType: 'number',
         hintText: "Supervisor & their contact",
+        requiredField: true,
+        validator: (value) => (value == null || value.isEmpty)
+            ? 'Supervisor contact is required'
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildStraightTime() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: CustomInputField(
+        controller: addTaskVM.straightTimeController.value,
+        fieldType: 'number',
+        hintText: "Straight/Overtime Hours",
         requiredField: true,
         validator: (value) => (value == null || value.isEmpty)
             ? 'Supervisor contact is required'

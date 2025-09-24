@@ -140,8 +140,6 @@ class EmployerTaskListScreen extends StatelessWidget {
               status: task['status'] ?? "Unknown",
               totalTasks: 1,
               count: 1,
-              // you can add delete handler if TaskSpecficBlock supports it
-              // onDelete: () => model.deleteTask(int.parse(task['id'].toString())),
             );
           },
         );

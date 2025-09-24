@@ -96,11 +96,11 @@ class AddTaskViewModel extends GetxController {
       'employer': employerText,
       'job_title': jobTypeController.value.text,
       'location': locationController.value.text,
-      'supervisorContactNumber': supervisorController.value.text,
-      //  'workingHoursController': workingHoursController.value.text,
+      'supervisor_contact_number': supervisorController.value.text,
+
       'task_date_time': formattedDateTime,
       'pay': wagesController.value.text,
-      'workingHours': straightTimeController.value.text,
+      'working_hours': straightTimeController.value.text,
       'notes': notesController.value.text,
     };
 
