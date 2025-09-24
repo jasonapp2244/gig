@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gig/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -17,18 +18,14 @@ class CreaAAddScreen extends StatefulWidget {
 
 class _CreaAAddScreen extends State<CreaAAddScreen> {
   final picker = ImagePicker();
+
   List<XFile> _images = [];
 
   String? selectedCategory;
   String? selectedCondition;
 
-  // Updated to use IDs instead of names if needed by your API
-  final Map<String, String> categories = {
-    'Electronics': '1',
-    'Furniture': '2',
-    'Clothing': '3',
-    'Books': '4',
-  };
+  // ✅ Categories will be fetched from API
+  Map<String, String> categories = {};
 
   final Map<String, String> conditions = {
     'New': 'new',
@@ -43,24 +40,48 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   final locationController = TextEditingController();
 
   bool _isLoading = false;
+
+  @override
   void initState() {
     super.initState();
-    //_loadCategories(); // call async loader
+    _loadCategories(); // fetch categories from API
   }
-  // Updated to use IDs instead of names if needed by your API
-  // final Map<String, String> categories = {
 
-  // };
+  Future<void> _loadCategories() async {
+    try {
+      var url = Uri.parse(
+        "https://lavender-buffalo-882516.hostingersite.com/gig_app/api/get-list-category",
+      );
+      String? token = await Utils.readSecureData('auth_token');
+      var response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-  // Future<void> _loadCategories() async {
-  //   categories = await getCategories();
-  //   setState(() {}); // refresh UI after categories are loaded
-  // }
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
 
-  // Future<List<CategoryModel>> getCategories() async {
-  //   controller.categories = await controller.getCategoriesApi();
-  //   return controller.categories!;
-  // }
+        if (jsonResponse['status'] == true && jsonResponse['data'] != null) {
+          Map<String, String> loadedCats = {};
+          for (var item in jsonResponse['data']) {
+            loadedCats[item['category']] = item['id'].toString();
+          }
+
+          setState(() {
+            categories = loadedCats;
+          });
+        }
+      } else {
+        print("Failed to load categories: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error loading categories: $e");
+    }
+  }
+
   Future<void> pickImages() async {
     final pickedFiles = await picker.pickMultiImage();
     if (pickedFiles.isNotEmpty) {
@@ -68,15 +89,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     }
   }
 
-  // Function to get user token from shared preferences
-  Future<String?> _getUserToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_token'); // Adjust this key as per your app
-  }
-
-  // Function to upload the ad
   Future<void> _uploadAd() async {
-    // Validate required fields
     if (_images.isEmpty) {
       _showErrorDialog('Please select at least one image');
       return;
@@ -93,79 +106,55 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      // Get user token
-      // final token = await _getUserToken();
-      // if (token == null) {
-      //   _showErrorDialog('Please login to create an ad');
-      //   setState(() => _isLoading = false);
-      //   return;
-      // }
-
-      // Create multipart request
       var uri = Uri.parse(
         'https://lavender-buffalo-882516.hostingersite.com/gig_app/api/add-list',
       );
       var request = http.MultipartRequest('POST', uri);
+      String? token = await Utils.readSecureData('auth_token');
 
-      // Add headers
-      // request.headers['Authorization'] = 'Bearer $token';
+      request.headers['Authorization'] = 'Bearer $token';
 
-      request.headers['Authorization'] =
-          'Bearer 126|qksaUczKY1shrR6x3kng0lzCB6AMPpL41uGgtdx3fa2c6dc2';
-      // Add text fields based on your API requirements
       request.fields['title'] = titleController.text;
       request.fields['old_price'] = oldPriceController.text;
       request.fields['new_price'] = newPriceController.text;
       request.fields['location'] = locationController.text;
       request.fields['description'] = descController.text;
       request.fields['condition'] = conditions[selectedCondition]!;
-      request.fields['category_id'] = categories[selectedCategory]!;
+      request.fields['category_id'] =
+          categories[selectedCategory]!; // ✅ send ID
 
-      // Add images with proper field names (images[0], images[1], etc.)
       for (var i = 0; i < _images.length; i++) {
         var file = File(_images[i].path);
         var multipartFile = await http.MultipartFile.fromPath(
-          'images[$i]', // Field name format as per your API
+          'images[$i]',
           file.path,
           contentType: MediaType('image', 'jpeg'),
         );
         request.files.add(multipartFile);
       }
 
-      // Send request
       var response = await request.send();
       var responseData = await response.stream.toBytes();
       var responseString = String.fromCharCodes(responseData);
 
       if (response.statusCode == 200) {
-        // Parse response
         var jsonResponse = json.decode(responseString);
-
         if (jsonResponse['status'] == true) {
-          // Success
           _showSuccessDialog('Ad created successfully!');
           _clearForm();
         } else {
-          // API returned error
           _showErrorDialog(jsonResponse['message'] ?? 'Failed to create ad');
         }
       } else {
-        // HTTP error
-        _showErrorDialog(
-          'Failed to create ad. Status code: ${response.statusCode}',
-        );
+        _showErrorDialog('Failed. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      _showErrorDialog('An error occurred: $e');
+      _showErrorDialog('Error: $e');
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
     }
   }
 

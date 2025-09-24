@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:gig/models/category_model.dart';
-import 'package:gig/view_models/controller/market_place/market_place_model.dart';
+import 'package:gig/view_models/controller/market_place/market_place_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../res/colors/app_color.dart';
