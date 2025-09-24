@@ -104,59 +104,73 @@ class GetProfileViewModel extends GetxController {
       loading.value = false;
     }
   }
+Future<bool> _checkStoragePermission() async {
+  if (Platform.isAndroid) {
+    final status = await Permission.storage.status;
 
-  Future<void> downloadPdf() async {
-    try {
-      if (resumeUrl.isEmpty) {
-        Get.snackbar(
-          'Error',
-          'No resume URL provided',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
-      }
+    if (status.isGranted) return true;
 
-      // Ask for permission (needed for Android < 11, ignored on 11+)
-      var status = await Permission.storage.request();
-      if (!status.isGranted) {
-        Get.snackbar(
-          'Error',
-          'Storage permission denied',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-        return;
-      }
+    final result = await Permission.storage.request();
+    return result.isGranted;
+  }
 
-      // Create custom directory inside Downloads
-      final downloadsDir = Directory("/storage/emulated/0/Download/MyApp");
+  return true; // iOS or others
+}
 
-      if (!downloadsDir.existsSync()) {
-        downloadsDir.createSync(recursive: true); // make the folder if missing
-      }
 
-      final fileName = "resume_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final filePath = "${downloadsDir.path}/$fileName";
-
-      await Dio().download(resumeUrl, filePath);
-
-      Get.snackbar(
-        'Success',
-        'Saved in: ${downloadsDir.path}',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-    } catch (e) {
+Future<void> downloadPdf() async {
+  try {
+    if (resumeUrl.isEmpty) {
       Get.snackbar(
         'Error',
-        'Download failed: $e',
+        'No resume URL provided',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      return;
     }
-  }
 
+    if (Platform.isAndroid) {
+      bool hasPermission = await _checkStoragePermission();
+
+      if (!hasPermission) {
+        Get.snackbar(
+          'Permission Required',
+          'Storage permission is required to save the file.',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        return;
+      }
+    }
+
+    // Save to Downloads
+    final downloadsDir = Directory('/storage/emulated/0/Download/MyApp');
+
+    if (!downloadsDir.existsSync()) {
+      downloadsDir.createSync(recursive: true);
+    }
+
+    final fileName = "resume_${DateTime.now().millisecondsSinceEpoch}.pdf";
+    final filePath = "${downloadsDir.path}/$fileName";
+
+    await Dio().download(resumeUrl, filePath);
+
+    Get.snackbar(
+      'Success',
+      'Saved to: $filePath',
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+    );
+  } catch (e) {
+    Get.snackbar(
+      'Error',
+      'Download failed: $e',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  }
+}
   // Helper methods to get specific profile data
   String get userName => profileData['name'] ?? 'User Name';
   String get userEmail => profileData['email'] ?? 'user@example.com';

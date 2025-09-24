@@ -154,7 +154,9 @@ class GetTaskViewModel extends GetxController {
               return isCompleted;
             } else if (status == 'Incomplete' || status == 'pending') {
               // Show tasks that are incomplete/pending (not completed and not ongoing)
-              bool isIncomplete = !hasEntry && (taskStatus == 'pending' || taskStatus == 'incomplete');
+              bool isIncomplete =
+                  !hasEntry &&
+                  (taskStatus == 'pending' || taskStatus == 'incomplete');
               print('🔍 Is Incomplete: $isIncomplete');
               return isIncomplete;
             }
@@ -202,7 +204,7 @@ class GetTaskViewModel extends GetxController {
         // Filter based on status
         bool shouldInclude = false;
         final pendingTasks = summary['pending'] ?? 0; // Add pending tasks count
-        
+
         if (status == 'Ongoing') {
           // Show employers that have ongoing tasks
           shouldInclude = ongoingTasks > 0;
@@ -302,12 +304,10 @@ class GetTaskViewModel extends GetxController {
         status: status,
         employerId: employerId.toString(),
       );
-      return tasks;
+      return tasks ?? [];
     } catch (e) {
       print("❌ Error fetching tasks: $e");
       return [];
     }
   }
-
-
 }

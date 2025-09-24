@@ -6,10 +6,12 @@ import 'package:get/get.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
+import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Get.put(DeleteTaskViewModel(), permanent: true);
 
   Utils.getAndPrintFCMToken();
 

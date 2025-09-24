@@ -308,6 +308,40 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> getCategoriesApi(
+    String token, {
+    required String url, // pass base endpoint for categories
+  }) async {
+    dynamic responseJson;
+    try {
+      print("🔍 Fetching Categories from: $url");
+
+      final response = await http
+          .get(
+            Uri.parse(url), // 👈 GET request instead of POST
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      print("📡 Response Status: ${response.statusCode}");
+      print("📋 Response Body: ${response.body}");
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on TimeoutException {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
+  }
+
   Future<dynamic> getTaskByDate(
     String token, {
     required String date,

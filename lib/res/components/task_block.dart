@@ -5,15 +5,14 @@ import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
-
 class TaskBlock extends StatelessWidget {
-  int? id;
+  final int? id;
   final String title;
   final String startDate;
   final String endDate;
   final String profileImage;
   final double progress; // 0.0 to 1.0
-  final String? employer; // Add employer field
+  final String? employer;
 
   final int totalTasks;
   final int count;
@@ -29,7 +28,6 @@ class TaskBlock extends StatelessWidget {
     required this.profileImage,
     required this.progress,
     this.employer,
-
     required this.totalTasks,
     required this.status,
     required this.count,
@@ -38,8 +36,9 @@ class TaskBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deleteTaskVM = Get.put(DeleteTaskViewModel());
-    final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+    // Use Get.find() instead of Get.put() to get existing instance
+    final DeleteTaskViewModel deleteTaskVM = Get.find<DeleteTaskViewModel>();
+    final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
 
     return InkWell(
       onTap: onTap,
@@ -80,6 +79,7 @@ class TaskBlock extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
+
             // Dates row
             Row(
               children: [
@@ -103,6 +103,7 @@ class TaskBlock extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
+
             // Progress bar
             Row(
               children: [
@@ -129,20 +130,28 @@ class TaskBlock extends StatelessWidget {
                 ),
               ],
             ),
+
             if (status != 'Completed')
               Padding(
                 padding: const EdgeInsets.only(top: 15),
                 child: Row(
-                  spacing: 20,
+                  // Added spacing between icons
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
                       LucideIcons.squarePen400,
                       color: Colors.green,
                       size: 20,
                     ),
-                    Obx(
-                      () => InkWell(
-                        onTap: deleteTaskVM.loading.value
+
+                    const SizedBox(width: 20),
+
+                    Obx(() {
+                      // Check if this task id is currently loading
+                      final isLoading = deleteTaskVM.loadingTasks.contains(id);
+
+                      return InkWell(
+                        onTap: isLoading
                             ? null
                             : () {
                                 customBottomSheet(
@@ -152,8 +161,6 @@ class TaskBlock extends StatelessWidget {
                                   btnText2: 'Cancel',
                                   onFirstTap: () async {
                                     await deleteTaskVM.deleteTask(id ?? 0);
-
-                                    // The DeleteTaskViewModel will handle the refresh automatically
                                     print('Deleted!');
                                   },
                                   onSecondTap: () {
@@ -161,7 +168,7 @@ class TaskBlock extends StatelessWidget {
                                   },
                                 );
                               },
-                        child: deleteTaskVM.loading.value
+                        child: isLoading
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
@@ -174,8 +181,8 @@ class TaskBlock extends StatelessWidget {
                                 Icons.delete_outline_rounded,
                                 color: Colors.red,
                               ),
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),

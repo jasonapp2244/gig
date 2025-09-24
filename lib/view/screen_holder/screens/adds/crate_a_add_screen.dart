@@ -43,7 +43,24 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   final locationController = TextEditingController();
 
   bool _isLoading = false;
+  void initState() {
+    super.initState();
+    //_loadCategories(); // call async loader
+  }
+  // Updated to use IDs instead of names if needed by your API
+  // final Map<String, String> categories = {
 
+  // };
+
+  // Future<void> _loadCategories() async {
+  //   categories = await getCategories();
+  //   setState(() {}); // refresh UI after categories are loaded
+  // }
+
+  // Future<List<CategoryModel>> getCategories() async {
+  //   controller.categories = await controller.getCategoriesApi();
+  //   return controller.categories!;
+  // }
   Future<void> pickImages() async {
     final pickedFiles = await picker.pickMultiImage();
     if (pickedFiles.isNotEmpty) {
@@ -216,6 +233,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
+          style: TextStyle(color: AppColor.whiteColor),
           decoration: InputDecoration(
             hintText: label,
             hintStyle: const TextStyle(

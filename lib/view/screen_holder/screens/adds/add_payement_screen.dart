@@ -242,7 +242,7 @@ class AddPaymentScreenState extends State<AddPaymentScreen>
                   loading: cardPaymentVM.loading.value,
                   buttonColor: AppColor.primeColor,
                   onPress: () {
-                    Get.toNamed(RoutesName.createAAddsScreen);
+                    Get.toNamed(RoutesName.createAddsScreen);
                     if (_formKey.currentState!.validate()) {
                       cardPaymentVM.cardPaymentApi();
                     }

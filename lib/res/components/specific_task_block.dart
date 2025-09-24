@@ -13,8 +13,9 @@ class TaskSpecficBlock extends StatelessWidget {
   final String startDate;
   final String endDate;
   final String profileImage;
-
+  var taskData;
   final String? employer; // Add employer field
+  int employeerId;
 
   final int totalTasks;
   final int count;
@@ -22,6 +23,7 @@ class TaskSpecficBlock extends StatelessWidget {
 
   TaskSpecficBlock({
     super.key,
+    required this.employeerId,
     required this.id,
     required this.title,
     required this.startDate,
@@ -125,7 +127,7 @@ class TaskSpecficBlock extends StatelessWidget {
                         final editTaskVM = Get.put(EditTaskViewModel());
 
                         // 1. Fetch details
-                        final taskData = await editTaskVM.getTasksDetails(
+                        taskData = await editTaskVM.getTasksDetails(
                           taskId: id.toString(),
                         );
 
@@ -160,9 +162,10 @@ class TaskSpecficBlock extends StatelessWidget {
                       ),
                     ),
 
-                    Obx(
-                      () => InkWell(
-                        onTap: deleteTaskVM.loading.value
+                    Obx(() {
+                      final isLoading = deleteTaskVM.loadingTasks.contains(id);
+                      return InkWell(
+                        onTap: isLoading
                             ? null
                             : () {
                                 customBottomSheet(
@@ -171,9 +174,14 @@ class TaskSpecficBlock extends StatelessWidget {
                                   btnText1: 'Yes, Delete',
                                   btnText2: 'Cancel',
                                   onFirstTap: () async {
-                                    await deleteTaskVM.deleteTask(id ?? 0);
+                                    var model = Get.find<GetTaskViewModel>();
 
-                                    // The DeleteTaskViewModel will handle the refresh automatically
+                                    await deleteTaskVM.deleteTask(id ?? 0);
+                                    await model.fetchTasksByEmployer(
+                                      employerId: employeerId,
+                                      status: status,
+                                    );
+
                                     print('Deleted!');
                                   },
                                   onSecondTap: () {
@@ -181,7 +189,7 @@ class TaskSpecficBlock extends StatelessWidget {
                                   },
                                 );
                               },
-                        child: deleteTaskVM.loading.value
+                        child: isLoading
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
@@ -194,8 +202,8 @@ class TaskSpecficBlock extends StatelessWidget {
                                 Icons.delete_outline_rounded,
                                 color: Colors.red,
                               ),
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),

@@ -294,7 +294,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           children:
               (profileController.userSkills.isNotEmpty
                       ? profileController.userSkills
-                      : ["General Skills", "Problem Solving", "Communication"])
+                      : [])
                   .take(10)
                   .map((skill) {
                     double skillPercent =
@@ -324,7 +324,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         children: [
           Text(
             skill,
-            style: const TextStyle(color: Colors.white, fontSize: 13),
+            style: const TextStyle(color: Colors.black, fontSize: 13),
           ),
           const SizedBox(height: 6),
           LinearPercentIndicator(

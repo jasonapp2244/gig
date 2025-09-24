@@ -38,7 +38,7 @@ class RoutesName {
 
   //////////// CREATE ADDS ROUTES
   static const String createAddsScreen = '/create_adds_screen';
-  static const String createAAddsScreen = '/create_a_adds_screen';
+  //static const String createAAddsScreen = '/create_a_adds_screen';
 
   //////////// PROFILE ROUTES
   static const String userProfileScreen = '/user_profile_screen';
