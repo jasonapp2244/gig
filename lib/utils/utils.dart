@@ -150,6 +150,7 @@ class Utils {
       print('❌ Error getting FCM token: $e');
       return null;
     }
+    return null;
   }
 
   // Get FCM token without extra printing (simple version)

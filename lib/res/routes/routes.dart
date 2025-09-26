@@ -11,6 +11,7 @@ import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_scr
 import 'package:gig/view/screen_holder/screens/market_place_screen/market_place_screen.dart';
 import 'package:gig/view/screen_holder/screens/market_place_screen/single_product_screen.dart';
 import 'package:gig/view/screen_holder/screens/notification/notification.dart';
+import 'package:gig/view/screen_holder/screens/support_view_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/add_profile_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
 import 'package:gig/view/subscription/subscription_screen.dart';
@@ -138,6 +139,7 @@ class AppRoutes {
       name: RoutesName.singleProductScreen,
       page: () => SingleProductScreen(),
     ),
+    GetPage(name: RoutesName.support_view, page: () => SupportView()),
 
     // GetPage(
     //   name: RoutesName.singleProductScreen,

@@ -5,7 +5,6 @@ import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
 import 'package:gig/view/screen_holder/screens/home_screen.dart';
 import 'package:gig/view/screen_holder/screens/income_tracker/income_tracker_screen.dart';
-import 'package:gig/view/screen_holder/screens/notification/notification.dart';
 import 'package:gig/view/screen_holder/screens/task/task_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
@@ -207,6 +206,12 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
             icon: LucideIcons.building400,
             text: "Employer",
             route: RoutesName.employerScreen,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.building400,
+            text: "Support",
+            route: RoutesName.support_view,
           ),
           _buildDrawerItem(
             context,

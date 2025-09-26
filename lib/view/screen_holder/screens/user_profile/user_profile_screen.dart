@@ -32,6 +32,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
+      appBar: AppBar(
+        backgroundColor: AppColor.appBodyBG,
+        elevation: 0,
+        centerTitle: true,
+        leading: Icon(Icons.arrow_back, color: AppColor.whiteColor),
+        title: Text(
+          'Profile',
+          style: TextStyle(
+            color: AppColor.secondColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Obx(() {
           if (profileController.loading.value) {

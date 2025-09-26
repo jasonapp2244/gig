@@ -806,6 +806,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           _buildDrawerItem(
             context,
+            icon: LucideIcons.headset,
+            text: "Support",
+            route: RoutesName.support_view,
+          ),
+          _buildDrawerItem(
+            context,
             icon: LucideIcons.building400,
             text: "Reset Password",
             route: RoutesName.resetPassword,
@@ -866,7 +872,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Text(
         initials,
         style: TextStyle(
-          color:Colors.black,
+          color: Colors.black,
           fontSize: radius * 0.6, // Scale font size with radius
           fontWeight: FontWeight.bold,
         ),

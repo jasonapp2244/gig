@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_instance/get_instance.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/utils.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/components/specific_task_block.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
@@ -119,7 +116,7 @@ class EmployerTaskListScreen extends StatelessWidget {
 
         centerTitle: true,
       ),
-      backgroundColor: AppColor.appBodyBG,
+      backgroundColor: AppColor.primeColor,
       body: Obx(() {
         if (model!.tasks.isEmpty) {
           return const Center(child: Text("No tasks found"));

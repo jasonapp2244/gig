@@ -241,7 +241,7 @@ class LoginVewModel extends GetxController {
           Utils.snakBar('Login', errorMsg);
         }
       }
-    } catch (error, stackTrace) {
+    } catch (error) {
       loading.value = false;
       print('Login API error: $error');
       Utils.snakBar('Error', error.toString());

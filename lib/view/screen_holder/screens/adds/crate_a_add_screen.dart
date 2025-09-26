@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/fonts/app_fonts.dart';
 

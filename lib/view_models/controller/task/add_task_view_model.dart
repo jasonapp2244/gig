@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import '../../../repository/task/add_task_repository.dart';
 import '../../../repository/employer/employer_repository.dart';
 import '../../../res/routes/routes_name.dart';
@@ -8,6 +8,8 @@ import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
 import '../task/get_task_view_model.dart';
 import '../home/home_view_model.dart';
+
+import 'package:intl/intl.dart';
 
 class AddTaskViewModel extends GetxController {
   final _api = AddTaskRepository();
@@ -46,12 +48,7 @@ class AddTaskViewModel extends GetxController {
     }
 
     // Handle null selectedDate by using current date as default
-    print('🔍 AddTaskAPI - selectedDate before assignment: $selectedDate');
-    print('🔍 AddTaskAPI - selectedDate is null: ${selectedDate == null}');
     DateTime taskDate = selectedDate ?? DateTime.now();
-    print('🔍 AddTaskAPI - taskDate after assignment: $taskDate');
-
-    // Create a DateTime with the selected date and time
     DateTime now = DateTime.now();
     DateTime taskDateTime;
 
@@ -65,9 +62,6 @@ class AddTaskViewModel extends GetxController {
         selectedTime.value!.minute,
         selectedTime.value!.second,
       );
-      print(
-        '🕐 Using selected time: ${selectedTime.value!.hour}:${selectedTime.value!.minute}',
-      );
     } else {
       // Use current time if no time selected
       taskDateTime = DateTime(
@@ -78,26 +72,19 @@ class AddTaskViewModel extends GetxController {
         now.minute,
         now.second,
       );
-      print('🕐 Using current time: ${now.hour}:${now.minute}');
     }
 
-    print('🔍 Original selectedDate: $selectedDate');
-    print('🔍 Original taskDate: $taskDate');
-    print('🔍 New taskDateTime: $taskDateTime');
+    // ✅ Format datetime as "Y-m-d H:i:s" using intl
+    String formattedDateTime = DateFormat(
+      'yyyy-MM-dd HH:mm:ss',
+    ).format(taskDateTime);
+    print('✅ Formatted task_date_time: $formattedDateTime');
 
-    // Format the date time properly - simple format without timezone
-    String formattedDateTime =
-        "${taskDateTime.year.toString().padLeft(4, '0')}-${taskDateTime.month.toString().padLeft(2, '0')}-${taskDateTime.day.toString().padLeft(2, '0')}T${taskDateTime.hour.toString().padLeft(2, '0')}:${taskDateTime.minute.toString().padLeft(2, '0')}:${taskDateTime.second.toString().padLeft(2, '0')}";
-
-    print('🔍 Formatted string: $formattedDateTime');
-    print('🔍 Expected format: 2025-08-21T09:00:00');
-
-    Map data = {
+    Map<String, dynamic> data = {
       'employer': employerText,
       'job_title': jobTypeController.value.text,
       'location': locationController.value.text,
       'supervisor_contact_number': supervisorController.value.text,
-
       'task_date_time': formattedDateTime,
       'pay': wagesController.value.text,
       'working_hours': straightTimeController.value.text,
@@ -105,16 +92,6 @@ class AddTaskViewModel extends GetxController {
     };
 
     print('📋 Task data being sent: $data');
-    print('🕐 Task date time: ${data['task_date_time']}');
-    print('📅 Selected date: $taskDate');
-    print(
-      '📅 Selected date hour: ${taskDate.hour}, minute: ${taskDate.minute}',
-    );
-    print('⏰ Created date time: $taskDateTime');
-    print('🕐 Formatted date time: $formattedDateTime');
-    print(
-      '🔍 Hour: ${taskDateTime.hour}, Minute: ${taskDateTime.minute}, Second: ${taskDateTime.second}',
-    );
 
     try {
       dynamic value = await _api.addTaskAPI(data);
@@ -126,39 +103,28 @@ class AddTaskViewModel extends GetxController {
         // Refresh both task list and home calendar data
         await taskViewModel.refreshData();
 
-        // Also refresh home screen calendar data
+        // Refresh home screen calendar data
         try {
           final HomeViewModel homeController = Get.find<HomeViewModel>();
           await homeController.silentRefreshTasksForCalendar();
-          print('✅ Home calendar data refreshed after adding task');
         } catch (e) {
           print('⚠️ Could not refresh home calendar: $e');
         }
 
-        // Navigate to Tasks tab in bottom navigation (this will clear the override screen)
+        // Navigate to Tasks tab
         try {
           final HomeViewModel homeController = Get.find<HomeViewModel>();
-          homeController.changeTab(
-            1,
-          ); // Switch to Tasks tab (index 1) - this also clears override screen
-          print('✅ Navigated to Tasks tab');
+          homeController.changeTab(1);
         } catch (e) {
           print('⚠️ Could not navigate to Tasks tab: $e');
-          // Fallback to regular navigation if HomeViewModel not found
           Get.toNamed(RoutesName.screenHolderScreen);
         }
       } else {
-        print("Task Add failed: $value");
-        print("Task Add failed: ${value['message']}");
-        print("Task Add failed - Full response: $value");
         String errorMessage = value['message'] ?? 'Something went wrong';
-        print("Task Add failed - Error message to display: $errorMessage");
         Utils.snakBar('Task Add', errorMessage);
-        // Don't navigate away on error - let user see the error and try again
       }
     } catch (error) {
       loading.value = false;
-      print('Task Add API error: ${error.toString()}');
       Utils.snakBar('Error', error.toString());
     }
   }

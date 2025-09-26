@@ -5,14 +5,12 @@ import '../colors/app_color.dart';
 
 void customBottomSheet(
   BuildContext context, {
-    required String title,
-    required VoidCallback onFirstTap,
-    required VoidCallback onSecondTap,
-    required String btnText1,
-    required String btnText2,
-  }
-)
-{
+  required String title,
+  required VoidCallback onFirstTap,
+  required VoidCallback onSecondTap,
+  required String btnText1,
+  required String btnText2,
+}) {
   showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -28,17 +26,18 @@ void customBottomSheet(
           children: [
             // ✅ Top Logo
             // Image.asset('assets/images/logo.png', width: 120),
-            Icon(LucideIcons.triangleAlert400, color: Colors.orangeAccent,size: 50,),
+            Icon(
+              LucideIcons.triangleAlert400,
+              color: AppColor.redColor,
+              size: 50,
+            ),
 
             SizedBox(height: 20),
 
             // ✅ Instruction Text
             Text(
               title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
 
@@ -58,7 +57,7 @@ void customBottomSheet(
                       padding: EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: AppColor.primeColor,
+                        color: AppColor.redColor,
                       ),
                       child: Text(
                         btnText1,
@@ -86,17 +85,13 @@ void customBottomSheet(
                       ),
                       child: Text(
                         btnText2,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
                       ),
                     ),
                   ),
                 ),
               ],
             ),
-
           ],
         ),
       );

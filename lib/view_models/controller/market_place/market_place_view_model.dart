@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gig/data/app_exceptions.dart';
 import 'package:gig/data/network/network_api_services.dart';
 import 'package:gig/models/category_model.dart';

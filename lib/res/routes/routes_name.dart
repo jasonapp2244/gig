@@ -52,4 +52,6 @@ class RoutesName {
 
   static const String home = '/home';
   static const String profileViewScreen = '/profile_view_screen';
+
+  static const String support_view = "/support";
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
-import 'package:intl/intl.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
 import '../../../../res/components/round_button.dart';
@@ -9,7 +8,6 @@ import '../../../../res/components/employer_dropdown.dart';
 import '../../../../view_models/controller/task/add_task_view_model.dart';
 import '../../../../view_models/controller/home/home_view_model.dart';
 import '../../../../utils/utils.dart';
-import 'package:one_clock/one_clock.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final DateTime? selectedDate;

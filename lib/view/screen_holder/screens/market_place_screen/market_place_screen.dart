@@ -2,19 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gig/models/category_model.dart';
-import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view/screen_holder/screens/adds/crate_a_add_screen.dart';
-import 'package:gig/view_models/controller/market_place/market_place_view_model.dart';
 import '../../../../res/colors/app_color.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:gig/res/routes/routes_name.dart';
-import 'package:get/get.dart';
-import '../../../../res/colors/app_color.dart';
 import 'package:http/http.dart' as http;  // <-- this fixes "Undefined name 'http'"
-import 'package:get/get.dart';   
 class MarketPlaceView extends StatefulWidget {
   const MarketPlaceView({super.key});
 
