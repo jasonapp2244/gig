@@ -503,7 +503,7 @@ class NetworkApiServices extends BaseApiServices {
       Map<String, dynamic> requestBody = {};
 
       if (status != null) {
-        requestBody['status'] = status.toLowerCase();
+        requestBody['status'] = status;
       }
       if (employerId != null) {
         requestBody['employer_id'] = employerId;
@@ -545,7 +545,7 @@ class NetworkApiServices extends BaseApiServices {
       Map<String, dynamic> requestBody = {};
 
       if (status != null) {
-        requestBody['status'] = status.toLowerCase();
+        requestBody['status'] = (status.toLowerCase());
       }
       if (employerId != null) {
         requestBody['employer_id'] = employerId;

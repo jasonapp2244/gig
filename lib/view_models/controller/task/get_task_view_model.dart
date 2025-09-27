@@ -294,6 +294,7 @@ class GetTaskViewModel extends GetxController {
       statusLoading.value = false;
     }
   }
+  
 
   Future<List<Map<String, dynamic>>> fetchTasksByEmployer({
     required int employerId,

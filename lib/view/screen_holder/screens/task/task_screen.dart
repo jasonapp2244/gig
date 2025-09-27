@@ -92,26 +92,6 @@ class _TaskScreenState extends State<TaskScreen>
       }
 
       print('🔍 Applying search filter with text: $searchText');
-
-      // List<Map<String, dynamic>> searchFilteredTasks = individualTasks.where((
-      //   task,
-      // ) {
-      //   final jobTitle = (task['job_title'] ?? '').toString().toLowerCase();
-      //   final employer = (task['employer'] ?? '').toString().toLowerCase();
-      //   final location = (task['location'] ?? '').toString().toLowerCase();
-      //   final taskStatus = (task['status'] ?? '').toString().toLowerCase();
-      //   final searchLower = searchText.toLowerCase();
-
-      //   return jobTitle.contains(searchLower) ||
-      //       employer.contains(searchLower) ||
-      //       location.contains(searchLower) ||
-      //       taskStatus.contains(searchLower);
-      // }).toList();
-
-      // print(
-      //   '🔍 Search filtered individual tasks count: ${searchFilteredTasks.length}',
-      // );
-      // return searchFilteredTasks;
     }
 
     // For other tabs, get employer summaries grouped by employer
@@ -399,11 +379,14 @@ class _TaskScreenState extends State<TaskScreen>
                 var model = Get.find<GetTaskViewModel>();
 
                 print("employeer id $employerId");
+                print("status .. $status");
 
                 Get.to(
                   () => EmployerTaskListScreen(
                     employerId: employerId,
-                    status: status,
+                    status: status.toLowerCase() == 'incomplete'
+                        ? 'pending'
+                        : status.toLowerCase(),
                     employerName: summaryData['employer_name'] ?? "Employer",
                     model: model,
                   ),
