@@ -19,19 +19,9 @@ class DeleteTaskViewModel extends GetxController {
       if (response != null && response['status'] == true) {
         Utils.snakBar('Success', 'Task deleted successfully!');
 
-        // Update UI as you already do
+        // Refresh data in background to sync with server
         try {
           final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
-          taskViewModel.tasks.removeWhere((task) {
-            final taskIdFromList = task['id'];
-            if (taskIdFromList is String) {
-              return int.tryParse(taskIdFromList) == taskId;
-            } else if (taskIdFromList is int) {
-              return taskIdFromList == taskId;
-            }
-            return false;
-          });
-
           await taskViewModel.refreshData();
 
           final HomeViewModel homeController = Get.find<HomeViewModel>();
@@ -41,11 +31,25 @@ class DeleteTaskViewModel extends GetxController {
           print('⚠️ Could not update task list: $e');
         }
       } else {
+        // If deletion failed, we need to rollback the UI change
         Utils.snakBar('Error', response?['message'] ?? 'Failed to delete task');
+        try {
+          final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
+          await taskViewModel.refreshData(); // Refresh to restore the deleted item
+        } catch (e) {
+          print('⚠️ Could not rollback task list: $e');
+        }
       }
     } catch (e) {
       print('❌ Error deleting task: $e');
       Utils.snakBar('Error', 'Failed to delete task');
+      // Rollback the UI change on error
+      try {
+        final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
+        await taskViewModel.refreshData(); // Refresh to restore the deleted item
+      } catch (e) {
+        print('⚠️ Could not rollback task list: $e');
+      }
     } finally {
       loadingTasks.remove(taskId);
     }

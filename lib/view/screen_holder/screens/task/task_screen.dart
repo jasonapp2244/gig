@@ -78,25 +78,25 @@ class _TaskScreenState extends State<TaskScreen>
   List<Map<String, dynamic>> getFilteredTasksByTab(String status) {
     print('🔍 getFilteredTasksByTab called with status: $status');
 
-    // For Incomplete tab, show individual task cards instead of employer summaries
-    if (status == 'Incomplete' || status == 'pending') {
-      // List<Map<String, dynamic>> individualTasks = taskViewModel
-      //     .getTasksByStatusFromSummary(status);
-
-      //  print('🔍 Individual tasks count: ${individualTasks.length}');
-
-      // Apply search filter on individual tasks
-      if (searchText.isEmpty) {
-        print('🔍 No search text, returning all individual tasks');
-        //  return individualTasks;
-      }
-
-      print('🔍 Applying search filter with text: $searchText');
+    // Convert UI status to API status for consistency
+    String apiStatus;
+    switch (status.toLowerCase()) {
+      case 'ongoing':
+        apiStatus = 'Ongoing';
+        break;
+      case 'incomplete':
+        apiStatus = 'Incomplete';
+        break;
+      case 'completed':
+        apiStatus = 'Completed';
+        break;
+      default:
+        apiStatus = status;
     }
 
-    // For other tabs, get employer summaries grouped by employer
+    // Get employer summaries grouped by employer using the proper status
     List<Map<String, dynamic>> employerSummaries = taskViewModel
-        .getEmployerSummariesByStatus(status);
+        .getEmployerSummariesByStatus(apiStatus);
 
     print('🔍 Employer summaries count: ${employerSummaries.length}');
 
@@ -378,15 +378,30 @@ class _TaskScreenState extends State<TaskScreen>
                 final status = currentTabStatus ?? "Ongoing";
                 var model = Get.find<GetTaskViewModel>();
 
-                print("employeer id $employerId");
-                print("status .. $status");
+                // Convert UI status to API status
+                String apiStatus;
+                switch (status.toLowerCase()) {
+                  case 'ongoing':
+                    apiStatus = 'ongoing';
+                    break;
+                  case 'incomplete':
+                    apiStatus = 'pending';
+                    break;
+                  case 'completed':
+                    apiStatus = 'completed';
+                    break;
+                  default:
+                    apiStatus = status.toLowerCase();
+                }
+
+                print("🔍 Employer ID: $employerId");
+                print("🔍 UI Status: $status");
+                print("🔍 API Status: $apiStatus");
 
                 Get.to(
                   () => EmployerTaskListScreen(
                     employerId: employerId,
-                    status: status.toLowerCase() == 'incomplete'
-                        ? 'pending'
-                        : status.toLowerCase(),
+                    status: apiStatus,
                     employerName: summaryData['employer_name'] ?? "Employer",
                     model: model,
                   ),

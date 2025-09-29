@@ -5,6 +5,7 @@ import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/components/button.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/view/privacy_policy.dart';
+import 'package:gig/view_models/controller/auth/login_view_model.dart';
 
 class GetStartedSecreen extends StatefulWidget {
   const GetStartedSecreen({super.key});
@@ -14,6 +15,8 @@ class GetStartedSecreen extends StatefulWidget {
 }
 
 class _GetStartedSecreenState extends State<GetStartedSecreen> {
+  final LoginVewModel loginVM = Get.put(LoginVewModel());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,10 +69,7 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
   Widget _buildSocialButtons() {
     return Column(
       children: [
-        _socialButton(
-          icon: 'assets/images/devicon_google.svg',
-          text: 'Continue with google',
-        ),
+        _googleSignInButton(),
         const SizedBox(height: 10),
         _socialButton(
           icon: 'assets/images/apple.svg',
@@ -88,6 +88,57 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
           text: 'Continue with twitter',
         ),
       ],
+    );
+  }
+
+  Widget _googleSignInButton() {
+    return Obx(
+      () => GestureDetector(
+        onTap: loginVM.googleLoading.value ? null : () {},
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+          decoration: BoxDecoration(
+            color: loginVM.googleLoading.value
+                ? Colors.grey
+                : AppColor.grayColor,
+            border: Border.all(color: Colors.white24, width: 1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              if (loginVM.googleLoading.value)
+                Container(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColor.whiteColor,
+                  ),
+                )
+              else
+                Container(
+                  width: 22,
+                  height: 22,
+                  child: SvgPicture.asset(
+                    'assets/images/devicon_google.svg',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              const SizedBox(width: 5),
+              Text(
+                loginVM.googleLoading.value
+                    ? 'Signing in...'
+                    : 'Continue with google',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColor.whiteColor,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

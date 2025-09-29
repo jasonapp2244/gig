@@ -229,10 +229,47 @@ class _LoginState extends State<Login> {
 
   /// ----------------- GOOGLE BUTTON -----------------
   Widget _buildGoogleButton() {
-    return _socialButton(
-      icon: 'assets/images/devicon_google.svg',
-      text: 'Continue with Google',
-    );
+    return Obx(() => GestureDetector(
+      onTap: LoginVM.googleLoading.value ? null : () 
+      
+      {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        decoration: BoxDecoration(
+          color: LoginVM.googleLoading.value ? Colors.grey : AppColor.grayColor,
+          border: Border.all(color: Colors.white24, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            if (LoginVM.googleLoading.value)
+              Container(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColor.whiteColor,
+                ),
+              )
+            else
+              Container(
+                width: 20,
+                height: 20,
+                child: SvgPicture.asset('assets/images/devicon_google.svg', fit: BoxFit.cover),
+              ),
+            const SizedBox(width: 5),
+            Text(
+              LoginVM.googleLoading.value ? 'Signing in...' : 'Continue with Google',
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColor.whiteColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 
   /// ----------------- FACEBOOK BUTTON -----------------

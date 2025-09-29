@@ -301,14 +301,32 @@ class GetTaskViewModel extends GetxController {
     required String status,
   }) async {
     try {
-      final tasks = await _api.getSpecficTasks(
+      loading.value = true;
+      print("🔄 Fetching tasks for employer $employerId with status: $status");
+      
+      final fetchedTasks = await _api.getSpecficTasks(
         status: status,
         employerId: employerId.toString(),
       );
-      return tasks ?? [];
+      
+      print("📋 Fetched ${fetchedTasks?.length ?? 0} tasks");
+      
+      // Update the observable tasks list
+      if (fetchedTasks != null) {
+        tasks.value = fetchedTasks;
+        print("✅ Updated tasks list with ${tasks.length} tasks");
+      } else {
+        tasks.value = [];
+        print("⚠️ No tasks returned from API");
+      }
+      
+      return fetchedTasks ?? [];
     } catch (e) {
       print("❌ Error fetching tasks: $e");
+      tasks.value = [];
       return [];
+    } finally {
+      loading.value = false;
     }
   }
 }

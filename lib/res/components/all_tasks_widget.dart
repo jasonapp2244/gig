@@ -12,12 +12,11 @@ extension StringCasingExtension on String {
   }
 }
 
-class EmployerTaskListScreen extends StatelessWidget {
+class EmployerTaskListScreen extends StatefulWidget {
   final int employerId;
   final String status;
   final String employerName;
   GetTaskViewModel? model;
-  // final GetTaskViewModel model = Get.put(GetTaskViewModel());
 
   EmployerTaskListScreen({
     super.key,
@@ -26,6 +25,26 @@ class EmployerTaskListScreen extends StatelessWidget {
     required this.employerName,
     this.model,
   });
+
+  @override
+  State<EmployerTaskListScreen> createState() => _EmployerTaskListScreenState();
+}
+
+class _EmployerTaskListScreenState extends State<EmployerTaskListScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch tasks after the widget is built using post frame callback
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.model != null) {
+        widget.model!.fetchTasksByEmployer(
+          employerId: widget.employerId,
+          status: widget.status, // Use the API status directly (already converted in task_screen.dart)
+        );
+      }
+    });
+  }
 
   String _formatDate(String? dateString) {
     if (dateString == null || dateString == 'N/A') return 'N/A';
@@ -39,11 +58,6 @@ class EmployerTaskListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // fetch tasks when screen opens
-    model!.fetchTasksByEmployer(
-      employerId: employerId,
-      status: status.toCapitalized(),
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -60,16 +74,24 @@ class EmployerTaskListScreen extends StatelessWidget {
       ),
       backgroundColor: AppColor.primeColor,
       body: Obx(() {
-        if (model!.tasks.isEmpty) {
+        if (widget.model!.loading.value) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: AppColor.secondColor,
+            ),
+          );
+        }
+
+        if (widget.model!.tasks.isEmpty) {
           return const Center(child: Text("No tasks found"));
         }
 
         return ListView.builder(
-          itemCount: model!.tasks.length,
+          itemCount: widget.model!.tasks.length,
           itemBuilder: (context, index) {
-            final task = model!.tasks[index];
+            final task = widget.model!.tasks[index];
             return TaskSpecficBlock(
-              employeerId: employerId,
+              employeerId: widget.employerId,
               id: int.tryParse(task['id']?.toString() ?? '0'),
               title: task['job_title'] ?? "Untitled Task",
               startDate: _formatDate(task['task_date_time']),

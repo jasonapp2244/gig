@@ -175,12 +175,24 @@ class TaskSpecficBlock extends StatelessWidget {
                                   btnText2: 'Cancel',
                                   onFirstTap: () async {
                                     var model = Get.find<GetTaskViewModel>();
+                                    
+                                    // Immediately remove from UI for instant feedback
+                                    final taskIdToDelete = id ?? 0;
+                                    model.tasks.removeWhere((task) {
+                                      final taskIdFromList = task['id'];
+                                      if (taskIdFromList is String) {
+                                        return int.tryParse(taskIdFromList) == taskIdToDelete;
+                                      } else if (taskIdFromList is int) {
+                                        return taskIdFromList == taskIdToDelete;
+                                      }
+                                      return false;
+                                    });
 
-                                    await deleteTaskVM.deleteTask(id ?? 0);
-                                    await model.fetchTasksByEmployer(
-                                      employerId: employeerId,
-                                      status: status,
-                                    );
+                                    // Close the bottom sheet immediately
+                                   // Get.back();
+
+                                    // Then delete from backend
+                                    await deleteTaskVM.deleteTask(taskIdToDelete);
 
                                     print('Deleted!');
                                   },

@@ -42,14 +42,14 @@ class GetProfileViewModel extends GetxController {
         return;
       }
 
-      print('🔑 Token exists: ${token.substring(0, 10)}...');
-      print('🌐 API URL: ${AppUrl.getProfileApi}');
+      print(' Token exists: ${token.substring(0, 10)}...');
+      print(' API URL: ${AppUrl.getProfileApi}');
 
       dynamic response = await _profileRepository.getProfile();
 
-      print('📡 Profile response received');
-      print('📡 Response type: ${response.runtimeType}');
-      print('📡 Profile response: $response');
+      print(' Profile response received');
+      print(' Response type: ${response.runtimeType}');
+      print(' Profile response: $response');
 
       if (response != null) {
         if (response['status'] == true) {
@@ -74,13 +74,13 @@ class GetProfileViewModel extends GetxController {
         } else {
           String apiError = response['message'] ?? 'Failed to load profile';
           error.value = 'Server Error: $apiError';
-          print('❌ API Error: $apiError');
+          print(' API Error: $apiError');
           Utils.snakBar('Profile Error', apiError);
         }
       } else {
         error.value =
             'No response from server. Please check your internet connection.';
-        print('❌ No response received from profile API');
+        print(' No response received from profile API');
         Utils.snakBar('Network Error', error.value);
       }
     } catch (e) {
@@ -107,7 +107,7 @@ class GetProfileViewModel extends GetxController {
 
   Future<bool> _checkStoragePermission() async {
     if (Platform.isAndroid) {
-      // ✅ Android 11+ (API 30 and above)
+      //  Android 11+ (API 30 and above)
       if (await Permission.manageExternalStorage.isGranted) {
         return true;
       } else {
@@ -122,7 +122,7 @@ class GetProfileViewModel extends GetxController {
         return false;
       }
     } else {
-      // ✅ Android 10 and below
+      //  Android 10 and below
       if (await Permission.storage.isGranted) {
         return true;
       } else {
