@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/components/bottom_banner_ads.dart';
 import 'package:intl/intl.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../view_models/controller/income/income_tracker_view_model.dart';
@@ -73,6 +74,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                       style: TextStyle(color: Colors.white70, fontSize: 16),
                     );
                   }),
+                  BottomBannerAd(),
                 ],
               ),
             );
@@ -164,6 +166,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    BottomBannerAd(),
                   ],
                 ),
               ],

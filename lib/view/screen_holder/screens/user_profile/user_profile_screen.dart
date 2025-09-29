@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:gig/res/components/bottom_banner_ads.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import '../../../../res/colors/app_color.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -69,7 +70,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   _buildProfileHeader(),
                   const SizedBox(height: 30),
                   _buildSkillsSection(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 20),BottomBannerAd(),
                 ],
               ),
             ),

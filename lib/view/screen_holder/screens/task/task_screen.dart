@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/all_tasks_widget.dart';
+import 'package:gig/res/components/bottom_banner_ads.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/task_block.dart';
@@ -166,10 +167,6 @@ class _TaskScreenState extends State<TaskScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-        ),
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
 
@@ -269,7 +266,7 @@ class _TaskScreenState extends State<TaskScreen>
                   ],
                 );
               }),
-            ),
+            ),BottomBannerAd(),
           ],
         ),
       ),

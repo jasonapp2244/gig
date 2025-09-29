@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
+import 'package:gig/res/components/bottom_banner_ads.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
@@ -433,6 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            BottomBannerAd(),
           ],
         ),
       ),

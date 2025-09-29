@@ -49,3 +49,11 @@ android {
 flutter {
     source = "../.."
 }
+dependencies {
+    // Add this dependency for AdMob
+    implementation("com.google.android.gms:play-services-ads:23.1.0")
+    
+    // If you're using Firebase, you might also want these
+    // implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    // implementation("com.google.firebase:firebase-analytics")
+}

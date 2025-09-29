@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/components/bottom_banner_ads.dart';
 import 'package:gig/view_models/controller/task/edit_task_view_model.dart';
 import '../../../../res/colors/app_color.dart';
 import '../../../../res/components/input.dart';
@@ -50,7 +51,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   ),
                 ),
               ),
-            ),
+            ),BottomBannerAd(),
           ],
         ),
       ),

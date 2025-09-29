@@ -61,6 +61,7 @@ dependencies:
   json_serializable: ^6.11.1
   one_clock: ^2.0.2
   intl:
+  google_mobile_ads: ^6.0.0
 
 
 

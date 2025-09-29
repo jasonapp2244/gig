@@ -7,6 +7,7 @@ import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +15,12 @@ void main() async {
   Get.put(DeleteTaskViewModel(), permanent: true);
 
   Utils.getAndPrintFCMToken();
-
+  try {
+    await MobileAds.instance.initialize();
+    print('AdMob initialized successfully');
+  } catch (e) {
+    print('Failed to initialize AdMob: $e');
+  }
   Color primeColor = Colors.transparent;
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
