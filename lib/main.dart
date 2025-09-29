@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/components/ads_mangager.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
@@ -15,12 +16,34 @@ void main() async {
   Get.put(DeleteTaskViewModel(), permanent: true);
 
   Utils.getAndPrintFCMToken();
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   AdManager().initialize();
+  // });
+  // try {
+  //   await MobileAds.instance.initialize();
+  //   print('AdMob initialized successfully');
+  // } catch (e) {
+  //   print('Failed to initialize AdMob: $e');
+  // }
+  MobileAds.instance.updateRequestConfiguration(
+    RequestConfiguration(
+      testDeviceIds: [
+        "BFADC99BDE11D3784C710529FD6E134D", // 👈 replace with your real test device ID from logs
+      ],
+    ),
+  );
   try {
     await MobileAds.instance.initialize();
-    print('AdMob initialized successfully');
+    print('✅ AdMob initialized successfully');
   } catch (e) {
-    print('Failed to initialize AdMob: $e');
+    print('❌ Failed to initialize AdMob: $e');
   }
+
+  // ✅ THEN initialize AdManager (without duplicate MobileAds init)
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    AdManager().initialize();
+  });
+
   Color primeColor = Colors.transparent;
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(

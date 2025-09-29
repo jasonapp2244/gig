@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gig/res/colors/app_color.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class BottomBannerAd extends StatefulWidget {
@@ -12,8 +14,8 @@ class _BottomBannerAdState extends State<BottomBannerAd> {
   BannerAd? _bannerAd;
   bool _isAdLoaded = false;
 
-  // Test ad unit ID
-  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
+  // Real ad unit ID
+  final String _adUnitId = 'ca-app-pub-8812386332155668/4027577863';
 
   @override
   void initState() {
@@ -29,7 +31,6 @@ class _BottomBannerAdState extends State<BottomBannerAd> {
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           print('Ad loaded successfully.');
-          // Use WidgetsBinding to schedule setState after the current frame
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -55,11 +56,16 @@ class _BottomBannerAdState extends State<BottomBannerAd> {
   @override
   Widget build(BuildContext context) {
     if (!_isAdLoaded) {
-      return const SizedBox(
+      return SizedBox(
         width: 320, // Match banner width to prevent layout shifts
         height: 50, // Match banner height
         child: Center(
-          child: SizedBox(), // Empty while loading, or show a placeholder
+          child: SizedBox(
+            child: Text(
+              "No Ads At This Moment",
+              style: GoogleFonts.dmSans(color: AppColor.whiteColor),
+            ),
+          ), // Empty while loading, or show a placeholder
         ),
       );
     }
