@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gig/firebase_options.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
@@ -10,10 +11,10 @@ import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Get.put(DeleteTaskViewModel(), permanent: true);
 
-  Utils.getAndPrintFCMToken();
+  // Utils.getAndPrintFCMToken();
 
   Color primeColor = Colors.transparent;
   SystemChrome.setSystemUIOverlayStyle(

@@ -114,6 +114,7 @@ class AddTaskViewModel extends GetxController {
         // Navigate to Tasks tab
         try {
           final HomeViewModel homeController = Get.find<HomeViewModel>();
+          clear();
           homeController.changeTab(1);
         } catch (e) {
           print('⚠️ Could not navigate to Tasks tab: $e');
@@ -273,5 +274,17 @@ class AddTaskViewModel extends GetxController {
     selectedTime.value = null;
     timeController.value.clear();
     print('🕐 Time cleared');
+  }
+
+  clear() {
+    clearSelectedTime();
+    employerController.value.clear();
+    jobTypeController.value.clear();
+    locationController.value.clear();
+    supervisorController.value.clear();
+    timeController.value.clear();
+    wagesController.value.clear();
+    straightTimeController.value.clear();
+    notesController.value.clear();
   }
 }

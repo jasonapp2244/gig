@@ -371,6 +371,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             }
 
             if (_formKey.currentState!.validate()) {
+              print('🔍 DEBUG: About to submit task with selectedDate: ${addTaskVM.selectedDate}');
+              print('🔍 DEBUG: Selected date components: ${addTaskVM.selectedDate?.year}-${addTaskVM.selectedDate?.month.toString().padLeft(2, '0')}-${addTaskVM.selectedDate?.day.toString().padLeft(2, '0')}');
               addTaskVM.addTaskApi();
               // Remove Get.back() - let the view model handle navigation after API response
             }
