@@ -104,6 +104,7 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
       children: [
         // Search TextField
         TextField(
+          cursorColor: AppColor.whiteColor,
           style: const TextStyle(color: Colors.white),
           controller: searchController,
 
@@ -117,13 +118,6 @@ class _EmployerDropdownState extends State<EmployerDropdown> {
             hintText: 'Employer Name',
             suffix: const Icon(Icons.search, color: Colors.white60),
 
-            // suffixIcon: searchController.text.isNotEmpty
-            //     ? IconButton(
-            //         icon: const Icon(Icons.add, color: AppColor.primeColor),
-            //         onPressed: _useCustomEmployer,
-            //         tooltip: 'Use as custom employer',
-            //       )
-            //     : null,
             border: OutlineInputBorder(),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white24, width: 1),

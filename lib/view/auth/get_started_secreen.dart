@@ -32,10 +32,16 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
         Utils.snakBar('Success', 'Google Sign-in successful!');
         String providerId = await Utils.readSecureData('provider_token') ?? '';
         String email = await Utils.readSecureData('email') ?? '';
-        loginVM.loginApiWithGoogle(providerId: providerId, email: email);
+        final user = result.user!;
+        loginVM.loginApiWithGoogle(
+          providerId: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoUrl: user.photoURL,
+        );
 
         // You can navigate to the next screen or handle the user data here
-        Get.toNamed(RoutesName.home);
+        //s Get.toNamed(RoutesName.home);
 
         print('Google Sign-in successful: ${result.user!.email}');
       } else {

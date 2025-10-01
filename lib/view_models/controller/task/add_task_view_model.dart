@@ -33,12 +33,13 @@ class AddTaskViewModel extends GetxController {
   RxList<Map<String, dynamic>> employers = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> filteredEmployers = <Map<String, dynamic>>[].obs;
   RxString searchQuery = ''.obs;
-
+  var employerText = "";
+  String formattedDateTime = "";
   Future<void> addTaskApi() async {
     loading.value = true;
 
     // Validate employer field
-    final employerText = employerController.value.text.trim();
+    employerText = employerController.value.text.trim();
     if (employerText.isEmpty) {
       loading.value = false;
       Utils.snakBar('Error', 'Please select or enter an employer name');
@@ -73,9 +74,7 @@ class AddTaskViewModel extends GetxController {
     }
 
     // ✅ Format datetime as "Y-m-d H:i:s" using intl
-    String formattedDateTime = DateFormat(
-      'yyyy-MM-dd HH:mm:ss',
-    ).format(taskDateTime);
+    formattedDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(taskDateTime);
     print('✅ Formatted task_date_time: $formattedDateTime');
 
     Map<String, dynamic> data = {
@@ -100,6 +99,7 @@ class AddTaskViewModel extends GetxController {
 
         // Refresh both task list and home calendar data
         await taskViewModel.refreshData();
+        clear();
 
         // Refresh home screen calendar data
         try {
@@ -125,6 +125,22 @@ class AddTaskViewModel extends GetxController {
       loading.value = false;
       Utils.snakBar('Error', error.toString());
     }
+  }
+
+  clear() {
+    jobTypeController.value.clear();
+    locationController.value.clear();
+    supervisorController.value.clear();
+    selectedTime.value = null;
+    selectedDate = null;
+    timeController.value.clear();
+
+    employerController.value.clear();
+    positionController.value.clear();
+
+    wagesController.value.clear();
+    straightTimeController.value.clear();
+    notesController.value.clear();
   }
 
   @override

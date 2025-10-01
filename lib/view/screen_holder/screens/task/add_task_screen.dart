@@ -106,7 +106,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ],
                   ),
                 ),
-              ),BottomBannerAd(),
+              ),
+              BottomBannerAd(),
             ],
           ),
         ),
@@ -130,6 +131,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   final HomeViewModel homeController =
                       Get.find<HomeViewModel>();
                   homeController.overrideScreen.value = null;
+                  addTaskVM.clear();
                   Get.back();
                 } catch (e) {
                   // Fallback to regular navigation if HomeViewModel not found
@@ -295,8 +297,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.white24, width: 1.5),
-          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.white24, width: 1),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: GestureDetector(
           onTap: () => addTaskVM.selectTime(context),
@@ -373,7 +375,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
             if (_formKey.currentState!.validate()) {
               addTaskVM.addTaskApi();
-              // Remove Get.back() - let the view model handle navigation after API response
+              Get.back();
             }
           },
         ),

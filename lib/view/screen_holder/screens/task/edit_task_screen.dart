@@ -51,7 +51,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   ),
                 ),
               ),
-            ),BottomBannerAd(),
+            ),
+            BottomBannerAd(),
           ],
         ),
       ),
@@ -203,6 +204,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: CustomInputField(
+        isEdit: false,
         controller: editTaskVM.notesController.value,
         fieldType: 'text',
         hintText: "Notes",

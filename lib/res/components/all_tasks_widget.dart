@@ -58,7 +58,7 @@ class EmployerTaskListScreen extends StatelessWidget {
 
         centerTitle: true,
       ),
-      backgroundColor: AppColor.primeColor,
+      backgroundColor: AppColor.appBodyBG,
       body: Obx(() {
         if (model!.tasks.isEmpty) {
           return const Center(child: Text("No tasks found"));

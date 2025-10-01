@@ -41,6 +41,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
       appBar: AppBar(
+        foregroundColor: AppColor.primeColor,
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
         centerTitle: true,

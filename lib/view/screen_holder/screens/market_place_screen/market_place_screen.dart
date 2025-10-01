@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view/screen_holder/screens/adds/crate_a_add_screen.dart';
 import '../../../../res/colors/app_color.dart';
 import 'package:gig/res/routes/routes_name.dart';
-import 'package:http/http.dart' as http;  // <-- this fixes "Undefined name 'http'"
+import 'package:http/http.dart'
+    as http; // <-- this fixes "Undefined name 'http'"
+
 class MarketPlaceView extends StatefulWidget {
   const MarketPlaceView({super.key});
 
@@ -71,9 +74,7 @@ class _MarketPlaceView extends State<MarketPlaceView> {
         return;
       }
 
-      final url = Uri.parse(
-        'https://lavender-buffalo-882516.hostingersite.com/gig_app/api/get-list?page=$currentPage',
-      );
+      final url = Uri.parse('${AppUrl.baseUrl}/get-list?page=$currentPage');
 
       final response = await http.get(
         url,
@@ -156,7 +157,7 @@ class _MarketPlaceView extends State<MarketPlaceView> {
       // Check if the path is a full URL or needs to be constructed
       if (path.startsWith('http')) {
         print("asfdasf$path");
-        return 'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/$path';
+        return '${AppUrl.baseUrl}/storage/$path';
       } else {
         print(
           'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/$path',

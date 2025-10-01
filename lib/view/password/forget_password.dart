@@ -5,6 +5,7 @@ import 'package:gig/view_models/controller/password/forget_password_view_model.d
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../res/components/round_button.dart';
+
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
 
@@ -19,6 +20,20 @@ class _RegisterState extends State<ForgetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: AppColor.primeColor,
+        backgroundColor: AppColor.appBodyBG,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Forget Password',
+          style: TextStyle(
+            color: AppColor.secondColor,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
         child: Column(

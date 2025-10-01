@@ -5,6 +5,8 @@ import 'package:gig/res/components/button.dart';
 import 'package:gig/res/fonts/app_fonts.dart';
 import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/responsive.dart';
+import 'package:gig/utils/utils.dart';
+import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -24,6 +26,43 @@ class _LoginState extends State<Login> {
   final LoginVM = Get.put(LoginVewModel());
   final _formKey = GlobalKey<FormState>();
   final LogoutnVM = Get.put(LogoutViewModel());
+
+  /// Handle Google Sign-In
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      LoginVM.googleLoading.value = true;
+
+      final result = await GoogleAuthRepository.signInWithGoogle();
+
+      if (result.success && result.user != null) {
+        // Google sign-in successful
+        Utils.snakBar('Success', 'Google Sign-in successful!');
+        String providerId = await Utils.readSecureData('provider_token') ?? '';
+        String email = await Utils.readSecureData('email') ?? '';
+        final user = result.user!;
+        LoginVM.loginApiWithGoogle(
+          providerId: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoUrl: user.photoURL,
+        );
+
+        // You can navigate to the next screen or handle the user data here
+        //s Get.toNamed(RoutesName.home);
+
+        print('Google Sign-in successful: ${result.user!.email}');
+      } else {
+        // Handle sign-in failure
+        Utils.snakBar('Sign-in Failed', result.message);
+        print('Google Sign-in failed: ${result.message}');
+      }
+    } catch (error) {
+      Utils.snakBar('Error', 'An unexpected error occurred');
+      print('Google Sign-in error: $error');
+    } finally {
+      LoginVM.googleLoading.value = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +139,8 @@ class _LoginState extends State<Login> {
         _buildDivider(),
         const SizedBox(height: 12),
         _buildGoogleButton(),
-        const SizedBox(height: 12),
-        _buildFacebookButton(),
+        // const SizedBox(height: 12),
+        //  _buildFacebookButton(),
         const SizedBox(height: 28),
         _buildSignInButton(),
       ],
@@ -244,30 +283,33 @@ class _LoginState extends State<Login> {
   }
 
   Widget _socialButton({required String icon, required String text}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-      decoration: BoxDecoration(
-        color: AppColor.grayColor,
-        border: Border.all(color: Colors.white24, width: 1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            child: SvgPicture.asset(icon, fit: BoxFit.cover),
-          ),
-          const SizedBox(width: 5),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColor.whiteColor,
-              fontWeight: FontWeight.w400,
+    return GestureDetector(
+      onTap: LoginVM.googleLoading.value ? null : _handleGoogleSignIn,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        decoration: BoxDecoration(
+          color: AppColor.grayColor,
+          border: Border.all(color: Colors.white24, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              child: SvgPicture.asset(icon, fit: BoxFit.cover),
             ),
-          ),
-        ],
+            const SizedBox(width: 5),
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColor.whiteColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

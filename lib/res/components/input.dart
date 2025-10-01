@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 
 import '../colors/app_color.dart';
 import '../fonts/app_fonts.dart';
@@ -11,6 +12,7 @@ class CustomInputField extends StatefulWidget {
   final Icon? prefixIcon;
   final bool? requiredField;
   final String? Function(String?)? validator;
+  Function()? onTap;
   bool? isEdit;
 
   CustomInputField({
@@ -23,6 +25,7 @@ class CustomInputField extends StatefulWidget {
     this.requiredField,
     this.validator,
     this.isEdit,
+    this.onTap
   });
 
   @override
@@ -41,7 +44,9 @@ class _CustomInputFieldState extends State<CustomInputField> {
   @override
   Widget build(BuildContext context) {
     TextInputType keyboardType;
-    bool isPassword = widget.fieldType == "password"||widget.fieldType == "confirm password";
+    bool isPassword =
+        widget.fieldType == "password" ||
+        widget.fieldType == "confirm password";
 
     switch (widget.fieldType) {
       case "email":
@@ -61,6 +66,8 @@ class _CustomInputFieldState extends State<CustomInputField> {
     }
 
     return TextFormField(
+      
+      onTap :widget.onTap,
       enabled: widget.isEdit ?? true,
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
@@ -78,6 +85,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
       obscureText: isPassword ? _obscureText : false,
       obscuringCharacter: '*',
       keyboardType: keyboardType,
+
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,
         iconColor: AppColor.textColor,
@@ -95,19 +103,19 @@ class _CustomInputFieldState extends State<CustomInputField> {
         border: OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white24, width: 1),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white24, width: 1),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
         ),
         errorBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.red, width: 1),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.red, width: 1),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(14),
         ),
         suffixIcon: isPassword
             ? IconButton(

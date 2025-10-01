@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:gig/repository/auth_repository/social_login_repository.dart';
 import 'package:gig/view_models/controller/otp/resend_otp_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/auth/user_model.dart';
@@ -8,6 +10,8 @@ import '../../../repository/auth_repository/register_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../../../repository/auth_repository/login_repository.dart';
 
 class RegisterVewModel extends GetxController {
   final _api = RegisterRepository();
@@ -16,8 +20,39 @@ class RegisterVewModel extends GetxController {
   final emailController = TextEditingController().obs;
   final passwordController = TextEditingController().obs;
   final phoneNumberController = TextEditingController().obs;
+  RxBool googleLoading = false.obs;
 
   RxBool loading = false.obs;
+  final _socialApi = SocialLoginRepository();
+  Future<String?> _getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // On Android 13+ and iOS: ask user for notification permission
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print('🔥 FCM Permission Status: ${settings.authorizationStatus}');
+
+    if (settings.authorizationStatus == AuthorizationStatus.denied) {
+      // Extra fallback using permission_handler (some OEMs block by default)
+      if (await Permission.notification.isDenied) {
+        await Permission.notification.request();
+      }
+
+      if (await Permission.notification.isDenied) {
+        print('🚫 Notification permission denied');
+        return null;
+      }
+    }
+
+    // ✅ Always try to get the token if not denied
+    String? token = await messaging.getToken();
+    print("✅ FCM Token: $token");
+    return token;
+  }
 
   bool validateFields() {
     if (nameController.value.text.trim().isEmpty) {
@@ -195,6 +230,75 @@ class RegisterVewModel extends GetxController {
         'Registration attempt failed. Retrying in $waitTime seconds...',
       );
       await Future.delayed(Duration(seconds: waitTime));
+    }
+  }
+
+  void registerApiWithGoogle({
+    required String providerId,
+    required String email,
+    required String displayName,
+    required String photoUrl,
+  }) async {
+    try {
+      loading.value = true;
+
+      String token = await _getToken() ?? '';
+      Map data = {
+        //'password': passwordController.value.text,
+        'fcm_token': token,
+        'service_provider': 'google',
+        'service_provider_id': providerId,
+        'email': email,
+        'name': displayName,
+        'profile_image': photoUrl,
+      };
+
+      // Await the API call only once
+      final value = await _socialApi.SocialLoginApi(data);
+
+      loading.value = false;
+
+      if (value['status'] == true) {
+        Utils.snakBar('Login', value['message']);
+
+        // Store user data
+        final storage = FlutterSecureStorage();
+        await storage.write(key: 'auth_token', value: value['token']);
+        await storage.write(key: 'user_name', value: value['user']['name']);
+        await storage.write(key: 'user_email', value: value['user']['email']);
+        await storage.write(
+          key: 'user_id',
+          value: value['user']['id'].toString(),
+        );
+        await storage.write(
+          key: 'user_phone',
+          value: value['user']['phone_number'],
+        );
+
+        // Navigate to home
+        Get.offAllNamed(RoutesName.home);
+      } else {
+        // Handle backend validation errors
+        String errorMsg = value['message'] ?? 'Something went wrong';
+
+        if (value['errors'] != null && value['errors'] is Map) {
+          Map<String, dynamic> errors = value['errors'];
+          String detailedErrorMsg = errors.values
+              .expand((list) => list)
+              .join('\n');
+
+          Utils.snakBar(
+            'Login',
+            detailedErrorMsg.isNotEmpty ? detailedErrorMsg : errorMsg,
+          );
+        } else {
+          Utils.snakBar('Login', errorMsg);
+        }
+      }
+    } catch (error) {
+      loading.value = false;
+      print('Login API error: $error');
+      Utils.snakBar('Error', error.toString());
     }
   }
   // /// Sign in with Google

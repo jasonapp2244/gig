@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:gig/repository/auth_repository/social_login_repository.dart';
 import 'package:gig/view/auth/auth_servies.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../repository/auth_repository/login_repository.dart';
@@ -11,6 +12,7 @@ import '../user_preference/user_preference_view_model.dart';
 
 class LoginVewModel extends GetxController {
   final _api = LoginRepository();
+  final _socialApi = SocialLoginRepository();
   UserPreference userPreference = UserPreference();
   final emailController = TextEditingController().obs;
   final passwordController = TextEditingController().obs;
@@ -151,21 +153,28 @@ class LoginVewModel extends GetxController {
   //   }
   // }
 
-  void loginApiWithGoogle({required String providerId, String? email}) async {
+  void loginApiWithGoogle({
+    required String providerId,
+    required String email,
+    required String displayName,
+    required String photoUrl,
+  }) async {
     try {
       loading.value = true;
 
       String token = await _getToken() ?? '';
       Map data = {
-        'email': email,
         //'password': passwordController.value.text,
         'fcm_token': token,
         'service_provider': 'google',
         'service_provider_id': providerId,
+        'email': email,
+        'name': displayName,
+        'profile_image': photoUrl,
       };
 
       // Await the API call only once
-      final value = await _api.loginApi(data);
+      final value = await _socialApi.SocialLoginApi(data);
 
       loading.value = false;
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/utils.dart';
@@ -43,6 +44,17 @@ class GoogleAuthRepository {
       // Check if we have the required tokens
       final String? accessToken = googleAuth.accessToken;
       final String? idToken = googleAuth.idToken;
+      // 🔑 Create Firebase credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: accessToken,
+        idToken: idToken,
+      );
+
+      // 🔥 Sign in with Firebase
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+
+      final User? firebaseUser = userCredential.user;
 
       if (accessToken == null || idToken == null) {
         return GoogleSignInResult(
@@ -51,10 +63,6 @@ class GoogleAuthRepository {
           errorType: GoogleSignInErrorType.authenticationFailed,
         );
       }
-
-      Utils.writeSecureStorage('provider_token', idToken.toString());
-      Utils.writeSecureStorage('email',account.email);
-      
 
       return GoogleSignInResult(
         success: true,
