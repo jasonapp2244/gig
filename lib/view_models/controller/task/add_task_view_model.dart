@@ -9,8 +9,6 @@ import '../user_preference/user_preference_view_model.dart';
 import '../task/get_task_view_model.dart';
 import '../home/home_view_model.dart';
 
-import 'package:intl/intl.dart';
-
 class AddTaskViewModel extends GetxController {
   final _api = AddTaskRepository();
   final _employerRepository = EmployerRepository();

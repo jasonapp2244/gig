@@ -19,9 +19,9 @@ class TaskStatusSummary extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColor.primeColor.withOpacity(0.1),
+          color: AppColor.primeColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColor.primeColor.withOpacity(0.3)),
+          border: Border.all(color: AppColor.primeColor.withValues(alpha:  0.3)),
         ),
         child: Center(
           child: CircularProgressIndicator(
@@ -40,9 +40,9 @@ class TaskStatusSummary extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.1),
+          color: Colors.red.withValues(alpha:  0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.red.withOpacity(0.3)),
+          border: Border.all(color: Colors.red.withValues(alpha:  0.3)),
         ),
         child: Text(
           'Debug: Task Status Summary - No data available\nData keys: ${statusData.keys.toList()}',
@@ -58,9 +58,9 @@ class TaskStatusSummary extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColor.primeColor.withOpacity(0.1),
+        color: AppColor.primeColor.withValues(alpha:  0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColor.primeColor.withOpacity(0.3)),
+        border: Border.all(color: AppColor.primeColor.withValues(alpha:  0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +101,7 @@ class TaskStatusSummary extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha:  0.3),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -144,7 +144,7 @@ class TaskStatusSummary extends StatelessWidget {
             Text(
               statusData['summary_text'].toString(),
               style: GoogleFonts.poppins(
-                color: AppColor.secondColor.withOpacity(0.8),
+                color: AppColor.secondColor.withValues(alpha:  0.8),
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
               ),
@@ -158,14 +158,14 @@ class TaskStatusSummary extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.date_range,
-                    color: AppColor.secondColor.withOpacity(0.6),
+                    color: AppColor.secondColor.withValues(alpha:  0.6),
                     size: 14,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${statusData['from_date']} to ${statusData['to_date']}',
                     style: GoogleFonts.poppins(
-                      color: AppColor.secondColor.withOpacity(0.6),
+                      color: AppColor.secondColor.withValues(alpha:  0.6),
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
                     ),
@@ -192,7 +192,7 @@ class TaskStatusSummary extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.poppins(
-            color: AppColor.secondColor.withOpacity(0.7),
+            color: AppColor.secondColor.withValues(alpha:  0.7),
             fontSize: 12,
             fontWeight: FontWeight.w400,
           ),

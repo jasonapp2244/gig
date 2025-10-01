@@ -8,16 +8,6 @@ import '../../../repository/auth_repository/login_repository.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../../../repository/auth_repository/login_repository.dart';
-
-import '../../../res/routes/routes_name.dart';
-import '../../../utils/utils.dart';
-import '../user_preference/user_preference_view_model.dart';
 
 class LoginVewModel extends GetxController {
   final _api = LoginRepository();

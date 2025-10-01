@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -9,27 +8,7 @@ import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/view/privacy_policy.dart';
 
 import 'package:gig/view_models/controller/auth/login_view_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-
-import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/button.dart';
-import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/utils/utils.dart';
-import 'package:gig/view/privacy_policy.dart';
-import 'package:gig/view_models/controller/auth/login_view_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-
-import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/button.dart';
-import 'package:gig/res/routes/routes_name.dart';
-import 'package:gig/utils/utils.dart';
-import 'package:gig/view/privacy_policy.dart';
-import 'package:gig/view_models/controller/auth/login_view_model.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class GetStartedSecreen extends StatefulWidget {
   const GetStartedSecreen({super.key});
