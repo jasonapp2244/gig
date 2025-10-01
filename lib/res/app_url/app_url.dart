@@ -1,7 +1,7 @@
 class AppUrl {
-  // static const String baseUrl = "http://192.168.100.98/gig_mob_app/public/api";
-  static const String baseUrl =
-      'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
+  static const String baseUrl = "http://192.168.100.98/gig_mob_app/public/api";
+  // static const String baseUrl =
+  //     'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
   // //  'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
 
   // AUTH API

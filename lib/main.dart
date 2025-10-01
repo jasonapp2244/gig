@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gig/firebase_options.dart';
 import 'package:gig/res/components/ads_mangager.dart';
+import 'package:gig/res/routes/routes_name.dart';
+import 'package:gig/view/auth/auth_servies.dart';
+import 'package:gig/view/auth/test_google.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
@@ -12,25 +16,24 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  GoogleAuthRepository.initialize();
+
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp();
+    }
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
+
   Get.put(DeleteTaskViewModel(), permanent: true);
 
+  //FCM TOKEN
   Utils.getAndPrintFCMToken();
-  // WidgetsBinding.instance.addPostFrameCallback((_) {
-  //   AdManager().initialize();
-  // });
-  // try {
-  //   await MobileAds.instance.initialize();
-  //   print('AdMob initialized successfully');
-  // } catch (e) {
-  //   print('Failed to initialize AdMob: $e');
-  // }
+
+  //Inilized Admod
   MobileAds.instance.updateRequestConfiguration(
-    RequestConfiguration(
-      testDeviceIds: [
-        "BFADC99BDE11D3784C710529FD6E134D", // 👈 replace with your real test device ID from logs
-      ],
-    ),
+    RequestConfiguration(testDeviceIds: ["BFADC99BDE11D3784C710529FD6E134D"]),
   );
   try {
     await MobileAds.instance.initialize();
@@ -39,7 +42,7 @@ void main() async {
     print('❌ Failed to initialize AdMob: $e');
   }
 
-  // ✅ THEN initialize AdManager (without duplicate MobileAds init)
+  //THEN initialize AdManager (without duplicate MobileAds init)
   WidgetsBinding.instance.addPostFrameCallback((_) {
     AdManager().initialize();
   });
@@ -104,7 +107,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSwatch(primarySwatch: primeSwatch),
             useMaterial3: true,
           ),
-          home: SplashScreen(),
+          initialRoute: RoutesName.onBoardingScreen,
         );
       },
     );
