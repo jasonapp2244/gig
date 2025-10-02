@@ -332,50 +332,50 @@ class _LoginState extends State<Login> {
   }
 
   /// ----------------- DRAWER -----------------
-  Widget _buildDrawer(BuildContext context) {
-    final bool isTablet = Responsive.isTablet(context);
+  // Widget _buildDrawer(BuildContext context) {
+  //   final bool isTablet = Responsive.isTablet(context);
 
-    return Drawer(
-      width: isTablet ? Responsive.width(40, context) : null,
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          _buildDrawerHeader(context, isTablet),
-          _buildDrawerItem(
-            context,
-            icon: Icons.post_add,
-            text: "Create Adds",
-            route: RoutesName.createAddsScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.account_circle_outlined,
-            text: "Profile",
-            route: RoutesName.userProfileScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.bellDot,
-            text: "Notification",
-            route: RoutesName.notificationScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.building400,
-            text: "Employer",
-            route: RoutesName.employerScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.building400,
-            text: "logout",
-            route: RoutesName.employerScreen,
-            onTap: () => LogoutnVM.logoutApi(),
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Drawer(
+  //     width: isTablet ? Responsive.width(40, context) : null,
+  //     child: ListView(
+  //       padding: EdgeInsets.zero,
+  //       children: [
+  //         _buildDrawerHeader(context, isTablet),
+  //         _buildDrawerItem(
+  //           context,
+  //           icon: Icons.post_add,
+  //           text: "Create Adds",
+  //           route: RoutesName.createAddsScreen,
+  //         ),
+  //         _buildDrawerItem(
+  //           context,
+  //           icon: Icons.account_circle_outlined,
+  //           text: "Profile",
+  //           route: RoutesName.userProfileScreen,
+  //         ),
+  //         _buildDrawerItem(
+  //           context,
+  //           icon: LucideIcons.bellDot,
+  //           text: "Notification",
+  //           route: RoutesName.notificationScreen,
+  //         ),
+  //         _buildDrawerItem(
+  //           context,
+  //           icon: LucideIcons.building400,
+  //           text: "Employer",
+  //           route: RoutesName.employerScreen,
+  //         ),
+  //         _buildDrawerItem(
+  //           context,
+  //           icon: LucideIcons.building400,
+  //           text: "logout",
+  //           route: RoutesName.employerScreen,
+  //           onTap: () => LogoutnVM.logoutApi(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildDrawerHeader(BuildContext context, bool isTablet) {
     return DrawerHeader(

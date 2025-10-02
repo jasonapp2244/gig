@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 5, top: 10),
+            padding: const EdgeInsets.only(left: 0, bottom: 5, top: 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -104,96 +104,125 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize:
-                          MainAxisSize.min, // Prevent inner column overflow
+                    Row(
                       children: [
-                        Text(
-                          "Welcome",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Responsive.fontSize(14, context),
+                        Obx(
+                          () => _buildTextAvatar(
+                            homeController.userName.value,
+                            Responsive.isTablet(context)
+                                ? Responsive.width(4, context)
+                                : Responsive.width(5, context),
                           ),
                         ),
-                        Obx(
-                          () => Text(
-                            homeController.userName.value,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: Responsive.fontSize(18, context),
-                              fontWeight: FontWeight.bold,
+                        SizedBox(width: 5),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize:
+                              MainAxisSize.min, // Prevent inner column overflow
+                          children: [
+                            Text(
+                              "Welcome",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(14, context),
+                              ),
                             ),
-                          ),
+                            Obx(
+                              () => Text(
+                                homeController.userName.value,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: Responsive.fontSize(18, context),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    Obx(
-                      () => _buildTextAvatar(
-                        homeController.userName.value,
-                        Responsive.isTablet(context)
-                            ? Responsive.width(4, context)
-                            : Responsive.width(5, context),
+                    // Obx(
+                    //   () => _buildTextAvatar(
+                    //     homeController.userName.value,
+                    //     Responsive.isTablet(context)
+                    //         ? Responsive.width(4, context)
+                    //         : Responsive.width(5, context),
+                    //   ),
+                    // ),
+                    Builder(
+                      builder: (context) => Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.menu,
+                            size: Responsive.fontSize(20, context),
+                            color: Colors.black,
+                          ),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: Responsive.height(1, context)),
                 // Search Row
-                Row(
-                  children: [
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: Responsive.height(
-                            5,
-                            context,
-                          ), // Limit height
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "Search...",
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: Responsive.height(0.5, context),
-                              horizontal: Responsive.width(4, context),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                Responsive.width(8, context),
-                              ),
-                              borderSide: BorderSide.none,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              size: Responsive.fontSize(20, context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (!Responsive.isTablet(context))
-                      SizedBox(width: Responsive.width(2, context)),
-                    if (!Responsive.isTablet(context))
-                      Builder(
-                        builder: (context) => Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.menu,
-                              size: Responsive.fontSize(20, context),
-                              color: Colors.black,
-                            ),
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     // Expanded(
+                //     //   child: ConstrainedBox(
+                //     //     constraints: BoxConstraints(
+                //     //       maxHeight: Responsive.height(
+                //     //         5,
+                //     //         context,
+                //     //       ), // Limit height
+                //     //     ),
+                //     //     child: TextField(
+                //     //       decoration: InputDecoration(
+                //     //         hintText: "Search...",
+                //     //         filled: true,
+                //     //         fillColor: Colors.white,
+                //     //         contentPadding: EdgeInsets.symmetric(
+                //     //           vertical: Responsive.height(0.5, context),
+                //     //           horizontal: Responsive.width(4, context),
+                //     //         ),
+                //     //         border: OutlineInputBorder(
+                //     //           borderRadius: BorderRadius.circular(
+                //     //             Responsive.width(8, context),
+                //     //           ),
+                //     //           borderSide: BorderSide.none,
+                //     //         ),
+                //     //         prefixIcon: Icon(
+                //     //           Icons.search,
+                //     //           size: Responsive.fontSize(20, context),
+                //     //         ),
+                //     //       ),
+                //     //     ),
+                //     //   ),
+                //     // ),
+                //     // if (!Responsive.isTablet(context))
+                //     //   SizedBox(width: Responsive.width(2, context)),
+                //     if (!Responsive.isTablet(context))
+                //       Builder(
+                //         builder: (context) => Container(
+                //           decoration: BoxDecoration(
+                //             color: Colors.white,
+                //             shape: BoxShape.circle,
+                //           ),
+                //           child: IconButton(
+                //             icon: Icon(
+                //               Icons.menu,
+                //               size: Responsive.fontSize(20, context),
+                //               color: Colors.black,
+                //             ),
+                //             onPressed: () => Scaffold.of(context).openDrawer(),
+                //           ),
+                //         ),
+                //       ),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -310,7 +339,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   defaultTextStyle: const TextStyle(color: Colors.white),
                   weekendTextStyle: const TextStyle(color: Colors.white),
                   outsideDaysVisible: false,
-                  // Remove default markers since we're using custom builder
                   markerDecoration: BoxDecoration(
                     color: Colors.transparent,
                     shape: BoxShape.circle,
@@ -342,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             InkWell(
               onTap: () {
-                final homeVM = Get.find<HomeViewModel>();
+                // final homeVM = Get.find<HomeViewModel>();
                 Get.toNamed(RoutesName.addTaskScreen);
               },
               child: Container(
@@ -753,11 +781,19 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/user.png'),
-                  radius: isTablet
-                      ? Responsive.width(5, context)
-                      : Responsive.width(6, context),
+                // CircleAvatar(
+                //   backgroundImage: AssetImage('assets/images/user.png'),
+                //   radius: isTablet
+                //       ? Responsive.width(5, context)
+                //       : Responsive.width(6, context),
+                // ),
+                Obx(
+                  () => _buildTextAvatar(
+                    homeController.userName.value,
+                    Responsive.isTablet(context)
+                        ? Responsive.width(4, context)
+                        : Responsive.width(5, context),
+                  ),
                 ),
                 SizedBox(height: Responsive.height(1, context)),
                 Obx(
@@ -794,18 +830,22 @@ class _HomeScreenState extends State<HomeScreen> {
             text: "Profile",
             route: RoutesName.userProfileScreen,
           ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.bellDot,
-            text: "Notification",
-            route: RoutesName.notificationScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.building400,
-            text: "Employer",
-            route: RoutesName.employerScreen,
-          ),
+
+          //we are not sending in app notification
+          // _buildDrawerItem(
+          //   context,
+          //   icon: LucideIcons.bellDot,
+          //   text: "Notification",
+          //   route: RoutesName.notificationScreen,
+          // ),
+
+          // need api for get emplyer name eraing location and images
+          // _buildDrawerItem(
+          //   context,
+          //   icon: LucideIcons.building400,
+          //   text: "Employer",
+          //   route: RoutesName.employerScreen,
+          // ),
           _buildDrawerItem(
             context,
             icon: LucideIcons.headset,
@@ -818,6 +858,12 @@ class _HomeScreenState extends State<HomeScreen> {
             text: "Reset Password",
             route: RoutesName.resetPassword,
           ),
+          _buildDrawerItem(
+            context,
+            icon: LucideIcons.album,
+            text: "Privacy PolicyView",
+            route: RoutesName.privacypolicyScreen,
+          ),
 
           _buildDrawerItem(
             context,
@@ -826,7 +872,7 @@ class _HomeScreenState extends State<HomeScreen> {
             route: "",
             onTap: () async {
               logoutController.logout(); // Call logout API
-              await Navigator.pushNamed(context, RoutesName.loginScreen);
+              // await Navigator.pushNamed(context, RoutesName.loginScreen);
 
               // Show confirmation dialog
             },
