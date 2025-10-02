@@ -42,4 +42,5 @@ class AppUrl {
   static const String showTasksApi = '$baseUrl/show-task';
   static const String earningSummaryApi = '$baseUrl/earningSummary';
   static const String getCategoriesApi = '$baseUrl/get-list-category';
+  static const String supportApi = '$baseUrl/support/send';
 }

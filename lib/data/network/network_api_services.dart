@@ -118,6 +118,34 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
+  Future<dynamic> supportRequest(var data, String url, String token) async {
+    dynamic responseJson;
+
+    try {
+      // Debug print request data
+      print(" Sending POST request to: $url");
+      print(" Data: $data");
+
+      final response = await http
+          .post(
+            Uri.parse(url),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    }
+    return responseJson;
+  }
 
   Future<dynamic> postTask(var data, String url, String token) async {
     dynamic responseJson;
