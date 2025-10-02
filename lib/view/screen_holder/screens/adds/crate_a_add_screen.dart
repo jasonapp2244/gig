@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gig/res/app_url/app_url.dart';
+import 'package:gig/res/components/input.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   final picker = ImagePicker();
 
   List<XFile> _images = [];
+  final _formKey = GlobalKey<FormState>();
 
   String? selectedCategory;
   String? selectedCondition;
@@ -27,11 +29,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   // ✅ Categories will be fetched from API
   Map<String, String> categories = {};
 
-  final Map<String, String> conditions = {
-    'New': 'new',
-    'Used': 'used',
-    'Refurbished': 'refurbished',
-  };
+  final Map<String, String> conditions = {'New': 'new', 'Used': 'used'};
 
   final titleController = TextEditingController();
   final oldPriceController = TextEditingController();
@@ -87,65 +85,76 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     }
   }
 
-  Future<void> _uploadAd() async {
-    if (_images.isEmpty) {
-      _showErrorDialog('Please select at least one image');
-      return;
-    }
+  // Function to get user token from shared preferences
+  Future<String?> _getUserToken() async {
+    // Check if token exists before making API call
+    String? token = await Utils.readSecureData('auth_token');
+    if (token == null || token.isEmpty) {}
+    return token;
+  }
 
-    if (titleController.text.isEmpty ||
-        oldPriceController.text.isEmpty ||
-        newPriceController.text.isEmpty ||
-        descController.text.isEmpty ||
-        locationController.text.isEmpty ||
-        selectedCategory == null ||
-        selectedCondition == null) {
-      _showErrorDialog('Please fill all required fields');
-      return;
-    }
+  Future<void> _uploadAd() async {
+    // if (_images.isEmpty) {
+    //   _showErrorDialog('Please select at least one image');
+    //   return;
+    // }
+
+    // if (titleController.text.isEmpty ||
+    //     oldPriceController.text.isEmpty ||
+    //     newPriceController.text.isEmpty ||
+    //     descController.text.isEmpty ||
+    //     locationController.text.isEmpty ||
+    //     selectedCategory == null ||
+    //     selectedCondition == null) {
+    //   _showErrorDialog('Please fill all required fields');
+    //   return;
+    // }
+    final token = await _getUserToken();
 
     setState(() => _isLoading = true);
 
     try {
-      var uri = Uri.parse('${AppUrl.baseUrl}/api/add-list');
-      var request = http.MultipartRequest('POST', uri);
-      String? token = await Utils.readSecureData('auth_token');
+      if (_formKey.currentState?.validate() ?? false) {
+        var uri = Uri.parse('${AppUrl.baseUrl}/add-list');
+        var request = http.MultipartRequest('POST', uri);
+        String? token = await Utils.readSecureData('auth_token');
 
-      request.headers['Authorization'] = 'Bearer $token';
+        request.headers['Authorization'] = 'Bearer $token';
 
-      request.fields['title'] = titleController.text;
-      request.fields['old_price'] = oldPriceController.text;
-      request.fields['new_price'] = newPriceController.text;
-      request.fields['location'] = locationController.text;
-      request.fields['description'] = descController.text;
-      request.fields['condition'] = conditions[selectedCondition]!;
-      request.fields['category_id'] =
-          categories[selectedCategory]!; // ✅ send ID
+        request.fields['title'] = titleController.text;
+        request.fields['old_price'] = oldPriceController.text;
+        request.fields['new_price'] = newPriceController.text;
+        request.fields['location'] = locationController.text;
+        request.fields['description'] = descController.text;
+        request.fields['condition'] = conditions[selectedCondition]!;
+        request.fields['category_id'] =
+            categories[selectedCategory]!; // ✅ send ID
 
-      for (var i = 0; i < _images.length; i++) {
-        var file = File(_images[i].path);
-        var multipartFile = await http.MultipartFile.fromPath(
-          'images[$i]',
-          file.path,
-          contentType: MediaType('image', 'jpeg'),
-        );
-        request.files.add(multipartFile);
-      }
-
-      var response = await request.send();
-      var responseData = await response.stream.toBytes();
-      var responseString = String.fromCharCodes(responseData);
-
-      if (response.statusCode == 200) {
-        var jsonResponse = json.decode(responseString);
-        if (jsonResponse['status'] == true) {
-          _showSuccessDialog('Ad created successfully!');
-          _clearForm();
-        } else {
-          _showErrorDialog(jsonResponse['message'] ?? 'Failed to create ad');
+        for (var i = 0; i < _images.length; i++) {
+          var file = File(_images[i].path);
+          var multipartFile = await http.MultipartFile.fromPath(
+            'images[$i]',
+            file.path,
+            contentType: MediaType('image', 'jpeg'),
+          );
+          request.files.add(multipartFile);
         }
-      } else {
-        _showErrorDialog('Failed. Status code: ${response.statusCode}');
+
+        var response = await request.send();
+        var responseData = await response.stream.toBytes();
+        var responseString = String.fromCharCodes(responseData);
+
+        if (response.statusCode == 200) {
+          var jsonResponse = json.decode(responseString);
+          if (jsonResponse['status'] == true) {
+            _showSuccessDialog('Ad created successfully!');
+            _clearForm();
+          } else {
+            _showErrorDialog(jsonResponse['message'] ?? 'Failed to create ad');
+          }
+        } else {
+          _showErrorDialog('Failed. Status code: ${response.statusCode}');
+        }
       }
     } catch (e) {
       _showErrorDialog('Error: $e');
@@ -209,46 +218,51 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     TextEditingController controller, {
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 5),
-        TextField(
+        CustomInputField(
           controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          style: TextStyle(color: AppColor.whiteColor),
-          decoration: InputDecoration(
-            hintText: label,
-            hintStyle: const TextStyle(
-              color: Colors.white60,
-              fontFamily: AppFonts.appFont,
-            ),
-            filled: true,
-            fillColor: AppColor.grayColor,
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 15,
-              horizontal: 17,
-            ),
-            border: OutlineInputBorder(),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white24, width: 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white24, width: 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red, width: 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+          hintText: label,
+          validator: validator,
+
+          //maxLines: maxLines,
+          // keyboardType: keyboardType,
+          // style: TextStyle(color: AppColor.whiteColor),
+          // decoration: InputDecoration(
+          //   hintText: label,
+          //   hintStyle: const TextStyle(
+          //     color: Colors.white60,
+          //     fontFamily: AppFonts.appFont,
+          //   ),
+          //   filled: true,
+
+          //   fillColor: AppColor.grayColor,
+          //   contentPadding: const EdgeInsets.symmetric(
+          //     vertical: 15,
+          //     horizontal: 17,
+          //   ),
+          //   border: OutlineInputBorder(),
+          //   enabledBorder: OutlineInputBorder(
+          //     borderSide: BorderSide(color: Colors.white24, width: 1),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   focusedBorder: OutlineInputBorder(
+          //     borderSide: BorderSide(color: Colors.white24, width: 1),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   errorBorder: OutlineInputBorder(
+          //     borderSide: const BorderSide(color: Colors.red, width: 1),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   focusedErrorBorder: OutlineInputBorder(
+          //     borderSide: const BorderSide(color: Colors.red, width: 1),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          // ),
         ),
         SizedBox(height: 15),
       ],
@@ -309,189 +323,235 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     return Scaffold(
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
-        child: Column(
-          children: [
-            // AppBar Area
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(Icons.arrow_back, color: AppColor.primeColor),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // AppBar Area
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      bottom: 10,
+                      top: 10,
                     ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 35,
-                  left: 35,
-                  child: Text(
-                    'Create Add',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColor.secondColor,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Image Picker
-                    GestureDetector(
-                      onTap: pickImages,
-                      child: Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white10,
-                          border: Border.all(color: Colors.white),
-                          borderRadius: BorderRadius.circular(10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: AppColor.primeColor,
                         ),
-                        child: _images.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.add_a_photo,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Add Photo",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: _images.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.all(8),
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                        image: FileImage(
-                                          File(_images[index].path),
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
                       ),
                     ),
-                    SizedBox(height: 10),
-
-                    // Photo description
-                    Text(
-                      "Choose your listing's main photo first.",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      "How to take a great listing photo",
-                      style: TextStyle(color: AppColor.secondColor),
-                    ),
-
-                    SizedBox(height: 20),
-
-                    // Form Fields - Updated to match API requirements
-                    buildInputField("Title", titleController),
-                    buildInputField(
-                      "Old Price",
-                      oldPriceController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    buildInputField(
-                      "New Price",
-                      newPriceController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    buildDropdown(
-                      "Category",
-                      categories.keys.toList(),
-                      selectedCategory,
-                      (val) => setState(() => selectedCategory = val),
-                    ),
-                    buildDropdown(
-                      "Condition",
-                      conditions.keys.toList(),
-                      selectedCondition,
-                      (val) => setState(() => selectedCondition = val),
-                    ),
-                    buildInputField("Description", descController, maxLines: 4),
-                    buildInputField("Location", locationController),
-
-                    SizedBox(height: 20),
-
-                    // Info text
-                    Text(
-                      "Anyone can contact them via chat to purchase the product.",
+                  ),
+                  Positioned(
+                    top: 10,
+                    right: 35,
+                    left: 35,
+                    child: Text(
+                      'Create Add',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: AppColor.secondColor,
+                        fontWeight: FontWeight.w400,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
-                      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                      style: TextStyle(color: Colors.white70),
-                    ),
-
-                    SizedBox(height: 30),
-
-                    // Submit Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _uploadAd,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColor.primeColor,
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Image Picker
+                      GestureDetector(
+                        onTap: pickImages,
+                        child: Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.white10,
+                            border: Border.all(color: Colors.white),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          child: _images.isEmpty
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add_a_photo,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "Add Photo",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _images.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: EdgeInsets.all(8),
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          image: FileImage(
+                                            File(_images[index].path),
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                         ),
-                        child: _isLoading
-                            ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Text(
-                                'Create Ad',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                  ],
+                      SizedBox(height: 10),
+
+                      // Photo description
+                      Text(
+                        "Choose your listing's main photo first.",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        "How to take a great listing photo",
+                        style: TextStyle(color: AppColor.secondColor),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      // Form Fields - Updated to match API requirements
+                      buildInputField(
+                        "Title",
+                        titleController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Title is required';
+                          return null;
+                        },
+                      ),
+
+                      buildInputField(
+                        "Old Price",
+                        oldPriceController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Old Price is required';
+                          return null;
+                        },
+                      ),
+                      buildInputField(
+                        "New Price",
+                        newPriceController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'New Price is required';
+                          return null;
+                        },
+                      ),
+                      buildDropdown(
+                        "Category",
+                        categories.keys.toList(),
+                        selectedCategory,
+                        (val) => setState(() => selectedCategory = val),
+                      ),
+                      buildDropdown(
+                        "Condition",
+                        conditions.keys.toList(),
+                        selectedCondition,
+                        (val) => setState(() => selectedCondition = val),
+                      ),
+                      buildInputField(
+                        "Description",
+                        descController,
+                        maxLines: 4,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Description is required';
+                          return null;
+                        },
+                      ),
+                      buildInputField(
+                        "Location",
+                        locationController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty)
+                            return 'Location is required';
+                          return null;
+                        },
+                      ),
+
+                      SizedBox(height: 20),
+
+                      // Info text
+                      Text(
+                        "Anyone can contact them via chat to purchase the product.",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+                        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+
+                      SizedBox(height: 30),
+
+                      // Submit Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _uploadAd,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.primeColor,
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  'Create Ad',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

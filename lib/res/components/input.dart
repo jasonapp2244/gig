@@ -7,7 +7,7 @@ import '../fonts/app_fonts.dart';
 class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final String fieldType;
+  final String? fieldType;
   final Color? inputColor;
   final Icon? prefixIcon;
   final bool? requiredField;
@@ -18,7 +18,7 @@ class CustomInputField extends StatefulWidget {
   CustomInputField({
     super.key,
     required this.controller,
-    required this.fieldType,
+this.fieldType,
     required this.hintText,
     this.inputColor,
     this.prefixIcon,
