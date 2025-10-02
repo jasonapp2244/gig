@@ -67,10 +67,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildEditButton(),
-                  _buildProfileHeader(),
+                  _buildProfileHeader(profileController.userName),
                   const SizedBox(height: 30),
                   _buildSkillsSection(),
-                  const SizedBox(height: 20),BottomBannerAd(),
+                  const SizedBox(height: 20),
+                  BottomBannerAd(),
                 ],
               ),
             ),
@@ -120,6 +121,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
+  String _getInitials(String name) {
+    if (name.trim().isEmpty) return "?";
+
+    // Split name into parts (first + last)
+    List<String> parts = name.trim().split(" ");
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    } else {
+      return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
+          .toUpperCase();
+    }
+  }
+
   /// ✏️ Edit Profile Button
   Widget _buildEditButton() {
     return Row(
@@ -134,11 +148,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   /// 👤 Profile Header (image, name, email, bio, contact, resume)
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(String name) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _buildProfileImage(),
+        CircleAvatar(
+          radius: 12,
+          backgroundColor: AppColor.primeColor,
+          child: Text(
+            _getInitials(name),
+            style: TextStyle(
+              color: AppColor.appBodyBG,
+              fontWeight: FontWeight.bold,
+              fontSize: 12 * 0.7,
+            ),
+          ),
+        ),
         const SizedBox(height: 12),
         _buildUserInfo(),
         const SizedBox(height: 20),
@@ -151,46 +176,46 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget _buildProfileImage() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Center(
-            child: CustomPhotoWidget(
-              radius: 50,
-              backgroundColor: AppColor.primeColor,
-              imageUrl: profileController.profileImage.isNotEmpty
-                  ? profileController.profileImage
-                  : null,
-              onImagePicked: (File? imageFile) async {
-                const storage = FlutterSecureStorage();
-                if (imageFile != null) {
-                  profileController.profileData.value = {
-                    ...profileController.profileData.value,
-                    'profile_image': imageFile.path,
-                  };
-                  await storage.write(
-                    key: 'user_profile',
-                    value: jsonEncode(profileController.profileData.value),
-                  );
-                } else {
-                  profileController.profileData.value = {
-                    ...profileController.profileData.value,
-                    'profile_image': '',
-                  };
-                  await storage.write(
-                    key: 'user_profile',
-                    value: jsonEncode(profileController.profileData.value),
-                  );
-                }
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildProfileImage() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       Expanded(
+  //         child: Center(
+  //           child: CustomPhotoWidget(
+  //             radius: 50,
+  //             backgroundColor: AppColor.primeColor,
+  //             imageUrl: profileController.profileImage.isNotEmpty
+  //                 ? profileController.profileImage
+  //                 : null,
+  //             onImagePicked: (File? imageFile) async {
+  //               const storage = FlutterSecureStorage();
+  //               if (imageFile != null) {
+  //                 profileController.profileData.value = {
+  //                   ...profileController.profileData.value,
+  //                   'profile_image': imageFile.path,
+  //                 };
+  //                 await storage.write(
+  //                   key: 'user_profile',
+  //                   value: jsonEncode(profileController.profileData.value),
+  //                 );
+  //               } else {
+  //                 profileController.profileData.value = {
+  //                   ...profileController.profileData.value,
+  //                   'profile_image': '',
+  //                 };
+  //                 await storage.write(
+  //                   key: 'user_profile',
+  //                   value: jsonEncode(profileController.profileData.value),
+  //                 );
+  //               }
+  //             },
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildUserInfo() {
     return Column(
