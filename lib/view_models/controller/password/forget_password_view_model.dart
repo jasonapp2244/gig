@@ -29,7 +29,7 @@ class ForgetPasswordVewModel extends GetxController {
             print("Forget Password failed: $value");
             Utils.snakBar(
               'Forget Password',
-              value['error'] ?? 'Something went wrong',
+              value['message'] ?? 'Something went wrong',
             );
           }
         })

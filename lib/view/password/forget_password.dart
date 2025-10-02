@@ -20,20 +20,6 @@ class _RegisterState extends State<ForgetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: AppColor.primeColor,
-        backgroundColor: AppColor.appBodyBG,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Forget Password',
-          style: TextStyle(
-            color: AppColor.secondColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
         child: Column(
@@ -91,8 +77,6 @@ class _RegisterState extends State<ForgetPassword> {
                             onPress: () {
                               if (_formKey.currentState!.validate()) {
                                 forgetPasswordVM.forgetPasswordApi();
-
-                                Navigator.pop(context);
                               }
                             },
                           ),

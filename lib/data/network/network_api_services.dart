@@ -731,8 +731,10 @@ class NetworkApiServices extends BaseApiServices {
         case 204:
           return jsonDecode(response.body);
 
+ 
         case 400:
         case 422:
+        case 404:
           // For 400 and 422 status codes, try to parse JSON response
           // This handles cases like email verification errors and validation errors
           try {
