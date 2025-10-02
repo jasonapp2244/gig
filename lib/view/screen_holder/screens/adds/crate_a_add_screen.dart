@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -48,9 +49,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
 
   Future<void> _loadCategories() async {
     try {
-      var url = Uri.parse(
-        "https://lavender-buffalo-882516.hostingersite.com/gig_app/api/get-list-category",
-      );
+      var url = Uri.parse("${AppUrl.baseUrl}/get-list-category");
       String? token = await Utils.readSecureData('auth_token');
       var response = await http.get(
         url,
@@ -108,9 +107,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     setState(() => _isLoading = true);
 
     try {
-      var uri = Uri.parse(
-        'https://lavender-buffalo-882516.hostingersite.com/gig_app/api/add-list',
-      );
+      var uri = Uri.parse('${AppUrl.baseUrl}/api/add-list');
       var request = http.MultipartRequest('POST', uri);
       String? token = await Utils.readSecureData('auth_token');
 
