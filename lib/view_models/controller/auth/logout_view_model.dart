@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:gig/repository/auth_repository/logout_repository.dart';
+import 'package:gig/view/auth/auth_servies.dart';
 import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
@@ -29,6 +30,12 @@ class LogoutViewModel extends GetxController {
           try {
             if (value['status'] == true) {
               // Clear all stored data
+              String providerName =
+                  await Utils.readSecureData('provider_name') ?? '';
+              if (providerName == 'google') {
+                GoogleAuthRepository.signOut();
+                await Utils().clearUserData();
+              }
               await Utils().clearUserData();
               Utils.snakBar(
                 'Logout',

@@ -200,6 +200,7 @@ class Utils {
     await _storage.delete(key: 'user_email');
     await _storage.delete(key: 'user_id');
     await _storage.delete(key: 'user_phone');
+    await _storage.delete(key: 'provider_name');
 
     // Clear user preferences
     // await userPreference.clearUser();

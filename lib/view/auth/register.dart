@@ -34,9 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (result.success && result.user != null) {
         // Google sign-in successful
         Utils.snakBar('Success', 'Google Sign-in successful!');
-        String providerId = await Utils.readSecureData('provider_token') ?? '';
-        String email = await Utils.readSecureData('email') ?? '';
+
         final user = result.user!;
+        Utils.writeSecureStorage('provider_name', 'google') ?? '';
         registerVM.registerApiWithGoogle(
           providerId: user.uid,
           email: user.email,
