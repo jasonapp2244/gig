@@ -1,5 +1,5 @@
 class AppUrl {
-  static const String baseUrl = 'http://192.168.100.98/gig_mob_app/public/api';
+  static const String baseUrl = 'https://gig.devonlinetestserver.com/api';
 
   //'https://gig.devonlinetestserver.com/api';
   // 'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
