@@ -42,8 +42,7 @@ class _TaskScreenState extends State<TaskScreen>
         if (route != null && route.isCurrent) {
           // Screen is currently visible - refresh data silently
           print('🔄 TaskScreen - Screen focused, refreshing task status data');
-          taskViewModel
-              .fetchTaskStatus(); // Only fetch task status, not full refresh
+          taskViewModel.fetchTaskStatus(); // Fetch all task status data
         }
       }
     });
@@ -60,7 +59,8 @@ class _TaskScreenState extends State<TaskScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_isInitialized) {
         print('🔄 TaskScreen - initState: Initializing task status data');
-        taskViewModel.fetchTaskStatus(); // Fetch task status data immediately
+        taskViewModel
+            .fetchTaskStatus(); // Fetch all task status data immediately
         _isInitialized = true;
       }
     });
@@ -266,7 +266,8 @@ class _TaskScreenState extends State<TaskScreen>
                   ],
                 );
               }),
-            ),BottomBannerAd(),
+            ),
+            BottomBannerAd(),
           ],
         ),
       ),
@@ -353,6 +354,7 @@ class _TaskScreenState extends State<TaskScreen>
             // Debug logging to see what values we're getting
 
             return TaskBlock(
+              summaryText: summaryData['summary_text'],
               id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
               title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
               startDate: _formatDate(summaryData['from_date']),

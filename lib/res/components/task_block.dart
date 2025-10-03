@@ -5,6 +5,7 @@ import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
+
 class TaskBlock extends StatelessWidget {
   final int? id;
   final String title;
@@ -18,24 +19,35 @@ class TaskBlock extends StatelessWidget {
   final int count;
   final String status;
   final VoidCallback onTap;
+  String? summaryText;
 
   TaskBlock({
     super.key,
     required this.id,
     required this.title,
     required this.startDate,
+    required this.status,
+    required this.summaryText,
+    required this.count,
     required this.endDate,
     required this.profileImage,
     required this.progress,
     this.employer,
     required this.totalTasks,
-    required this.status,
-    required this.count,
+
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Debug logging
+    print('🔍 TaskBlock received:');
+    print('  - title: $title');
+    print('  - count: $count');
+    print('  - totalTasks: $totalTasks');
+    print('  - status: $status');
+    print('  - progress: $progress');
+
     // Use Get.find() instead of Get.put() to get existing instance
     final DeleteTaskViewModel deleteTaskVM = Get.find<DeleteTaskViewModel>();
     final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
@@ -125,7 +137,7 @@ class TaskBlock extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  "$count/$totalTasks tasks",
+                  "$summaryText tasks",
                   style: const TextStyle(color: Colors.amber),
                 ),
               ],
