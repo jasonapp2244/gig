@@ -10,7 +10,7 @@ import 'package:gig/res/routes/routes_name.dart';
 import 'package:http/http.dart'
     as http; // <-- this fixes "Undefined name 'http'"
 
-class MarketPlaceView extends StatefulWidget {
+                      class MarketPlaceView extends StatefulWidget {
   const MarketPlaceView({super.key});
 
   @override
@@ -159,10 +159,8 @@ class _MarketPlaceView extends State<MarketPlaceView> {
         print("asfdasf$path");
         return '${AppUrl.baseUrl}/storage/$path';
       } else {
-        print(
-          'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/$path',
-        );
-        return 'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/app/public/$path';
+        print('https://gig.devonlinetestserver.com/storage/$path');
+        return 'https://gig.devonlinetestserver.com/storage/$path';
       }
     }
     // Return a placeholder image if no image is available
@@ -220,89 +218,89 @@ class _MarketPlaceView extends State<MarketPlaceView> {
               child: Column(
                 children: [
                   // Top Tab Buttons
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 8,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => selectedTab = 0),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: selectedTab == 0
-                                    ? Colors.white
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.white),
-                              ),
-                              alignment: Alignment.center,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.sell,
-                                    color: selectedTab == 0
-                                        ? Colors.black
-                                        : Colors.white,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    "Sell",
-                                    style: TextStyle(
-                                      color: selectedTab == 0
-                                          ? Colors.black
-                                          : Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => selectedTab = 1),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: selectedTab == 1
-                                    ? Colors.orange
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.orange),
-                              ),
-                              alignment: Alignment.center,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.category,
-                                    color: selectedTab == 1
-                                        ? Colors.white
-                                        : Colors.orange,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text(
-                                    "Categories",
-                                    style: TextStyle(
-                                      color: selectedTab == 1
-                                          ? Colors.white
-                                          : Colors.orange,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 10,
+                  //     vertical: 8,
+                  //   ),
+                  //   child: Row(
+                  //     children: [
+                  //       Expanded(
+                  //         child: GestureDetector(
+                  //           onTap: () => setState(() => selectedTab = 0),
+                  //           child: Container(
+                  //             padding: EdgeInsets.symmetric(vertical: 12),
+                  //             decoration: BoxDecoration(
+                  //               color: selectedTab == 0
+                  //                   ? Colors.white
+                  //                   : Colors.transparent,
+                  //               borderRadius: BorderRadius.circular(12),
+                  //               border: Border.all(color: Colors.white),
+                  //             ),
+                  //             alignment: Alignment.center,
+                  //             child: Row(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               children: [
+                  //                 Icon(
+                  //                   Icons.sell,
+                  //                   color: selectedTab == 0
+                  //                       ? Colors.black
+                  //                       : Colors.white,
+                  //                 ),
+                  //                 SizedBox(width: 6),
+                  //                 Text(
+                  //                   "Sell",
+                  //                   style: TextStyle(
+                  //                     color: selectedTab == 0
+                  //                         ? Colors.black
+                  //                         : Colors.white,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       SizedBox(width: 12),
+                  //       Expanded(
+                  //         child: GestureDetector(
+                  //           onTap: () => setState(() => selectedTab = 1),
+                  //           child: Container(
+                  //             padding: EdgeInsets.symmetric(vertical: 12),
+                  //             decoration: BoxDecoration(
+                  //               color: selectedTab == 1
+                  //                   ? Colors.orange
+                  //                   : Colors.transparent,
+                  //               borderRadius: BorderRadius.circular(12),
+                  //               border: Border.all(color: Colors.orange),
+                  //             ),
+                  //             alignment: Alignment.center,
+                  //             child: Row(
+                  //               mainAxisAlignment: MainAxisAlignment.center,
+                  //               children: [
+                  //                 Icon(
+                  //                   Icons.category,
+                  //                   color: selectedTab == 1
+                  //                       ? Colors.white
+                  //                       : Colors.orange,
+                  //                 ),
+                  //                 SizedBox(width: 6),
+                  //                 Text(
+                  //                   "Categories",
+                  //                   style: TextStyle(
+                  //                     color: selectedTab == 1
+                  //                         ? Colors.white
+                  //                         : Colors.orange,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
 
                   // Loading indicator or Grid View
                   Expanded(
@@ -376,14 +374,14 @@ class _MarketPlaceView extends State<MarketPlaceView> {
                                       final item = items[index];
                                       return GestureDetector(
                                         onTap: () {
-                                          // Get.toNamed(
-                                          //   RoutesName.singleProductScreen,
-                                          //   arguments: item,
-                                          // );
                                           Get.toNamed(
-                                            RoutesName.detailScreenView,
+                                            RoutesName.singleProductScreen,
                                             arguments: item,
                                           );
+                                          // Get.toNamed(
+                                          //   RoutesName.detailScreenView,
+                                          //   arguments: item,
+                                          // );
                                         },
                                         child: Column(
                                           crossAxisAlignment:

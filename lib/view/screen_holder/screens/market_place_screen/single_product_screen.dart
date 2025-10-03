@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:gig/models/category_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../res/colors/app_color.dart';
-
 
 class SingleProductScreen extends StatefulWidget {
   const SingleProductScreen({super.key});
@@ -21,11 +22,43 @@ class _SingleProductScreen extends State<SingleProductScreen> {
   int _currentIndex = 0;
   List<CategoryModel>? categories;
 
-  List<String> sliderImages = [
-    'https://images.unsplash.com/photo-1600891964599-f61ba0e24092',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-    'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c',
-  ];
+  late Map<String, dynamic> productData;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Get product data passed from previous screen
+    productData = Get.arguments ?? {};
+  }
+
+  // Helper function to get image URLs
+  String _getImageUrl(dynamic imageData) {
+    if (imageData == null)
+      return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c';
+
+    String path = imageData;
+    if (path.startsWith('http')) {
+      return 'https://gig.devonlinetestserver.com/storage/$path';
+    } else {
+      return 'https://gig.devonlinetestserver.com/storage/$path';
+    }
+  }
+
+  List<String> get _productImages {
+    List<String> images = [];
+    if (productData['images'] != null && productData['images'].isNotEmpty) {
+      for (var image in productData['images']) {
+        images.add(_getImageUrl(image['path']));
+      }
+    }
+    // Add placeholder if no images
+    if (images.isEmpty) {
+      images.add(
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+      );
+    }
+    return images;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +115,7 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                             width: double.infinity,
                             child: PageView.builder(
                               controller: _pageController,
-                              itemCount: sliderImages.length,
+                              itemCount: _productImages.length,
                               onPageChanged: (index) {
                                 setState(() {
                                   _currentIndex = index;
@@ -90,10 +123,42 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                               },
                               itemBuilder: (context, index) {
                                 return ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
                                   child: Image.network(
-                                    sliderImages[index],
+                                    _productImages[index],
                                     fit: BoxFit.cover,
                                     width: double.infinity,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        height: 220,
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            value:
+                                                loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 220,
+                                        color: Colors.grey[300],
+                                        child: Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                          size: 50,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 );
                               },
@@ -116,7 +181,7 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(
-                          sliderImages.length,
+                          _productImages.length,
                           (index) => Container(
                             margin: EdgeInsets.symmetric(horizontal: 4),
                             width: 8,
@@ -138,31 +203,107 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Lorem ipsum dolor sit amet",
+                            productData['title'] ?? 'No Title',
                             style: TextStyle(
-                              color: Colors.redAccent,
-                              fontSize: 18,
+                              color: Colors.red,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                          SizedBox(height: 8),
+                          Column(
+                            children: [
+                              Text(
+                                '\$${productData['new_price'] ?? '0'}',
+                                style: TextStyle(
+                                  color: AppColor.primeColor,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              if (productData['old_price'] !=
+                                  productData['new_price'])
+                                Text(
+                                  '\$${productData['old_price'] ?? '0'}',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
                           Row(
                             children: [
-                              Icon(Icons.star, color: Colors.amber, size: 18),
+                              Icon(
+                                Icons.location_on,
+                                color: Colors.grey,
+                                size: 16,
+                              ),
                               SizedBox(width: 4),
                               Text(
-                                "4.1",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                "| 128 Reviews",
+                                productData['location'] ??
+                                    'Location not specified',
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 13,
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Icon(
+                                Icons.category,
+                                color: Colors.grey,
+                                size: 16,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                productData['category']?['category'] ??
+                                    'No Category',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage:
+                                    productData['user']?['profile_image'] !=
+                                        null
+                                    ? NetworkImage(
+                                        productData['user']['profile_image'],
+                                      )
+                                    : null,
+                                child:
+                                    productData['user']?['profile_image'] ==
+                                        null
+                                    ? Icon(Icons.person, color: Colors.white)
+                                    : null,
+                              ),
+                              SizedBox(width: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    productData['user']?['name'] ??
+                                        'Unknown Seller',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
                           Text(
                             "Send seller a message",
                             style: TextStyle(color: Colors.white, fontSize: 16),
@@ -184,7 +325,7 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                                 Expanded(
                                   child: TextField(
                                     decoration: InputDecoration(
-                                      hintText: "Message",
+                                      hintText: "Message seller...",
                                       border: InputBorder.none,
                                       hintStyle: TextStyle(color: Colors.grey),
                                     ),
@@ -192,7 +333,7 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                                   ),
                                 ),
                                 CircleAvatar(
-                                  backgroundColor: Colors.orange,
+                                  backgroundColor: AppColor.primeColor,
                                   child: Icon(
                                     Icons.send,
                                     color: Colors.white,
@@ -202,41 +343,25 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 12),
-                          Text(
-                            "Lorem ipsum dolor sit amet, consectetur adip...",
-                            style: TextStyle(color: Colors.white70),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "View more",
-                              style: TextStyle(color: Colors.redAccent),
-                            ),
-                          ),
+                          SizedBox(height: 20),
 
                           // Accordion Section
-                          buildAccordion(
-                            "Description",
-                            descExpanded,
-                            () {
-                              setState(() => descExpanded = !descExpanded);
-                            },
-                            "Detailed description here.",
-                          ),
+                          buildAccordion("Description", descExpanded, () {
+                            setState(() => descExpanded = !descExpanded);
+                          }, productData['description']),
 
-                          buildAccordion(
-                            "Additional information",
-                            infoExpanded,
-                            () {
-                              setState(() => infoExpanded = !infoExpanded);
-                            },
-                            "Weight: 1kg\nMaterial: Organic",
-                          ),
+                          // buildAccordion(
+                          //   "Additional information",
+                          //   infoExpanded,
+                          //   () {
+                          //     setState(() => infoExpanded = !infoExpanded);
+                          //   },
+                          //   "Weight: 1kg\nMaterial: Organic",
+                          // ),
 
-                          buildAccordion("Reviews(0)", reviewExpanded, () {
-                            setState(() => reviewExpanded = !reviewExpanded);
-                          }, "No reviews yet."),
+                          // buildAccordion("Reviews(0)", reviewExpanded, () {
+                          //   setState(() => reviewExpanded = !reviewExpanded);
+                          // }, "No reviews yet."),
                         ],
                       ),
                     ),
@@ -262,17 +387,14 @@ class _SingleProductScreen extends State<SingleProductScreen> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(title, style: TextStyle(color: Colors.white)),
-          trailing: Icon(
-            expanded ? Icons.expand_less : Icons.expand_more,
-            color: Colors.white,
-          ),
+
           onTap: onTap,
         ),
-        if (expanded)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(content, style: TextStyle(color: Colors.white70)),
-          ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(content, style: TextStyle(color: Colors.white70)),
+        ),
       ],
     );
   }
