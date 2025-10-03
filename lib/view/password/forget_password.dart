@@ -82,34 +82,6 @@ class _RegisterState extends State<ForgetPassword> {
                           ),
                         ),
                         SizedBox(height: 30),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     Text(
-                        //       'Back to ',
-                        //       style: TextStyle(
-                        //         color: Colors.white,
-                        //         fontFamily: AppFonts.appFont,
-                        //         fontSize: 16,
-                        //         fontWeight: FontWeight.w400,
-                        //       ),
-                        //     ),
-                        //     InkWell(
-                        //       onTap: () {
-                        //         Get.toNamed(RoutesName.loginScreen);
-                        //       },
-                        //       child: Text(
-                        //         'Login',
-                        //         style: TextStyle(
-                        //           color: AppColor.primeColor,
-                        //           fontFamily: AppFonts.appFont,
-                        //           fontSize: 16,
-                        //           fontWeight: FontWeight.w900,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                       ],
                     ),
                   ),

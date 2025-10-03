@@ -240,7 +240,7 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
     return InkWell(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => PrivacyPolicy()),
+        MaterialPageRoute(builder: (_) => PrivacyPolicyView()),
       ),
       child: Text(
         'Privacy Policy',

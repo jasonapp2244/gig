@@ -298,7 +298,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: GestureDetector(
           onTap: () => addTaskVM.selectTime(context),

@@ -50,8 +50,10 @@ class RoutesName {
   static const String employerScreen = '/employer_screen';
   static const String employerDetailScreen = '/employer_detail_screen';
 
+  //////////// EMPLOYER ROUTES
+  static const String privacypolicyScreen = '/privacypolicy_screen';
   static const String home = '/home';
   static const String profileViewScreen = '/profile_view_screen';
-
+  //////////// SUPPORT ROUTES
   static const String support_view = "/support";
 }

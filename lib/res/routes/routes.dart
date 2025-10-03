@@ -4,6 +4,7 @@ import 'package:gig/view/auth/register.dart';
 import 'package:gig/view/otp/otp_screen.dart';
 import 'package:gig/view/password/reset_password.dart';
 import 'package:gig/view/payment/payment_method_screen.dart';
+import 'package:gig/view/privacy_policy.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view/screen_holder/screens/adds/add_payement_screen.dart';
 import 'package:gig/view/screen_holder/screens/employer/employer_detail_screen.dart';
@@ -72,6 +73,12 @@ class AppRoutes {
     GetPage(
       name: RoutesName.otpScreen,
       page: () => OtpScreen(),
+      transitionDuration: Duration(milliseconds: 300),
+      transition: Transition.rightToLeft,
+    ), //////////// OTP ROUTES
+    GetPage(
+      name: RoutesName.privacypolicyScreen,
+      page: () => PrivacyPolicyView(),
       transitionDuration: Duration(milliseconds: 300),
       transition: Transition.rightToLeft,
     ),

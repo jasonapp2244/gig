@@ -194,18 +194,22 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
             text: "Profile",
             route: RoutesName.userProfileScreen,
           ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.bellDot,
-            text: "Notification",
-            route: RoutesName.notificationScreen,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: LucideIcons.building400,
-            text: "Employer",
-            route: RoutesName.employerScreen,
-          ),
+
+          //we are not using in app notification at this moment
+          // _buildDrawerItem(
+          //   context,
+          //   icon: LucideIcons.bellDot,
+          //   text: "Notification",
+          //   route: RoutesName.notificationScreen,
+          // ),
+
+          //List of Employer with name location and earinig or image api required
+          // _buildDrawerItem(
+          //   context,
+          //   icon: LucideIcons.building400,
+          //   text: "Employer",
+          //   route: RoutesName.employerScreen,
+          // ),
           _buildDrawerItem(
             context,
             icon: LucideIcons.building400,

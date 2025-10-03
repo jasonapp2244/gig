@@ -33,7 +33,7 @@ class AppUrl {
 
   // PROFILE API
   static const String updateProfileApi = "$baseUrl/update-profile";
-  static const String getProfileApi = "$baseUrl/get-user";
+  static const String getProfileApi = "$baseUrl/user-profile";
 
   static const String getEmployerApi = "$baseUrl/get-employer";
   static const String updateEmployeerApi = "$baseUrl/employer/";
@@ -46,4 +46,5 @@ class AppUrl {
   static const String showTasksApi = '$baseUrl/show-task';
   static const String earningSummaryApi = '$baseUrl/earningSummary';
   static const String getCategoriesApi = '$baseUrl/get-list-category';
+  static const String supportApi = '$baseUrl/support/send';
 }
