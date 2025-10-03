@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/utils/utils.dart';
@@ -94,21 +96,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   }
 
   Future<void> _uploadAd() async {
-    // if (_images.isEmpty) {
-    //   _showErrorDialog('Please select at least one image');
-    //   return;
-    // }
-
-    // if (titleController.text.isEmpty ||
-    //     oldPriceController.text.isEmpty ||
-    //     newPriceController.text.isEmpty ||
-    //     descController.text.isEmpty ||
-    //     locationController.text.isEmpty ||
-    //     selectedCategory == null ||
-    //     selectedCondition == null) {
-    //   _showErrorDialog('Please fill all required fields');
-    //   return;
-    // }
+  
     final token = await _getUserToken();
 
     setState(() => _isLoading = true);
@@ -156,6 +144,8 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
           _showErrorDialog('Failed. Status code: ${response.statusCode}');
         }
       }
+      Get.back();
+      Get.back();
     } catch (e) {
       _showErrorDialog('Error: $e');
     } finally {

@@ -378,10 +378,10 @@ class _MarketPlaceView extends State<MarketPlaceView> {
                                             RoutesName.singleProductScreen,
                                             arguments: item,
                                           );
-                                          Get.toNamed(
-                                            RoutesName.detailScreenView,
-                                            arguments: item,
-                                          );
+                                          // Get.toNamed(
+                                          //   RoutesName.detailScreenView,
+                                          //   arguments: item,
+                                          // );
                                         },
                                         child: Column(
                                           crossAxisAlignment:

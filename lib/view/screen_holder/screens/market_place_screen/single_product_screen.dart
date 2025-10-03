@@ -21,9 +21,8 @@ class _SingleProductScreen extends State<SingleProductScreen> {
   int _currentIndex = 0;
   List<CategoryModel>? categories;
 
-
   late Map<String, dynamic> productData;
-  
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -33,8 +32,9 @@ class _SingleProductScreen extends State<SingleProductScreen> {
 
   // Helper function to get image URLs
   String _getImageUrl(dynamic imageData) {
-    if (imageData == null) return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c';
-    
+    if (imageData == null)
+      return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c';
+
     String path = imageData;
     if (path.startsWith('http')) {
       return 'https://gig.devonlinetestserver.com/storage/$path';
@@ -52,10 +52,13 @@ class _SingleProductScreen extends State<SingleProductScreen> {
     }
     // Add placeholder if no images
     if (images.isEmpty) {
-      images.add('https://images.unsplash.com/photo-1600585154340-be6161a56a0c');
+      images.add(
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+      );
     }
     return images;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,13 +204,13 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                           Text(
                             productData['title'] ?? 'No Title',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.red,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(height: 8),
-                          Row(
+                          Column(
                             children: [
                               Text(
                                 '\$${productData['new_price'] ?? '0'}',
@@ -295,13 +298,6 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text(
-                                    'Member since ${DateTime.parse(productData['user']?['created_at'] ?? DateTime.now().toString()).year}',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 12,
-                                    ),
-                                  ),
                                 ],
                               ),
                             ],
@@ -349,27 +345,22 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                           SizedBox(height: 20),
 
                           // Accordion Section
-                          buildAccordion(
-                            "Description",
-                            descExpanded,
-                            () {
-                              setState(() => descExpanded = !descExpanded);
-                            },
-                            "Detailed description here.",
-                          ),
+                          buildAccordion("Description", descExpanded, () {
+                            setState(() => descExpanded = !descExpanded);
+                          }, productData['description']),
 
-                          buildAccordion(
-                            "Additional information",
-                            infoExpanded,
-                            () {
-                              setState(() => infoExpanded = !infoExpanded);
-                            },
-                            "Weight: 1kg\nMaterial: Organic",
-                          ),
+                          // buildAccordion(
+                          //   "Additional information",
+                          //   infoExpanded,
+                          //   () {
+                          //     setState(() => infoExpanded = !infoExpanded);
+                          //   },
+                          //   "Weight: 1kg\nMaterial: Organic",
+                          // ),
 
-                          buildAccordion("Reviews(0)", reviewExpanded, () {
-                            setState(() => reviewExpanded = !reviewExpanded);
-                          }, "No reviews yet."),
+                          // buildAccordion("Reviews(0)", reviewExpanded, () {
+                          //   setState(() => reviewExpanded = !reviewExpanded);
+                          // }, "No reviews yet."),
                         ],
                       ),
                     ),
@@ -395,17 +386,14 @@ class _SingleProductScreen extends State<SingleProductScreen> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(title, style: TextStyle(color: Colors.white)),
-          trailing: Icon(
-            expanded ? Icons.expand_less : Icons.expand_more,
-            color: Colors.white,
-          ),
+
           onTap: onTap,
         ),
-        if (expanded)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(content, style: TextStyle(color: Colors.white70)),
-          ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(content, style: TextStyle(color: Colors.white70)),
+        ),
       ],
     );
   }
