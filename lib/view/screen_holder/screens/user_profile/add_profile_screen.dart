@@ -75,7 +75,21 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
     );
   }
 
+  String? name;
+
   /// -------------------- Widget Methods --------------------
+  String _getInitials(String name) {
+    if (name.trim().isEmpty) return "?";
+
+    // Split name into parts (first + last)
+    List<String> parts = name.trim().split(" ");
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    } else {
+      return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
+          .toUpperCase();
+    }
+  }
 
   PreferredSizeWidget _buildAppBar(AddProfileController controller) {
     return AppBar(
@@ -98,18 +112,20 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       String? existingImageUrl;
       if (Get.isRegistered<GetProfileViewModel>()) {
         final profileVM = Get.find<GetProfileViewModel>();
-        existingImageUrl = profileVM.profileImage;
+        name = profileVM.userName;
       }
 
-      return CustomPhotoWidget(
-        imageUrl: existingImageUrl,
-        radius: 50,
+      return CircleAvatar(
+        radius: 30,
         backgroundColor: AppColor.primeColor,
-        onImagePicked: (File? imageFile) {
-          if (imageFile != null) {
-            controller.imageFile.value = imageFile;
-          }
-        },
+        child: Text(
+          _getInitials(name.toString()),
+          style: TextStyle(
+            color: AppColor.appBodyBG,
+            fontWeight: FontWeight.bold,
+            fontSize: 40 * 0.7,
+          ),
+        ),
       );
     });
   }

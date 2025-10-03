@@ -107,28 +107,41 @@ class GetProfileViewModel extends GetxController {
 
   Future<bool> _checkStoragePermission() async {
     if (Platform.isAndroid) {
-      // ✅ Android 11+ (API 30 and above)
       if (await Permission.manageExternalStorage.isGranted) {
         return true;
-      } else {
-        final status = await Permission.manageExternalStorage.request();
-
-        if (status.isGranted) return true;
-
-        // If still denied, open app settings manually
-        if (status.isPermanentlyDenied) {
-          await openAppSettings();
-        }
-        return false;
       }
-    } else {
-      // ✅ Android 10 and below
-      if (await Permission.storage.isGranted) {
+
+      final status = await Permission.manageExternalStorage.request();
+
+      if (status.isGranted) {
         return true;
-      } else {
-        final status = await Permission.storage.request();
-        return status.isGranted;
       }
+
+      // ❗️ Special permissions (like manageExternalStorage) do not always show dialogs
+      // Show custom dialog or redirect to app settings
+      if (status.isDenied || status.isPermanentlyDenied) {
+        Get.defaultDialog(
+          title: 'Storage Permission Required',
+          middleText:
+              'Please grant storage permission from app settings to download files.',
+          confirm: ElevatedButton(
+            onPressed: () {
+              openAppSettings();
+              Get.back();
+            },
+            child: const Text("Open Settings"),
+          ),
+          cancel: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancel"),
+          ),
+        );
+      }
+
+      return false;
+    } else {
+      // For iOS or other platforms
+      return true;
     }
   }
 
@@ -148,17 +161,11 @@ class GetProfileViewModel extends GetxController {
         bool hasPermission = await _checkStoragePermission();
 
         if (!hasPermission) {
-          Get.snackbar(
-            'Permission Required',
-            'Storage permission is required to save the file.',
-            backgroundColor: Colors.orange,
-            colorText: Colors.white,
-          );
-          return;
+          return; // _checkStoragePermission already shows dialog
         }
       }
 
-      // Save to Downloads
+      // Use public Download folder (requires MANAGE_EXTERNAL_STORAGE on Android 11+)
       final downloadsDir = Directory('/storage/emulated/0/Download/MyApp');
 
       if (!downloadsDir.existsSync()) {
@@ -195,8 +202,7 @@ class GetProfileViewModel extends GetxController {
       profileData['address_one'] ?? profileData['address'] ?? '';
   String get userBio =>
       profileData['bio'] ?? profileData['description'] ?? 'No bio available';
-  String baseUrlResume =
-      'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/app/public/cv/';
+  String baseUrlResume = 'https://gig.devonlinetestserver.com/api/cv/';
 
   // Fall back to server path from API (just the filename)
   String get resumeUrl {

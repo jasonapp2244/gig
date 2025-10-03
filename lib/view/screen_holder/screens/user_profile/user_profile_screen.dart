@@ -149,14 +149,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
-          radius: 12,
+          radius: 30,
           backgroundColor: AppColor.primeColor,
           child: Text(
             _getInitials(name),
             style: TextStyle(
               color: AppColor.appBodyBG,
               fontWeight: FontWeight.bold,
-              fontSize: 12 * 0.7,
+              fontSize: 40 * 0.7,
             ),
           ),
         ),
@@ -303,7 +303,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ],
               ),
             ),
-            const Icon(Icons.download, color: Colors.black),
+            IconButton(
+              icon: Icon(Icons.download),
+              color: Colors.black,
+              onPressed: () {},
+            ),
           ],
         ),
       ),
