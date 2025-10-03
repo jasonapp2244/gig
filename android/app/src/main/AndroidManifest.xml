@@ -16,6 +16,7 @@
 
     
     <application
+     android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         android:label="gigapp"
         android:name="${applicationName}"
