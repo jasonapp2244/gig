@@ -7,7 +7,7 @@ import '../fonts/app_fonts.dart';
 class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final String fieldType;
+  final String? fieldType;
   final Color? inputColor;
   final Icon? prefixIcon;
   final bool? requiredField;
@@ -18,14 +18,14 @@ class CustomInputField extends StatefulWidget {
   CustomInputField({
     super.key,
     required this.controller,
-    required this.fieldType,
+    this.fieldType,
     required this.hintText,
     this.inputColor,
     this.prefixIcon,
     this.requiredField,
     this.validator,
     this.isEdit,
-    this.onTap
+    this.onTap,
   });
 
   @override
@@ -66,8 +66,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
     }
 
     return TextFormField(
-      
-      onTap :widget.onTap,
+      onTap: widget.onTap,
       enabled: widget.isEdit ?? true,
       style: const TextStyle(color: Colors.white),
       cursorColor: Colors.white,
