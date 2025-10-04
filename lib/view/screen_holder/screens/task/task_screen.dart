@@ -355,7 +355,7 @@ class _TaskScreenState extends State<TaskScreen>
 
             return TaskBlock(
               summaryText: summaryData['summary_text'],
-              id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
+      
               title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
               startDate: _formatDate(summaryData['from_date']),
               status: taskStatus,
@@ -382,11 +382,11 @@ class _TaskScreenState extends State<TaskScreen>
 
                 Get.to(
                   () => EmployerTaskListScreen(
-                    employerId: employerId,
+                    employerId: employerId.toString(),
                     status: status.toLowerCase() == 'incomplete'
                         ? 'pending'
                         : status.toLowerCase(),
-                    employerName: summaryData['employer_name'] ?? "Employer",
+                    // employerName: summaryData['employer_name'] ?? "Employer",
                     model: model,
                   ),
                 );

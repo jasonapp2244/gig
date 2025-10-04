@@ -13,11 +13,12 @@ class GetTaskViewModel extends GetxController {
   // Task status summary observables
   RxBool statusLoading = false.obs;
   RxMap<String, dynamic> taskStatusSummary = <String, dynamic>{}.obs;
+  var getEachTasks = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    //  fetchTasks();
+    fetchTasks();
     fetchTaskStatus(); // Initial load without status filter
   }
 
@@ -89,8 +90,8 @@ class GetTaskViewModel extends GetxController {
         loading.value = true;
       }
 
-      // Fetch both tasks and status summary (all data)
-      await Future.wait([fetchTasks(), fetchTaskStatus()]);
+      // Fetch both tasks and status summary with optional status filter
+      await Future.wait([fetchTasks(), fetchTaskStatus(status: status)]);
 
       print('✅ Task data refreshed successfully');
     } catch (e) {
@@ -120,73 +121,130 @@ class GetTaskViewModel extends GetxController {
     }).toList();
   }
 
+  // New method to get tasks by status from employer_status_summary
+  List<Map<String, dynamic>> getTasksByStatusFromSummary(String status) {
+    List<Map<String, dynamic>> filteredTasks = [];
+
+    print('🔍 Filtering tasks by status: $status');
+    print('🔍 taskStatusSummary keys: ${taskStatusSummary.keys}');
+    print('🔍 tasks available: ${taskStatusSummary['tasks'] != null}');
+
+    // Check if tasks are in the 'tasks' field
+    if (taskStatusSummary['tasks'] != null) {
+      List<dynamic> tasksList = taskStatusSummary['tasks'];
+      print('🔍 Total tasks in tasks list: ${tasksList.length}');
+
+      filteredTasks = tasksList
+          .where((task) {
+            final taskStatus = (task['status'] ?? '').toString().toLowerCase();
+            final hasEntry = task['has_entry'] ?? false;
+
+            print(
+              '🔍 Task: ${task['employer'] ?? task['job_title']} - Status: $taskStatus, HasEntry: $hasEntry',
+            );
+
+            if (status == 'Ongoing') {
+              // Show tasks that are ongoing (not completed)
+              bool isOngoing = !hasEntry && taskStatus == 'ongoing';
+              print('🔍 Is Ongoing: $isOngoing');
+              return isOngoing;
+            } else if (status == 'Completed') {
+              // Show tasks that are completed
+              bool isCompleted = hasEntry == true || taskStatus == 'completed';
+              print('🔍 Is Completed: $isCompleted');
+              return isCompleted;
+            } else if (status == 'Incomplete' || status == 'pending') {
+              // Show tasks that are incomplete/pending (not completed and not ongoing)
+              bool isIncomplete =
+                  !hasEntry &&
+                  (taskStatus == 'pending' || taskStatus == 'incomplete');
+              print('🔍 Is Incomplete: $isIncomplete');
+              return isIncomplete;
+            }
+
+            return false;
+          })
+          .map((task) => Map<String, dynamic>.from(task))
+          .toList();
+
+      print('🔍 Filtered tasks count: ${filteredTasks.length}');
+    } else {
+      print('🔍 No tasks data available in taskStatusSummary');
+    }
+
+    return filteredTasks;
+  }
+
+  // New method to get employer summaries grouped by employer
   List<Map<String, dynamic>> getEmployerSummariesByStatus(String status) {
     List<Map<String, dynamic>> employerSummaries = [];
 
     print('🔍 Getting employer summaries for status: $status');
+    print('🔍 taskStatusSummary keys: ${taskStatusSummary.keys}');
+    print('🔍 Full taskStatusSummary: $taskStatusSummary');
 
-    // Use employer_status_summary only
-    final summaries = taskStatusSummary['employer_status_summary'];
+    // Use employer_all_summary data which contains both completed and ongoing counts
+    if (taskStatusSummary['employer_all_summary'] != null) {
+      List<dynamic> allSummaries = taskStatusSummary['employer_all_summary'];
+      print('🔍 Total employer summaries from API: ${allSummaries.length}');
 
-    if (summaries != null && summaries is List && summaries.isNotEmpty) {
-      print('📊 Using employer_status_summary data');
-
-      for (var summary in summaries) {
-        final summaryStatus = summary['status'] ?? '';
-
-        // Map UI status to API status for filtering
-        String apiStatus = '';
-        switch (status.toLowerCase()) {
-          case 'incomplete':
-            apiStatus = 'pending';
-            break;
-          case 'ongoing':
-            apiStatus = 'ongoing';
-            break;
-          case 'completed':
-            apiStatus = 'completed';
-            break;
-          default:
-            apiStatus = status.toLowerCase();
-        }
-
-        // Only include summaries that match the current tab status
-        if (summaryStatus.toString().toLowerCase() != apiStatus) {
-          continue;
-        }
+      for (var summary in allSummaries) {
+        print('🔍 Processing summary: $summary');
 
         final employerName = summary['employer_name'] ?? 'Unknown Employer';
-        final employerId = summary['employer_id'] ?? 0;
         final totalTasks = summary['total'] ?? 0;
-        final count = summary['count'] ?? 0;
-        final percentage = summary['percentage']?.toString() ?? '';
+        final completedTasks =
+            summary['completed'] ?? 0; // Direct completed count
+        final ongoingTasks = summary['ongoing'] ?? 0; // Direct ongoing count
+        final percentage = summary['percentage'] ?? 0;
+        final summaryText = summary['summary_text'] ?? '';
         final fromDate = summary['from_date'];
         final toDate = summary['to_date'];
-        final summaryText = summary['summary_text'] ?? '';
+        final employerId = summary['employer_id'];
 
-        employerSummaries.add({
-          'employer_name': employerName,
-          'employer_id': employerId,
-          'total': totalTasks,
-          'status': summaryStatus,
-          'count': count,
-          'percentage': percentage,
-          'summary_text': summaryText,
-          'from_date': fromDate,
-          'to_date': toDate,
-          'has_entry': count > 0,
-        });
+        // Filter based on status
+        bool shouldInclude = false;
+        final pendingTasks = summary['pending'] ?? 0; // Add pending tasks count
 
-        print(
-          '✅ Added: $employerName | Status: $summaryStatus | Total: $totalTasks | Count: $count | Percentage: $percentage',
-        );
+        if (status == 'Ongoing') {
+          // Show employers that have ongoing tasks
+          shouldInclude = ongoingTasks > 0;
+        } else if (status == 'Completed') {
+          // Show employers that have completed tasks
+          shouldInclude = completedTasks > 0;
+        } else if (status == 'pending' || status == 'Incomplete') {
+          // Show employers that have pending/incomplete tasks
+          shouldInclude = pendingTasks > 0;
+        }
+
+        if (shouldInclude) {
+          employerSummaries.add({
+            'employer_name': employerName,
+            'employer_id': employerId,
+            'total': totalTasks,
+            'completed': completedTasks,
+            'ongoing': ongoingTasks,
+            'pending': pendingTasks, // Add pending tasks count
+            'percentage': percentage.toString(),
+            'summary_text': summaryText,
+            'from_date': fromDate,
+            'to_date': toDate,
+            'status': status, // Use the requested status
+            'has_entry': completedTasks > 0,
+          });
+
+          print(
+            '🔍 Added Employer: $employerName - Total: $totalTasks, Completed: $completedTasks, Ongoing: $ongoingTasks, Percentage: $percentage',
+          );
+        }
       }
 
       print(
-        '✅ Total summaries found for "$status": ${employerSummaries.length}',
+        '🔍 Created ${employerSummaries.length} employer summaries for $status tab',
       );
     } else {
-      print('❌ No employer_status_summary data found in taskStatusSummary.');
+      print('🔍 No employer_all_summary data available in taskStatusSummary');
+      print('🔍 Available keys: ${taskStatusSummary.keys.toList()}');
     }
 
     return employerSummaries;
@@ -196,10 +254,9 @@ class GetTaskViewModel extends GetxController {
     try {
       statusLoading.value = true;
 
-      print('🔄 Fetching task status summary (all statuses)');
+      print('🔄 Fetching task status summary for status: $status');
 
-      // Don't pass status parameter to get all data
-      dynamic response = await _api.getTaskStatusAPI();
+      dynamic response = await _api.getTaskStatusAPI(status: status);
 
       print('📊 Task status response: $response');
 
@@ -213,20 +270,11 @@ class GetTaskViewModel extends GetxController {
           taskStatusSummary.value = fullData;
           print('✅ Task status loaded successfully');
           print('📊 Full taskStatusSummary: $taskStatusSummary');
-          print('📊 taskStatusSummary keys: ${taskStatusSummary.keys}');
           print(
             '📊 employer_status_summary: ${response['employer_status_summary']}',
           );
           print(
-            '📊 employer_status_summary type: ${response['employer_status_summary']?.runtimeType}',
-          );
-          print(
-            '📊 employer_status_summary length: ${response['employer_status_summary']?.length}',
-          );
-          print('📊 tasks: ${response['tasks']}');
-          print('📊 tasks length: ${response['tasks']?.length}');
-          print(
-            '📊 employer_status_summary: ${response['employer_status_summary']}',
+            '📊 employer_status_summary type: ${response['employer_status_summary'].runtimeType}',
           );
           print(
             '📊 employer_status_summary length: ${response['employer_status_summary']?.length}',
@@ -249,15 +297,15 @@ class GetTaskViewModel extends GetxController {
   }
 
   Future<List<Map<String, dynamic>>> fetchTasksByEmployer({
-    required int employerId,
+    required String employerId,
     required String status,
   }) async {
     try {
-      final tasks = await _api.getSpecficTasks(
+      getEachTasks = await _api.getSpecficTasks(
         status: status,
         employerId: employerId.toString(),
       );
-      return tasks ?? [];
+      return getEachTasks ?? [];
     } catch (e) {
       print("❌ Error fetching tasks: $e");
       return [];

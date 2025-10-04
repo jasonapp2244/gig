@@ -2,31 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/res/components/specific_task_block.dart';
+import 'package:gig/view_models/controller/task/add_task_view_model.dart';
+import 'package:gig/view_models/controller/task/get_task_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gig/res/colors/app_color.dart';
+import 'package:gig/res/components/specific_task_block.dart';
+import 'package:gig/view_models/controller/task/add_task_view_model.dart';
 import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 
-extension StringCasingExtension on String {
-  /// Capitalize first letter, keep remainder as-is.
-  String toCapitalized() {
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1);
-  }
-}
+// extension StringCasingExtension on String {
+//   /// Capitalize first letter, keep remainder as-is.
+//   String toCapitalized() {
+//     if (isEmpty) return this;
+//     return this[0].toUpperCase() + substring(1);
+//   }
+// }
 
-class EmployerTaskListScreen extends StatelessWidget {
-  final int employerId;
+class EmployerTaskListScreen extends StatefulWidget {
+  final String employerId;
   final String status;
-  final String employerName;
-  GetTaskViewModel? model;
-  // final GetTaskViewModel model = Get.put(GetTaskViewModel());
+  // final String employerName;
+  final GetTaskViewModel? model;
 
   EmployerTaskListScreen({
     super.key,
     required this.employerId,
     required this.status,
-    required this.employerName,
+    // required this.employerName,
     this.model,
   });
 
+  @override
+  State<EmployerTaskListScreen> createState() => _EmployerTaskListScreenState();
+}
+
+class _EmployerTaskListScreenState extends State<EmployerTaskListScreen> {
   String _formatDate(String? dateString) {
     if (dateString == null || dateString == 'N/A') return 'N/A';
     try {
@@ -38,13 +49,20 @@ class EmployerTaskListScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // fetch tasks when screen opens
-    model!.fetchTasksByEmployer(
-      employerId: employerId,
-      status: status.toCapitalized(),
-    );
+  void initState() {
+    super.initState();
+    // Fetch tasks when screen opens
+    // Initialize data immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.model!.fetchTasksByEmployer(
+        employerId: widget.employerId.toString(),
+        status: widget.status, // Don't capitalize, use as-is
+      );
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -55,22 +73,49 @@ class EmployerTaskListScreen extends StatelessWidget {
         ),
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
-
         centerTitle: true,
+        // title: Text(
+        //   widget.employerName,
+        //   style: TextStyle(
+        //     color: Colors.white,
+        //     fontSize: 18,
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
       ),
       backgroundColor: AppColor.appBodyBG,
       body: Obx(() {
-        if (model!.tasks.isEmpty) {
-          return const Center(child: Text("No tasks found"));
+        // Check the correct data source
+        if (widget.model!.getEachTasks.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "No tasks found",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Status: ${widget.status}",
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                Text(
+                  "Employer ID: ${widget.employerId}",
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ),
+          );
         }
 
         return ListView.builder(
-          itemCount: model!.tasks.length,
+          itemCount: widget.model!.getEachTasks.length,
           itemBuilder: (context, index) {
-            final task = model!.tasks[index];
+            final task = widget.model!.getEachTasks[index];
             return TaskSpecficBlock(
-              employeerId: employerId,
-              id: int.tryParse(task['id']?.toString() ?? '0'),
+              employeerId: widget.employerId.toString(),
+              id: (task['id']),
               title: task['job_title'] ?? "Untitled Task",
               startDate: _formatDate(task['task_date_time']),
               endDate: _formatDate(task['task_end_date_time']),

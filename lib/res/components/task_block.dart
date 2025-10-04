@@ -7,7 +7,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'bottom_sheet.dart';
 
 class TaskBlock extends StatelessWidget {
-  final int? id;
   final String title;
   final String startDate;
   final String endDate;
@@ -23,7 +22,7 @@ class TaskBlock extends StatelessWidget {
 
   TaskBlock({
     super.key,
-    required this.id,
+
     required this.title,
     required this.startDate,
     required this.status,
@@ -33,6 +32,7 @@ class TaskBlock extends StatelessWidget {
     required this.profileImage,
     required this.progress,
     this.employer,
+
     required this.totalTasks,
 
     required this.onTap,
@@ -137,7 +137,7 @@ class TaskBlock extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  "$summaryText tasks",
+                  "$count/$totalTasks tasks",
                   style: const TextStyle(color: Colors.amber),
                 ),
               ],
@@ -158,43 +158,41 @@ class TaskBlock extends StatelessWidget {
 
                     const SizedBox(width: 20),
 
-                    Obx(() {
-                      // Check if this task id is currently loading
-                      final isLoading = deleteTaskVM.loadingTasks.contains(id);
+                    // Obx(() {
+                    //   // Check if this task id is currently loading
+                    //   // final isLoading = deleteTaskVM.loadingTasks.contains(id);
 
-                      return InkWell(
-                        onTap: isLoading
-                            ? null
-                            : () {
-                                customBottomSheet(
-                                  context,
-                                  title: 'Are you sure you want to delete?',
-                                  btnText1: 'Yes, Delete',
-                                  btnText2: 'Cancel',
-                                  onFirstTap: () async {
-                                    await deleteTaskVM.deleteTask(id ?? 0);
-                                    print('Deleted!');
-                                  },
-                                  onSecondTap: () {
-                                    print('Cancelled!');
-                                  },
-                                );
-                              },
-                        child: isLoading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.red,
-                                ),
-                              )
-                            : Icon(
-                                Icons.delete_outline_rounded,
-                                color: Colors.red,
-                              ),
-                      );
-                    }),
+                    //   // return InkWell(
+                    //   //   onTap: isLoading
+                    //   //       ? null
+                    //   //       : () {
+                    //   //           customBottomSheet(
+                    //   //             context,
+                    //   //             title: 'Are you sure you want to delete?',
+                    //   //             btnText1: 'Yes, Delete',
+                    //   //             btnText2: 'Cancel',
+                    //   //             onFirstTap: () async {
+                    //   //               await deleteTaskVM.deleteTask(id ?? 0);
+                    //   //               print('Deleted!');
+                    //   //             },
+                    //   //             onSecondTap: () {
+                    //   //               print('Cancelled!');
+                    //   //             },
+                    //   //           );
+                    //   //         },}
+                    //   // return isLoading
+                    //   //       ? SizedBox(
+                    //   //           width: 20,
+                    //   //           height: 20,
+                    //   //           child: CircularProgressIndicator(
+                    //   //             strokeWidth: 2,
+                    //   //             color: Colors.red,
+                    //   //           ),
+                    //   //         )
+                    //   //       : Icon(
+                    //   //           Icons.delete_outline_rounded,
+                    //   //           color: Colors.red,
+                    // },
                   ],
                 ),
               ),

@@ -731,7 +731,6 @@ class NetworkApiServices extends BaseApiServices {
         case 204:
           return jsonDecode(response.body);
 
- 
         case 400:
         case 422:
         case 404:
