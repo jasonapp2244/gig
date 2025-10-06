@@ -370,8 +370,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             InkWell(
               onTap: () {
-                // final homeVM = Get.find<HomeViewModel>();
-                Get.toNamed(RoutesName.addTaskScreen);
+                final homeVM = Get.find<HomeViewModel>();
+                homeVM.changeTab(1);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
@@ -402,7 +402,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             InkWell(
               onTap: () {
-                Get.toNamed(RoutesName.incomeTracker);
+                final homeVM = Get.find<HomeViewModel>();
+                homeVM.changeTab(2);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
@@ -828,7 +829,15 @@ class _HomeScreenState extends State<HomeScreen> {
             context,
             icon: Icons.account_circle_outlined,
             text: "Profile",
-            route: RoutesName.userProfileScreen,
+            // route: RoutesName.userProfileScreen,
+            route: "",
+            onTap: () {
+              final homeVM = Get.find<HomeViewModel>();
+              homeVM.changeTab(
+                3,
+              ); // index of UserProfileScreen in _screens list
+              Navigator.pop(context); // close drawer
+            },
           ),
 
           //we are not sending in app notification

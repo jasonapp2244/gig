@@ -90,8 +90,7 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
-
- Future<dynamic> supportApiRequest(var data, String url, String token) async {
+  Future<dynamic> supportApiRequest(var data, String url, String token) async {
     dynamic responseJson;
 
     try {
@@ -119,8 +118,6 @@ class NetworkApiServices extends BaseApiServices {
     }
     return responseJson;
   }
-
-
 
   Future<dynamic> postProfileData(var data, String url, String token) async {
     dynamic responseJson;
@@ -763,7 +760,6 @@ class NetworkApiServices extends BaseApiServices {
         case 204:
           return jsonDecode(response.body);
 
- 
         case 400:
         case 422:
         case 404:

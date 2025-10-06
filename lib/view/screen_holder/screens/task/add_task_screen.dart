@@ -95,7 +95,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       const SizedBox(height: 15),
                       _buildSupervisor(),
                       const SizedBox(height: 15),
-                      _buildStraightTime(),
+                      _buildHoursDropdown(),
                       const SizedBox(height: 15),
                       _buildWages(),
                       const SizedBox(height: 15),
@@ -277,17 +277,47 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  Widget _buildStraightTime() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: CustomInputField(
-        controller: addTaskVM.straightTimeController.value,
-        fieldType: 'number',
-        hintText: "Straight/Overtime Hours",
-        requiredField: true,
-        validator: (value) => (value == null || value.isEmpty)
-            ? 'Supervisor contact is required'
-            : null,
+  Widget _buildHoursDropdown() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppColor.grayColor.withOpacity(0.9), // same fill color
+        borderRadius: BorderRadius.circular(12), // same radius
+        border: Border.all(color: Colors.white24, width: 1), // same border
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 17),
+      child: DropdownButtonHideUnderline(
+        child: Obx(() {
+          final selected = addTaskVM.selectedHour?.value ?? '';
+          return DropdownButton<String>(
+            isExpanded: true,
+            value: selected.isEmpty ? null : selected,
+            hint: const Text('Hour', style: TextStyle(color: Colors.white60)),
+            dropdownColor: AppColor.whiteColor,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+            iconEnabledColor: AppColor.primeColor,
+            borderRadius: BorderRadius.circular(12),
+            items: addTaskVM.selectedHours.map((title) {
+              return DropdownMenuItem(
+                value: title,
+                child: Text(
+                  title,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) addTaskVM.setSelectedHours(value);
+            },
+          );
+        }),
       ),
     );
   }
@@ -298,7 +328,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1),
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: GestureDetector(
           onTap: () => addTaskVM.selectTime(context),

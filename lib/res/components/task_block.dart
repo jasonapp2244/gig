@@ -5,6 +5,7 @@ import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
+
 class TaskBlock extends StatelessWidget {
   final int? id;
   final String title;
@@ -72,10 +73,10 @@ class TaskBlock extends StatelessWidget {
                     ],
                   ),
                 ),
-                CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage(profileImage),
-                ),
+                // CircleAvatar(
+                //   radius: 18,
+                //   backgroundImage: NetworkImage(profileImage),
+                // ),
               ],
             ),
             const SizedBox(height: 12),

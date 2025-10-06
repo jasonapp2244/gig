@@ -87,17 +87,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     }
   }
 
-  // Function to get user token from shared preferences
-  Future<String?> _getUserToken() async {
-    // Check if token exists before making API call
-    String? token = await Utils.readSecureData('auth_token');
-    if (token == null || token.isEmpty) {}
-    return token;
-  }
-
   Future<void> _uploadAd() async {
-    final token = await _getUserToken();
-
     setState(() => _isLoading = true);
 
     try {
@@ -143,12 +133,12 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
           _showErrorDialog('Failed. Status code: ${response.statusCode}');
         }
       }
-      Get.back();
-      Get.back();
     } catch (e) {
       _showErrorDialog('Error: $e');
     } finally {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -179,8 +169,8 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop(); // Go back to previous screen
+              Navigator.of(ctx).pop(); // Close dialog
+              Get.back(); // Go back to previous screen
             },
             child: Text('OK', style: TextStyle(color: AppColor.primeColor)),
           ),
@@ -328,7 +318,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => Get.back(),
                         child: Icon(
                           Icons.arrow_back,
                           color: AppColor.primeColor,

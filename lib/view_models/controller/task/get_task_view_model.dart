@@ -13,11 +13,12 @@ class GetTaskViewModel extends GetxController {
   // Task status summary observables
   RxBool statusLoading = false.obs;
   RxMap<String, dynamic> taskStatusSummary = <String, dynamic>{}.obs;
+  var getEachTasks = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    //  fetchTasks();
+    fetchTasks();
     fetchTaskStatus(); // Initial load without status filter
   }
 
@@ -294,20 +295,21 @@ class GetTaskViewModel extends GetxController {
       statusLoading.value = false;
     }
   }
-  
 
   Future<List<Map<String, dynamic>>> fetchTasksByEmployer({
-    required int employerId,
+    required String employerId,
     required String status,
   }) async {
     try {
-      final tasks = await _api.getSpecficTasks(
+      final result = await _api.getSpecficTasks(
         status: status,
         employerId: employerId.toString(),
       );
-      return tasks ?? [];
+      getEachTasks.assignAll(result ?? []);
+      return getEachTasks.toList();
     } catch (e) {
       print("❌ Error fetching tasks: $e");
+      getEachTasks.clear();
       return [];
     }
   }

@@ -1,5 +1,8 @@
 class RoutesName {
   //////////// GENERAL ROUTES
+  ///
+  ///
+  static const String splash = '/';
   static const String onBoardingScreen = '/onboarding_screen';
   static const String getStartedScreen = '/get_started_screen';
 

@@ -15,7 +15,7 @@ class TaskSpecficBlock extends StatelessWidget {
   final String profileImage;
   var taskData;
   final String? employer; // Add employer field
-  int employeerId;
+  String employeerId;
 
   final int totalTasks;
   final int count;
@@ -75,10 +75,10 @@ class TaskSpecficBlock extends StatelessWidget {
                   ),
                 ),
 
-                CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage(profileImage),
-                ),
+                // CircleAvatar(
+                //   radius: 18,
+                //   backgroundImage: NetworkImage(profileImage),
+                // ),
               ],
             ),
             const SizedBox(height: 12),
@@ -176,9 +176,9 @@ class TaskSpecficBlock extends StatelessWidget {
                                   onFirstTap: () async {
                                     var model = Get.find<GetTaskViewModel>();
 
-                                    await deleteTaskVM.deleteTask(id ?? 0);
+                                    // await deleteTaskVM.deleteTask(id);
                                     await model.fetchTasksByEmployer(
-                                      employerId: employeerId,
+                                      employerId: (employeerId ?? ''),
                                       status: status,
                                     );
 

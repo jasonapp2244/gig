@@ -33,7 +33,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         backgroundColor: AppColor.appBodyBG,
         elevation: 0,
         centerTitle: true,
-        leading: Icon(Icons.arrow_back, color: AppColor.whiteColor),
+
         title: Text(
           'Profile',
           style: TextStyle(

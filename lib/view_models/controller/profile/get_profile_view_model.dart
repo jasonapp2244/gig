@@ -202,7 +202,7 @@ class GetProfileViewModel extends GetxController {
       profileData['address_one'] ?? profileData['address'] ?? '';
   String get userBio =>
       profileData['bio'] ?? profileData['description'] ?? 'No bio available';
-  String baseUrlResume = 'https://gig.devonlinetestserver.com/api/cv/';
+  String baseUrlResume = '${AppUrl.baseUrl}/storage/cv/';
 
   // Fall back to server path from API (just the filename)
   String get resumeUrl {
@@ -224,8 +224,7 @@ class GetProfileViewModel extends GetxController {
     String? localPath = profileData['profile_image'] ?? '';
 
     // Base URL for server images (includes the profile_images folder)
-    const String baseUrl =
-        'https://lavender-buffalo-882516.hostingersite.com/gig_app/storage/app/public/profile_images/';
+    const String baseUrl = '${AppUrl.baseUrl}/storage/profile_images/';
 
     // Fall back to server path from API (just the filename)
     String? fileName = profileData['avatar'] ?? localPath ?? '';

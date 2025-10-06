@@ -42,8 +42,7 @@ class _TaskScreenState extends State<TaskScreen>
         if (route != null && route.isCurrent) {
           // Screen is currently visible - refresh data silently
           print('🔄 TaskScreen - Screen focused, refreshing task status data');
-          taskViewModel
-              .fetchTaskStatus(); // Only fetch task status, not full refresh
+          taskViewModel.fetchTaskStatus(); // Fetch all task status data
         }
       }
     });
@@ -60,7 +59,8 @@ class _TaskScreenState extends State<TaskScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && !_isInitialized) {
         print('🔄 TaskScreen - initState: Initializing task status data');
-        taskViewModel.fetchTaskStatus(); // Fetch task status data immediately
+        taskViewModel
+            .fetchTaskStatus(); // Fetch all task status data immediately
         _isInitialized = true;
       }
     });
@@ -266,7 +266,8 @@ class _TaskScreenState extends State<TaskScreen>
                   ],
                 );
               }),
-            ),BottomBannerAd(),
+            ),
+            BottomBannerAd(),
           ],
         ),
       ),
@@ -278,16 +279,6 @@ class _TaskScreenState extends State<TaskScreen>
     bool showSummaries = false,
     String? currentTabStatus, // Add current tab status parameter
   }) {
-    print(
-      '🔍 _buildTaskList called with ${taskList.length} tasks, showSummaries: $showSummaries, currentTabStatus: $currentTabStatus',
-    );
-    print('🔍 Tasks: $taskList');
-    print('🔍 taskStatusSummary: ${taskViewModel.taskStatusSummary}');
-    print(
-      '🔍 taskStatusSummary.isEmpty: ${taskViewModel.taskStatusSummary.isEmpty}',
-    );
-    print('🔍 taskStatusSummary.keys: ${taskViewModel.taskStatusSummary.keys}');
-
     // Use the filtered task list directly
     List<Map<String, dynamic>> tasksToShow = taskList;
     taskViewModel.status.value = currentTabStatus.toString();
@@ -353,7 +344,8 @@ class _TaskScreenState extends State<TaskScreen>
             // Debug logging to see what values we're getting
 
             return TaskBlock(
-              id: int.tryParse(summaryData['employer_id']?.toString() ?? '0'),
+              id: summaryData['id'],
+
               title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
               startDate: _formatDate(summaryData['from_date']),
               status: taskStatus,
@@ -380,11 +372,11 @@ class _TaskScreenState extends State<TaskScreen>
 
                 Get.to(
                   () => EmployerTaskListScreen(
-                    employerId: employerId,
+                    employerId: employerId.toString(),
                     status: status.toLowerCase() == 'incomplete'
                         ? 'pending'
                         : status.toLowerCase(),
-                    employerName: summaryData['employer_name'] ?? "Employer",
+                    // employerName: summaryData['employer_name'] ?? "Employer",
                     model: model,
                   ),
                 );

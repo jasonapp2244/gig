@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/ads_mangager.dart';
-import 'package:gig/res/routes/routes_name.dart';
 import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
+import 'package:gig/view/initial_screen_wrapper.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
@@ -51,6 +51,10 @@ void main() async {
       systemNavigationBarColor: primeColor,
     ),
   );
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
@@ -104,7 +108,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSwatch(primarySwatch: primeSwatch),
             useMaterial3: true,
           ),
-          initialRoute: RoutesName.onBoardingScreen,
+          home: const InitialScreenWrapper(),
         );
       },
     );

@@ -32,9 +32,38 @@ class AddTaskViewModel extends GetxController {
   RxBool employerLoading = false.obs;
   RxList<Map<String, dynamic>> employers = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> filteredEmployers = <Map<String, dynamic>>[].obs;
+  String selectedPaymentTitle = "";
   RxString searchQuery = ''.obs;
   var employerText = "";
   String formattedDateTime = "";
+  RxString selectedHour = "2".obs;
+
+  RxList<String> selectedHours = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+  ].obs;
   Future<void> addTaskApi() async {
     loading.value = true;
 
@@ -84,7 +113,7 @@ class AddTaskViewModel extends GetxController {
       'supervisor_contact_number': supervisorController.value.text,
       'task_date_time': formattedDateTime,
       'pay': wagesController.value.text,
-      'working_hours': straightTimeController.value.text,
+      'working_hours': selectedHour.value.toString(),
       'notes': notesController.value.text,
     };
 
@@ -253,8 +282,6 @@ class AddTaskViewModel extends GetxController {
     }
   }
 
-  DateTime? _countryTime;
-
   // Method to select time
   Future<void> selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -280,6 +307,10 @@ class AddTaskViewModel extends GetxController {
       print('🕐 Time selected: ${selectedTime.value}');
       print('🕐 Time field updated: ${timeController.value.text}');
     }
+  }
+
+  setSelectedHours(String hours) {
+    selectedHour.value = hours;
   }
 
   // Method to clear selected time

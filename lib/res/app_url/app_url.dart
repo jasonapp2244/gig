@@ -1,5 +1,5 @@
 class AppUrl {
-  static const String baseUrl = 'https://gig.devonlinetestserver.com/api';
+  static const String baseUrl = 'https://gig.devonlinetestserver.com';
 
   //'https://gig.devonlinetestserver.com/api';
   // 'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
@@ -8,43 +8,43 @@ class AppUrl {
   // //  'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
 
   // AUTH API
-  static const String loginApi = "$baseUrl/auth/login";
-  static const String registerApi = "$baseUrl/auth/signup";
-  static const String logoutApi = "$baseUrl/logout";
-  static const String socialLoginApi = '$baseUrl/auth/social-login';
+  static const String loginApi = "$baseUrl/api/auth/login";
+  static const String registerApi = "$baseUrl/api/auth/signup";
+  static const String logoutApi = "$baseUrl/api/logout";
+  static const String socialLoginApi = '$baseUrl/api/auth/social-login';
 
   // PASSWORD API
-  static const String forgetPasswordApi = "$baseUrl/auth/forgot-password";
-  static const String resetPasswordApi = "$baseUrl/reset-password";
+  static const String forgetPasswordApi = "$baseUrl/api/auth/forgot-password";
+  static const String resetPasswordApi = "$baseUrl/api/reset-password";
 
   // OTP API
-  static const String otpApi = "$baseUrl/auth/verify-otp";
-  static const String resendOtpApi = "$baseUrl/auth/resend-otp";
+  static const String otpApi = "$baseUrl/api/auth/verify-otp";
+  static const String resendOtpApi = "$baseUrl/api/auth/resend-otp";
 
   // TASK API
-  static const String addTaskAPI = "$baseUrl/tasks";
-  static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
-  static const String getPaymentTaskAPI = "$baseUrl/get_tasks";
+  static const String addTaskAPI = "$baseUrl/api/tasks";
+  static const String editTaskAPI = "$baseUrl/api/api/editTaskAPI";
+  static const String getPaymentTaskAPI = "$baseUrl/api/get_tasks";
 
-  static const String deleteTaskAPI = "$baseUrl/tasks-delete/";
-  static const String taskStatusAPI = "$baseUrl/tasks-status";
-  static const String showspecTaskAPI = "$baseUrl/show-employer-tasks";
-  static const String taskByDate = "$baseUrl/tasks-by-date";
+  static const String deleteTaskAPI = "$baseUrl/api/tasks-delete/";
+  static const String taskStatusAPI = "$baseUrl/api/tasks-status";
+  static const String showspecTaskAPI = "$baseUrl/api/show-employer-tasks";
+  static const String taskByDate = "$baseUrl/api/tasks-by-date";
 
   // PROFILE API
-  static const String updateProfileApi = "$baseUrl/update-profile";
-  static const String getProfileApi = "$baseUrl/user-profile";
+  static const String updateProfileApi = "$baseUrl/api/update-profile";
+  static const String getProfileApi = "$baseUrl/api/user-profile";
 
-  static const String getEmployerApi = "$baseUrl/get-employer";
-  static const String updateEmployeerApi = "$baseUrl/employer/";
-  static const String deleteEmployeerApi = "$baseUrl/delete-employer/";
+  static const String getEmployerApi = "$baseUrl/api/get-employer";
+  static const String updateEmployeerApi = "$baseUrl/api/employer/";
+  static const String deleteEmployeerApi = "$baseUrl/api/delete-employer/";
 
-  static const String addmployeerApi = "$baseUrl/employers/";
+  static const String addmployeerApi = "$baseUrl/api/employers/";
 
-  static const String paymentApi = '$baseUrl/get_tasks';
-  static const String taskPaymentApi = '$baseUrl/task-payment';
-  static const String showTasksApi = '$baseUrl/show-task';
-  static const String earningSummaryApi = '$baseUrl/earningSummary';
-  static const String getCategoriesApi = '$baseUrl/get-list-category';
-  static const String supportApi = '$baseUrl/support/send';
+  static const String paymentApi = '$baseUrl/api/get_tasks';
+  static const String taskPaymentApi = '$baseUrl/api/task-payment';
+  static const String showTasksApi = '$baseUrl/api/show-task';
+  static const String earningSummaryApi = '$baseUrl/api/earningSummary';
+  static const String getCategoriesApi = '$baseUrl/api/get-list-category';
+  static const String supportApi = '$baseUrl/api/support/send';
 }

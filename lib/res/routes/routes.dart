@@ -15,6 +15,7 @@ import 'package:gig/view/screen_holder/screens/notification/notification.dart';
 import 'package:gig/view/screen_holder/screens/support_view_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/add_profile_screen.dart';
 import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.dart';
+import 'package:gig/view/splash_screen.dart';
 import 'package:gig/view/subscription/subscription_screen.dart';
 import '../../view/auth/get_started_secreen.dart';
 import '../../view/auth/login.dart';
@@ -28,6 +29,13 @@ import '../../view/screen_holder/screens/task/task_screen.dart';
 class AppRoutes {
   static List<GetPage> appRoutes() => [
     //////////// GENERAL ROUTES
+    ///
+    GetPage(
+      name: RoutesName.splash,
+      page: () => SplashScreen(),
+      transitionDuration: Duration(milliseconds: 300),
+      transition: Transition.rightToLeft,
+    ),
     GetPage(
       name: RoutesName.onBoardingScreen,
       page: () => OnboardingScreen(),
