@@ -10,7 +10,7 @@ import 'package:gig/res/routes/routes_name.dart';
 import 'package:http/http.dart'
     as http; // <-- this fixes "Undefined name 'http'"
 
-                      class MarketPlaceView extends StatefulWidget {
+class MarketPlaceView extends StatefulWidget {
   const MarketPlaceView({super.key});
 
   @override
