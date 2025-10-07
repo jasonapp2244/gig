@@ -58,12 +58,12 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-  Future<dynamic> postApi(var data, String url) async {
+  Future<dynamic> postApi2(Map<String, String> data, String url) async {
     dynamic responseJson;
     try {
       // final userData = await UserPreference().getUser();
       // final token = userData.token;
-      debugPrint(data);
+      //debugPrint(data);
 
       final response = await http
           .post(
@@ -493,7 +493,9 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> getEarningSummaryApi(String token) async {
     dynamic responseJson;
     try {
-      debugPrint('🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}');
+      debugPrint(
+        '🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}',
+      );
 
       final response = await http
           .get(
@@ -800,5 +802,38 @@ class NetworkApiServices extends BaseApiServices {
       }
       throw FetchDataException('Invalid JSON or unexpected error: $e');
     }
+  }
+
+  @override
+  Future postApi(data, String url) async {
+    dynamic responseJson;
+    try {
+      // final userData = await UserPreference().getUser();
+      // final token = userData.token;
+      //debugPrint(data);
+
+      final response = await http
+          .post(
+            Uri.parse(url),
+            body: jsonEncode(data),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              //'Authorization': '$data',
+            },
+          )
+          .timeout(Duration(seconds: 15));
+
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw InternetException(
+        'Please check your internet connection and try again',
+      );
+    } on RequestTimeout {
+      throw RequestTimeout('Server is not responding');
+    } catch (e) {
+      throw FetchDataException('Unexpected error: $e');
+    }
+    return responseJson;
   }
 }

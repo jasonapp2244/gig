@@ -227,7 +227,7 @@ class LoginVewModel extends GetxController {
       loading.value = true;
 
       String token = await _getToken() ?? '';
-      Map data = {
+    Map<String,String> data = {
         'email': emailController.value.text,
         'password': passwordController.value.text,
         'fcm_token': token,
