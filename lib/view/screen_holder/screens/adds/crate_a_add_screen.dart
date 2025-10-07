@@ -522,7 +522,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                         selectedCategory,
                         (val) => setState(() => selectedCategory = val),
                         validator: (value) {
-                          if (selectedCondition!.isEmpty) {
+                          if (selectedCategory!.isEmpty) {
                             return 'Category is required';
                           }
                         },

@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/custom_photo_widget.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/res/components/chip_input_field.dart';
 import 'package:gig/res/components/pdf_picker_widget.dart';
 import 'package:get/get.dart';
-import 'package:gig/res/routes/routes_name.dart';
+import 'package:gig/view_models/controller/home/home_view_model.dart';
 import 'package:gig/view_models/controller/profile/add_profile_controller.dart';
 import 'package:gig/view_models/controller/profile/get_profile_view_model.dart';
 
@@ -108,8 +105,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
 
   Widget _buildPhotoPicker(AddProfileController controller) {
     return Obx(() {
-      // Get existing profile image from GetProfileViewModel if available
-      String? existingImageUrl;
+      // Get existing profile name from GetProfileViewModel if available
       if (Get.isRegistered<GetProfileViewModel>()) {
         final profileVM = Get.find<GetProfileViewModel>();
         name = profileVM.userName;
@@ -226,7 +222,17 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                       if (Get.isRegistered<GetProfileViewModel>()) {
                         await Get.find<GetProfileViewModel>()
                             .loadFromStoredData();
-                        Get.offAllNamed(RoutesName.userProfileScreen);
+                      }
+
+                      // Navigate back first
+                      Get.back();
+
+                      // Small delay to ensure navigation completes, then change tab
+                      await Future.delayed(const Duration(milliseconds: 100));
+
+                      if (Get.isRegistered<HomeViewModel>()) {
+                        final homeVM = Get.find<HomeViewModel>();
+                        homeVM.changeTab(3);
                       }
                     }
                   },
