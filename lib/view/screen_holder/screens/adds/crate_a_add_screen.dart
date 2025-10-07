@@ -49,7 +49,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
 
   Future<void> _loadCategories() async {
     try {
-      var url = Uri.parse("${AppUrl.baseUrl}/get-list-category");
+      var url = Uri.parse("${AppUrl.baseUrl}/api/get-list-category");
       String? token = await Utils.readSecureData('auth_token');
       var response = await http.get(
         url,
@@ -92,7 +92,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
 
     try {
       if (_formKey.currentState?.validate() ?? false) {
-        var uri = Uri.parse('${AppUrl.baseUrl}/add-list');
+        var uri = Uri.parse('${AppUrl.baseUrl}/api/add-list');
         var request = http.MultipartRequest('POST', uri);
         String? token = await Utils.readSecureData('auth_token');
 
@@ -140,6 +140,8 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
         _isLoading = false;
       });
     }
+    Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   void _showErrorDialog(String message) {
@@ -193,10 +195,10 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
   }
 
   Widget buildInputField(
+    String fieldType,
     String label,
     TextEditingController controller, {
     int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -204,6 +206,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
       children: [
         SizedBox(height: 5),
         CustomInputField(
+          fieldType: fieldType,
           controller: controller,
           hintText: label,
           validator: validator,
@@ -248,51 +251,121 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
     );
   }
 
+  // Widget buildDropdown(
+  //   String label,
+  //   List<String> items,
+  //   String? value,
+  //   Function(String?) onChanged,
+  // ) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       SizedBox(height: 5),
+  //       Container(
+  //         padding: EdgeInsets.symmetric(horizontal: 12),
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(10),
+  //           color: AppColor.grayColor,
+  //           border: Border.all(color: Colors.white24),
+  //         ),
+  //         child: DropdownButton<String>(
+
+  //           focusColor: AppColor.textColor,
+  //           isExpanded: true,
+  //           value: value,
+  //           hint: Text(
+  //             label,
+  //             style: TextStyle(
+  //               color: Colors.white60,
+  //               fontFamily: AppFonts.appFont,
+  //             ),
+  //           ),
+  //           items: items.map((String val) {
+  //             return DropdownMenuItem<String>(
+  //               value: val,
+  //               child: Text(
+  //                 val,
+  //                 style: TextStyle(
+  //                   color: Colors.white60,
+  //                   fontFamily: AppFonts.appFont,
+  //                 ),
+  //               ),
+  //             );
+  //           }).toList(),
+  //           onChanged: onChanged,
+
+  //           underline: SizedBox(),
+  //           dropdownColor: AppColor.grayColor,
+  //         ),
+  //       ),
+  //       SizedBox(height: 15),
+  //     ],
+  //   );
+  // }
   Widget buildDropdown(
     String label,
     List<String> items,
     String? value,
-    Function(String?) onChanged,
-  ) {
+    Function(String?) onChanged, {
+    String? Function(String?)? validator, // 👈 added validator parameter
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 5),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: AppColor.grayColor,
-            border: Border.all(color: Colors.white24),
-          ),
-          child: DropdownButton<String>(
-            isExpanded: true,
-            value: value,
-            hint: Text(
-              label,
-              style: TextStyle(
-                color: Colors.white60,
-                fontFamily: AppFonts.appFont,
-              ),
+        const SizedBox(height: 5),
+        DropdownButtonFormField<String>(
+          value: value,
+          onChanged: onChanged,
+          validator: validator, // 👈 validation added here
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppColor.grayColor, // background color
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 15,
             ),
-            items: items.map((String val) {
-              return DropdownMenuItem<String>(
-                value: val,
-                child: Text(
-                  val,
-                  style: TextStyle(
-                    color: Colors.white60,
-                    fontFamily: AppFonts.appFont,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-            underline: SizedBox(),
-            dropdownColor: AppColor.grayColor,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.white24),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.white70),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.redAccent),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.redAccent),
+            ),
+            hintText: label,
+            hintStyle: const TextStyle(
+              color: Colors.white60,
+              fontFamily: AppFonts.appFont,
+            ),
           ),
+          dropdownColor: AppColor.grayColor,
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: AppFonts.appFont,
+          ),
+          iconEnabledColor: AppColor.textColor,
+          items: items.map((String val) {
+            return DropdownMenuItem<String>(
+              value: val,
+              child: Text(
+                val,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: AppFonts.appFont,
+                ),
+              ),
+            );
+          }).toList(),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
       ],
     );
   }
@@ -331,7 +404,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                     right: 35,
                     left: 35,
                     child: Text(
-                      'Create Add',
+                      'Create Ad',
                       style: TextStyle(
                         fontSize: 18,
                         color: AppColor.secondColor,
@@ -413,6 +486,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
 
                       // Form Fields - Updated to match API requirements
                       buildInputField(
+                        "",
                         "Title",
                         titleController,
                         validator: (value) {
@@ -423,9 +497,9 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                       ),
 
                       buildInputField(
+                        "number",
                         "Old Price",
                         oldPriceController,
-                        keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty)
                             return 'Old Price is required';
@@ -433,9 +507,9 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                         },
                       ),
                       buildInputField(
+                        "number",
                         "New Price",
                         newPriceController,
-                        keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty)
                             return 'New Price is required';
@@ -447,14 +521,25 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                         categories.keys.toList(),
                         selectedCategory,
                         (val) => setState(() => selectedCategory = val),
+                        validator: (value) {
+                          if (selectedCondition!.isEmpty) {
+                            return 'Category is required';
+                          }
+                        },
                       ),
                       buildDropdown(
                         "Condition",
                         conditions.keys.toList(),
                         selectedCondition,
                         (val) => setState(() => selectedCondition = val),
+                        validator: (value) {
+                          if (selectedCondition!.isEmpty) {
+                            return 'Condition is required';
+                          }
+                        },
                       ),
                       buildInputField(
+                        "",
                         "Description",
                         descController,
                         maxLines: 4,
@@ -465,6 +550,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                         },
                       ),
                       buildInputField(
+                        "",
                         "Location",
                         locationController,
                         validator: (value) {

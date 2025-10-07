@@ -105,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           textAlign: TextAlign.center,
         ),
         Text(
-          'Lorem Ipsum is simply dummy text',
+          'Stay organized, stay ahead',
           style: TextStyle(
             fontSize: 12,
             color: AppColor.whiteColor,

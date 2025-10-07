@@ -185,7 +185,7 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
           _buildDrawerItem(
             context,
             icon: Icons.post_add,
-            text: "Create Adds",
+            text: "Create Ads",
             route: RoutesName.createAddsScreen,
           ),
           _buildDrawerItem(

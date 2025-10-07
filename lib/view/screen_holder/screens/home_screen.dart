@@ -229,242 +229,245 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          spacing: 15,
-          children: [
-            SizedBox(height: 20),
-
-            // Calendar with task indicators
-            Obx(() {
-              if (homeController.tasksLoading.value) {
-                return Container(
-                  height: 400,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: AppColor.primeColor,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            spacing: 15,
+            children: [
+              SizedBox(height: 20),
+          
+              // Calendar with task indicators
+              Obx(() {
+                if (homeController.tasksLoading.value) {
+                  return Container(
+                    height: 400,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColor.primeColor,
+                      ),
                     ),
-                  ),
-                );
-              }
-
-              return TableCalendar<Map<String, dynamic>>(
-                firstDay: DateTime.utc(2020, 1, 1),
-                lastDay: DateTime.utc(2030, 12, 31),
-                focusedDay: _focusedDay,
-                selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                calendarFormat: _calendarFormat,
-                onFormatChanged: (format) {
-                  if (mounted) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
-                  }
-                },
-                daysOfWeekVisible: true,
-                onDaySelected: (selectedDay, focusedDay) {
-                  if (mounted) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                    _handleDateSelection(selectedDay, homeController);
-                  }
-                },
-                onPageChanged: (focusedDay) {
-                  if (mounted) {
-                    setState(() {
-                      _focusedDay = focusedDay;
-                    });
-                  }
-                },
-                // Add event loader to show task indicators
-                eventLoader: (day) {
-                  return homeController.getEventsForDate(day);
-                },
-                // Custom calendar builder to show task count
-                calendarBuilders: CalendarBuilders(
-                  markerBuilder: (context, date, events) {
-                    if (events.isNotEmpty) {
-                      if (events.length == 1) {
-                        // Show only a dot for 1 task
-                        return Positioned(
-                          bottom: 1,
-                          child: Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: AppColor.primeColor,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        );
-                      } else {
-                        // Show number for 2+ tasks
-                        return Positioned(
-                          bottom: 1,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColor.primeColor,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '${events.length}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                  );
+                }
+          
+                return TableCalendar<Map<String, dynamic>>(
+                  firstDay: DateTime.utc(2020, 1, 1),
+                  lastDay: DateTime.utc(2030, 12, 31),
+                  focusedDay: _focusedDay,
+                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                  calendarFormat: _calendarFormat,
+                  onFormatChanged: (format) {
+                    if (mounted) {
+                      setState(() {
+                        _calendarFormat = format;
+                      });
+                    }
+                  },
+                  daysOfWeekVisible: true,
+                  onDaySelected: (selectedDay, focusedDay) {
+                    if (mounted) {
+                      setState(() {
+                        _selectedDay = selectedDay;
+                        _focusedDay = focusedDay;
+                      });
+                      _handleDateSelection(selectedDay, homeController);
+                    }
+                  },
+                  onPageChanged: (focusedDay) {
+                    if (mounted) {
+                      setState(() {
+                        _focusedDay = focusedDay;
+                      });
+                    }
+                  },
+                  // Add event loader to show task indicators
+                  eventLoader: (day) {
+                    return homeController.getEventsForDate(day);
+                  },
+                  // Custom calendar builder to show task count
+                  calendarBuilders: CalendarBuilders(
+                    markerBuilder: (context, date, events) {
+                      if (events.isNotEmpty) {
+                        if (events.length == 1) {
+                          // Show only a dot for 1 task
+                          return Positioned(
+                            bottom: 1,
+                            child: Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: AppColor.primeColor,
+                                shape: BoxShape.circle,
                               ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          // Show number for 2+ tasks
+                          return Positioned(
+                            bottom: 1,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColor.primeColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '${events.length}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                       }
-                    }
-                    return null;
-                  },
-                ),
-                calendarStyle: CalendarStyle(
-                  todayDecoration: const BoxDecoration(
-                    color: AppColor.primeColor,
-                    shape: BoxShape.circle,
+                      return null;
+                    },
                   ),
-                  selectedDecoration: BoxDecoration(
-                    border: Border.all(color: AppColor.primeColor, width: 2),
-                    color: const Color(0xFF2D2F3A),
-                    shape: BoxShape.circle,
-                  ),
-                  defaultTextStyle: const TextStyle(color: Colors.white),
-                  weekendTextStyle: const TextStyle(color: Colors.white),
-                  outsideDaysVisible: false,
-                  markerDecoration: BoxDecoration(
-                    color: Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  markerSize: 0,
-                  markerMargin: EdgeInsets.zero,
-                ),
-                headerStyle: const HeaderStyle(
-                  titleCentered: true,
-                  formatButtonVisible: false,
-                  titleTextStyle: TextStyle(color: Colors.white),
-                  leftChevronIcon: Icon(
-                    Icons.chevron_left,
-                    color: Colors.white,
-                  ),
-                  rightChevronIcon: Icon(
-                    Icons.chevron_right,
-                    color: Colors.white,
-                  ),
-                ),
-                daysOfWeekStyle: const DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(color: Colors.white70),
-                  weekendStyle: TextStyle(color: Colors.white70),
-                ),
-              );
-            }),
-
-            SizedBox(height: 10),
-
-            InkWell(
-              onTap: () {
-                final homeVM = Get.find<HomeViewModel>();
-                homeVM.changeTab(1);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.history400,
-                      color: AppColor.textColor,
-                      size: 25,
+                  calendarStyle: CalendarStyle(
+                    todayDecoration: const BoxDecoration(
+                      color: AppColor.primeColor,
+                      shape: BoxShape.circle,
                     ),
-                    Text(
-                      'work history',
-                      style: TextStyle(
+                    selectedDecoration: BoxDecoration(
+                      border: Border.all(color: AppColor.primeColor, width: 2),
+                      color: const Color(0xFF2D2F3A),
+                      shape: BoxShape.circle,
+                    ),
+                    defaultTextStyle: const TextStyle(color: Colors.white),
+                    weekendTextStyle: const TextStyle(color: Colors.white),
+                    outsideDaysVisible: false,
+                    markerDecoration: BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                    ),
+                    markerSize: 0,
+                    markerMargin: EdgeInsets.zero,
+                  ),
+                  headerStyle: const HeaderStyle(
+                    titleCentered: true,
+                    formatButtonVisible: false,
+                    titleTextStyle: TextStyle(color: Colors.white),
+                    leftChevronIcon: Icon(
+                      Icons.chevron_left,
+                      color: Colors.white,
+                    ),
+                    rightChevronIcon: Icon(
+                      Icons.chevron_right,
+                      color: Colors.white,
+                    ),
+                  ),
+                  daysOfWeekStyle: const DaysOfWeekStyle(
+                    weekdayStyle: TextStyle(color: Colors.white70),
+                    weekendStyle: TextStyle(color: Colors.white70),
+                  ),
+                );
+              }),
+          
+              SizedBox(height: 10),
+          
+              InkWell(
+                onTap: () {
+                  final homeVM = Get.find<HomeViewModel>();
+                  homeVM.changeTab(1);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.history400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'work history',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                final homeVM = Get.find<HomeViewModel>();
-                homeVM.changeTab(2);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.handCoins400,
-                      color: AppColor.textColor,
-                      size: 25,
-                    ),
-                    Text(
-                      'Track Income',
-                      style: TextStyle(
+              InkWell(
+                onTap: () {
+                  final homeVM = Get.find<HomeViewModel>();
+                  homeVM.changeTab(2);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.handCoins400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Track Income',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                Get.toNamed(RoutesName.detailScreenView);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-                decoration: BoxDecoration(
-                  color: AppColor.inputBGColor100,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(width: 1, color: Colors.white38),
-                ),
-                child: Row(
-                  spacing: 10,
-                  children: [
-                    Icon(
-                      LucideIcons.store400,
-                      color: AppColor.textColor,
-                      size: 25,
-                    ),
-                    Text(
-                      'Marketplace',
-                      style: TextStyle(
+              InkWell(
+                onTap: () {
+                  Get.toNamed(RoutesName.detailScreenView);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
+                  decoration: BoxDecoration(
+                    color: AppColor.inputBGColor100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(width: 1, color: Colors.white38),
+                  ),
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Icon(
+                        LucideIcons.store400,
                         color: AppColor.textColor,
-                        fontFamily: AppFonts.appFont,
-                        fontSize: 18,
+                        size: 25,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Marketplace',
+                        style: TextStyle(
+                          color: AppColor.textColor,
+                          fontFamily: AppFonts.appFont,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            BottomBannerAd(),
-          ],
+              BottomBannerAd(),
+            ],
+          ),
         ),
       ),
     );
@@ -822,7 +825,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildDrawerItem(
             context,
             icon: Icons.post_add,
-            text: "Create Adds",
+            text: "Create Ads",
             route: RoutesName.createAddsScreen,
           ),
           _buildDrawerItem(

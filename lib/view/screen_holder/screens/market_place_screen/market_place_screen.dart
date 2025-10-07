@@ -74,7 +74,7 @@ class _MarketPlaceView extends State<MarketPlaceView> {
         return;
       }
 
-      final url = Uri.parse('${AppUrl.baseUrl}/get-list?page=$currentPage');
+      final url = Uri.parse('${AppUrl.baseUrl}/api/get-list?page=$currentPage');
 
       final response = await http.get(
         url,
@@ -153,18 +153,18 @@ class _MarketPlaceView extends State<MarketPlaceView> {
   String _getImageUrl(dynamic item) {
     if (item['images'] != null && item['images'].isNotEmpty) {
       String path = item['images'][0]['path'];
-      print("4321$path");
+      debugPrint("4321$path");
       // Check if the path is a full URL or needs to be constructed
       if (path.startsWith('http')) {
-        print("asfdasf$path");
+        debugPrint("asfdasf$path");
         return '${AppUrl.baseUrl}/storage/$path';
       } else {
-        print('https://gig.devonlinetestserver.com/storage/$path');
-        return 'https://gig.devonlinetestserver.com/storage/$path';
+        debugPrint('${AppUrl.baseUrl}/storage/$path');
+        return '${AppUrl.baseUrl}/storage/$path';
       }
     }
     // Return a placeholder image if no image is available
-    return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c';
+    return '${AppUrl.baseUrl}/storage/profile_images/logo-icon.png';
   }
 
   @override

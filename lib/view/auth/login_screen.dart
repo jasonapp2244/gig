@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
           textAlign: TextAlign.center,
         ),
         Text(
-          'Lorem Ipsum is simply dummy text',
+          'Your tasks, your productivity.',
           style: TextStyle(
             fontSize: 12,
             color: AppColor.whiteColor,

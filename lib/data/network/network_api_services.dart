@@ -63,7 +63,7 @@ class NetworkApiServices extends BaseApiServices {
     try {
       // final userData = await UserPreference().getUser();
       // final token = userData.token;
-      print(data);
+      debugPrint(data);
 
       final response = await http
           .post(
@@ -94,9 +94,9 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
 
     try {
-      // Debug print request data
-      print(" Sending POST request to: $url");
-      print(" Data: $data");
+      // Debug debugPrint request data
+      debugPrint(" Sending POST request to: $url");
+      debugPrint(" Data: $data");
 
       final response = await http
           .post(
@@ -123,9 +123,9 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
 
     try {
-      // Debug print request data
-      print(" Sending POST request to: $url");
-      print(" Data: $data");
+      // Debug debugPrint request data
+      debugPrint(" Sending POST request to: $url");
+      debugPrint(" Data: $data");
 
       final response = await http
           .post(
@@ -152,9 +152,9 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
 
     try {
-      // Debug print request data
-      print(" Sending POST request to: $url");
-      print(" Data: $data");
+      // Debug debugPrint request data
+      debugPrint(" Sending POST request to: $url");
+      debugPrint(" Data: $data");
 
       final response = await http
           .post(
@@ -210,16 +210,16 @@ class NetworkApiServices extends BaseApiServices {
         );
       }
 
-      print('🚀 Sending multipart request to: ${AppUrl.updateProfileApi}');
-      print('📄 Form fields: ${request.fields}');
-      print('📎 Files: ${request.files.map((f) => f.field).toList()}');
-      print('🔑 Token: Bearer ${token.substring(0, 10)}...');
+      debugPrint('🚀 Sending multipart request to: ${AppUrl.updateProfileApi}');
+      debugPrint('📄 Form fields: ${request.fields}');
+      debugPrint('📎 Files: ${request.files.map((f) => f.field).toList()}');
+      debugPrint('🔑 Token: Bearer ${token.substring(0, 10)}...');
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      print('📈 Response status: ${response.statusCode}');
-      print('📝 Response body: ${response.body}');
+      debugPrint('📈 Response status: ${response.statusCode}');
+      debugPrint('📝 Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.body;
@@ -229,7 +229,7 @@ class NetworkApiServices extends BaseApiServices {
         );
       }
     } catch (e) {
-      print('❌ Error in _uploadProfileWithFiles: $e');
+      debugPrint('❌ Error in _uploadProfileWithFiles: $e');
       rethrow;
     }
   }
@@ -238,9 +238,9 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> postApiWithToken(var data, String url, String token) async {
     dynamic responseJson;
     try {
-      print('🔑 Sending authenticated request to: $url');
-      print('📄 Data: $data');
-      print('🎫 Token: Bearer ${token.substring(0, 10)}...');
+      debugPrint('🔑 Sending authenticated request to: $url');
+      debugPrint('📄 Data: $data');
+      debugPrint('🎫 Token: Bearer ${token.substring(0, 10)}...');
 
       final response = await http
           .post(
@@ -270,7 +270,7 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> postLogoutApi(var data, String url) async {
     dynamic responseJson;
     try {
-      print(data['token']);
+      debugPrint(data['token']);
       String token = data['token'];
 
       final response = await http
@@ -309,7 +309,7 @@ class NetworkApiServices extends BaseApiServices {
       final apiUrl = "${url}/$taskId";
       // 👆 change this if your endpoint is different
 
-      print("🔍 Fetching Task details from: $apiUrl");
+      debugPrint("🔍 Fetching Task details from: $apiUrl");
 
       final response = await http
           .post(
@@ -321,8 +321,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print("📡 Response Status: ${response.statusCode}");
-      print("📋 Response Body: ${response.body}");
+      debugPrint("📡 Response Status: ${response.statusCode}");
+      debugPrint("📋 Response Body: ${response.body}");
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -343,7 +343,7 @@ class NetworkApiServices extends BaseApiServices {
   }) async {
     dynamic responseJson;
     try {
-      print("🔍 Fetching Categories from: $url");
+      debugPrint("🔍 Fetching Categories from: $url");
 
       final response = await http
           .get(
@@ -355,8 +355,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print("📡 Response Status: ${response.statusCode}");
-      print("📋 Response Body: ${response.body}");
+      debugPrint("📡 Response Status: ${response.statusCode}");
+      debugPrint("📋 Response Body: ${response.body}");
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -382,7 +382,7 @@ class NetworkApiServices extends BaseApiServices {
       final apiUrl = "${url}";
       // 👆 change this if your endpoint is different
 
-      print("🔍 Fetching Task details from: $apiUrl");
+      debugPrint("🔍 Fetching Task details from: $apiUrl");
 
       final response = await http
           .post(
@@ -396,8 +396,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print("📡 Response Status: ${response.statusCode}");
-      print("📋 Response Body: ${response.body}");
+      debugPrint("📡 Response Status: ${response.statusCode}");
+      debugPrint("📋 Response Body: ${response.body}");
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -493,7 +493,7 @@ class NetworkApiServices extends BaseApiServices {
   Future<dynamic> getEarningSummaryApi(String token) async {
     dynamic responseJson;
     try {
-      print('🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}');
+      debugPrint('🔍 Fetching earning summary from: ${AppUrl.earningSummaryApi}');
 
       final response = await http
           .get(
@@ -505,8 +505,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print('📡 Earning Summary Response Status: ${response.statusCode}');
-      print('📋 Earning Summary Response Body: ${response.body}');
+      debugPrint('📡 Earning Summary Response Status: ${response.statusCode}');
+      debugPrint('📋 Earning Summary Response Body: ${response.body}');
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -609,11 +609,11 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
     try {
       final deleteUrl = '${AppUrl.deleteEmployeerApi}$employerId';
-      print('🗑️ DELETE Request URL: $deleteUrl');
-      print('🗑️ DELETE Request Headers: Authorization: Bearer $token');
+      debugPrint('🗑️ DELETE Request URL: $deleteUrl');
+      debugPrint('🗑️ DELETE Request Headers: Authorization: Bearer $token');
 
       // First, get the employer data to use their actual salary
-      print('🔍 Fetching employer data for ID: $employerId');
+      debugPrint('🔍 Fetching employer data for ID: $employerId');
       final employerResponse = await http
           .get(
             Uri.parse(AppUrl.getEmployerApi),
@@ -625,7 +625,7 @@ class NetworkApiServices extends BaseApiServices {
           .timeout(const Duration(seconds: 10));
 
       final employerData = jsonDecode(employerResponse.body);
-      print('📋 Employer data response: $employerData');
+      debugPrint('📋 Employer data response: $employerData');
 
       // Find the specific employer by ID
       Map<String, dynamic>? targetEmployer;
@@ -641,7 +641,7 @@ class NetworkApiServices extends BaseApiServices {
         throw Exception('Employer with ID $employerId not found');
       }
 
-      print(
+      debugPrint(
         '✅ Found employer: ${targetEmployer['employer_name']} with salary: ${targetEmployer['salary']}',
       );
 
@@ -651,7 +651,7 @@ class NetworkApiServices extends BaseApiServices {
         // Mark as inactive/deleted
       };
 
-      print('🗑️ POST Request Body: $requestBody');
+      debugPrint('🗑️ POST Request Body: $requestBody');
 
       final response = await http
           .post(
@@ -665,8 +665,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print(' POST Response Status: ${response.statusCode}');
-      print(' POST Response Body: ${response.body}');
+      debugPrint(' POST Response Status: ${response.statusCode}');
+      debugPrint(' POST Response Body: ${response.body}');
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -676,7 +676,7 @@ class NetworkApiServices extends BaseApiServices {
     } on RequestTimeout {
       throw RequestTimeout('Server is not responding, please try again later');
     } catch (e) {
-      print('🗑️ DELETE Error: $e');
+      debugPrint('🗑️ DELETE Error: $e');
       throw FetchDataException('Unexpected error: $e');
     }
     return responseJson;
@@ -686,11 +686,11 @@ class NetworkApiServices extends BaseApiServices {
     dynamic responseJson;
     try {
       final deleteUrl = '${url}$taskId';
-      print('🗑️ DELETE Request URL: $deleteUrl');
-      print('🗑️ DELETE Request Headers: Authorization: Bearer $token');
+      debugPrint('🗑️ DELETE Request URL: $deleteUrl');
+      debugPrint('🗑️ DELETE Request Headers: Authorization: Bearer $token');
 
       // First, get the task data to verify it exists
-      print('🔍 Fetching task data for ID: $taskId');
+      debugPrint('🔍 Fetching task data for ID: $taskId');
       final taskResponse = await http
           .get(
             Uri.parse(AppUrl.addTaskAPI),
@@ -702,7 +702,7 @@ class NetworkApiServices extends BaseApiServices {
           .timeout(const Duration(seconds: 10));
 
       final tasksData = jsonDecode(taskResponse.body);
-      print('📋 Task data response: $tasksData');
+      debugPrint('📋 Task data response: $tasksData');
 
       // Find the specific task by ID
       Map<String, dynamic>? targetTask;
@@ -729,8 +729,8 @@ class NetworkApiServices extends BaseApiServices {
           )
           .timeout(const Duration(seconds: 10));
 
-      print(' POST Response Status: ${response.statusCode}');
-      print(' POST Response Body: ${response.body}');
+      debugPrint(' POST Response Status: ${response.statusCode}');
+      debugPrint(' POST Response Body: ${response.body}');
 
       responseJson = returnResponse(response);
     } on SocketException {
@@ -740,7 +740,7 @@ class NetworkApiServices extends BaseApiServices {
     } on RequestTimeout {
       throw RequestTimeout('Server is not responding, please try again later');
     } catch (e) {
-      print('🗑️ DELETE Error: $e');
+      debugPrint('🗑️ DELETE Error: $e');
       throw FetchDataException('Unexpected error: $e');
     }
     return responseJson;
@@ -748,8 +748,8 @@ class NetworkApiServices extends BaseApiServices {
 
   dynamic returnResponse(http.Response response) {
     if (kDebugMode) {
-      print("Response Body: ${response.body}");
-      print("Status Code: ${response.statusCode}");
+      debugPrint("Response Body: ${response.body}");
+      debugPrint("Status Code: ${response.statusCode}");
     }
 
     try {

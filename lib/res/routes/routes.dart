@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:gig/res/routes/routes_name.dart';
-import 'package:gig/view/auth/register.dart';
+import 'package:gig/view/auth/register_screen.dart';
 import 'package:gig/view/otp/otp_screen.dart';
 import 'package:gig/view/password/reset_password.dart';
 import 'package:gig/view/payment/payment_method_screen.dart';
@@ -18,7 +18,7 @@ import 'package:gig/view/screen_holder/screens/user_profile/user_profile_screen.
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/view/subscription/subscription_screen.dart';
 import '../../view/auth/get_started_secreen.dart';
-import '../../view/auth/login.dart';
+import '../../view/auth/login_screen.dart';
 import '../../view/onboarding_screen/onboarding_screen.dart';
 import '../../view/password/forget_password.dart';
 import '../../view/screen_holder/screens/adds/crate_a_add_screen.dart';

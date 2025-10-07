@@ -92,7 +92,7 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
           textAlign: TextAlign.center,
         ),
         Text(
-          'Lorem Ipsum is simply dummy text',
+          'Plan today, achieve tomorrow.',
           style: TextStyle(
             fontSize: 12,
             color: AppColor.whiteColor,

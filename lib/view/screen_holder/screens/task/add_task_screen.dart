@@ -300,7 +300,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             isExpanded: true,
             value: selected.isEmpty ? null : selected,
             hint: const Text('Hour', style: TextStyle(color: Colors.white60)),
-            dropdownColor: AppColor.whiteColor,
+            dropdownColor: AppColor.appBodyBG,
             style: const TextStyle(color: Colors.white, fontSize: 16),
             iconEnabledColor: AppColor.primeColor,
             borderRadius: BorderRadius.circular(12),

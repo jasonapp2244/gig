@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:gig/models/category_model.dart';
+import 'package:gig/res/app_url/app_url.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../res/colors/app_color.dart';
@@ -38,9 +39,9 @@ class _SingleProductScreen extends State<SingleProductScreen> {
 
     String path = imageData;
     if (path.startsWith('http')) {
-      return 'https://gig.devonlinetestserver.com/storage/$path';
+      return '${AppUrl.baseUrl}/storage/$path';
     } else {
-      return 'https://gig.devonlinetestserver.com/storage/$path';
+      return '${AppUrl.baseUrl}/storage/$path';
     }
   }
 
@@ -305,45 +306,50 @@ class _SingleProductScreen extends State<SingleProductScreen> {
                           ),
                           SizedBox(height: 20),
                           Text(
-                            "Send seller a message",
+                            "Email : ${productData['user']?['email'] ?? 'Unknown Seller'}",
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                           SizedBox(height: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.grey.shade700),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  LucideIcons.messageSquare,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Message seller...",
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(color: Colors.grey),
-                                    ),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                                CircleAvatar(
-                                  backgroundColor: AppColor.primeColor,
-                                  child: Icon(
-                                    Icons.send,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Text(
+                            "Phone Number : ${productData['user']?['phone_number'] ?? 'Unknown Seller'}",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
-                          SizedBox(height: 20),
+                          // SizedBox(height: 8),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(12),
+                          //     border: Border.all(color: Colors.grey.shade700),
+                          //   ),
+                          //   padding: EdgeInsets.symmetric(horizontal: 12),
+                          //   child: Row(
+                          //     children: [
+                          //       Icon(
+                          //         LucideIcons.messageSquare,
+                          //         color: Colors.grey,
+                          //       ),
+                          //       SizedBox(width: 8),
+                          //       Expanded(
+                          //         child: TextField(
+                          //           decoration: InputDecoration(
+                          //             hintText: "Message seller...",
+                          //             border: InputBorder.none,
+                          //             hintStyle: TextStyle(color: Colors.grey),
+                          //           ),
+                          //           style: TextStyle(color: Colors.white),
+                          //         ),
+                          //       ),
+                          //       CircleAvatar(
+                          //         backgroundColor: AppColor.primeColor,
+                          //         child: Icon(
+                          //           Icons.send,
+                          //           color: Colors.white,
+                          //           size: 18,
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
+                          // SizedBox(height: 20),
 
                           // Accordion Section
                           buildAccordion("Description", descExpanded, () {

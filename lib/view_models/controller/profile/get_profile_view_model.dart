@@ -114,6 +114,7 @@ class GetProfileViewModel extends GetxController {
       final status = await Permission.manageExternalStorage.request();
 
       if (status.isGranted) {
+        print(status.isPermanentlyDenied);
         return true;
       }
 
