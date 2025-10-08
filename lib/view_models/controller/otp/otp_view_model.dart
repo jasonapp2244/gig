@@ -83,8 +83,8 @@ class OtpViewModel extends GetxController {
             // Update user preference with verified user data
             await userPreference.saveUser(UserModel.fromJson(value));
 
-            // Navigate to home screen
-            Get.to(ScreenHolderScreen());
+            // Navigate to home screen and clear all previous routes
+            Get.offAll(() => const ScreenHolderScreen());
           } else {
             Utils.snakBar(
               'OTP Error',

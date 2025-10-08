@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/utils/utils.dart';
+import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -140,8 +141,6 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
         _isLoading = false;
       });
     }
-    Navigator.pop(context);
-    Navigator.pop(context);
   }
 
   void _showErrorDialog(String message) {
@@ -171,8 +170,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop(); // Close dialog
-              Get.back(); // Go back to previous screen
+              Get.offAll(() => ScreenHolderScreen());
             },
             child: Text('OK', style: TextStyle(color: AppColor.primeColor)),
           ),
@@ -315,6 +313,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
           value: value,
+
           onChanged: onChanged,
           validator: validator, // 👈 validation added here
           decoration: InputDecoration(
@@ -341,11 +340,13 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
               borderSide: const BorderSide(color: Colors.redAccent),
             ),
             hintText: label,
+            labelStyle: TextStyle(),
             hintStyle: const TextStyle(
-              color: Colors.white60,
+              color: Colors.white,
               fontFamily: AppFonts.appFont,
             ),
           ),
+
           dropdownColor: AppColor.grayColor,
           style: const TextStyle(
             color: Colors.white,

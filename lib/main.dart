@@ -7,6 +7,7 @@ import 'package:gig/res/components/ads_mangager.dart';
 import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/res/routes/routes.dart';
 import 'package:gig/utils/utils.dart';
+import 'package:gig/view_models/controller/home/home_view_model.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 import 'package:gig/view/initial_screen_wrapper.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return ScreenUtilInit(
       designSize: const Size(350, 767),
       minTextAdapt: true,

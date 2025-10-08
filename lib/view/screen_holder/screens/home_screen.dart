@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final HomeViewModel homeController = Get.put(HomeViewModel());
+    final homeController = Get.put(HomeViewModel());
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -235,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
             spacing: 15,
             children: [
               SizedBox(height: 20),
-          
+
               // Calendar with task indicators
               Obx(() {
                 if (homeController.tasksLoading.value) {
@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 }
-          
+
                 return TableCalendar<Map<String, dynamic>>(
                   firstDay: DateTime.utc(2020, 1, 1),
                   lastDay: DateTime.utc(2030, 12, 31),
@@ -367,9 +367,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }),
-          
+
               SizedBox(height: 10),
-          
+
               InkWell(
                 onTap: () {
                   final homeVM = Get.find<HomeViewModel>();
