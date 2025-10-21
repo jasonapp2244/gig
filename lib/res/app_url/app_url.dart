@@ -1,12 +1,6 @@
 class AppUrl {
   static const String baseUrl = 'https://gig.devonlinetestserver.com';
 
-  //'https://gig.devonlinetestserver.com/api';
-  // 'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
-  //http://192.168.100.98/gig_mob_app/public/api";
-
-  // //  'https://lavender-buffalo-882516.hostingersite.com/gig_app/api';
-
   // AUTH API
   static const String loginApi = "$baseUrl/api/auth/login";
   static const String registerApi = "$baseUrl/api/auth/signup";

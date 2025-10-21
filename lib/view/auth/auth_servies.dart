@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/utils.dart';
-import 'package:gig/utils/utils.dart';
 import 'package:gig/view_models/controller/auth/login_view_model.dart';
 
 class GoogleAuthRepository {

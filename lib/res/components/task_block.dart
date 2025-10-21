@@ -39,7 +39,7 @@ class TaskBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use Get.find() instead of Get.put() to get existing instance
     final DeleteTaskViewModel deleteTaskVM = Get.find<DeleteTaskViewModel>();
-    final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
+    // final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
 
     return InkWell(
       onTap: onTap,

@@ -40,7 +40,7 @@ class TaskSpecficBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deleteTaskVM = Get.put(DeleteTaskViewModel());
-    final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
+    // final GetTaskViewModel taskViewModel = Get.put(GetTaskViewModel());
 
     return InkWell(
       onTap: () {},
@@ -178,7 +178,7 @@ class TaskSpecficBlock extends StatelessWidget {
 
                                     // await deleteTaskVM.deleteTask(id);
                                     await model.fetchTasksByEmployer(
-                                      employerId: (employeerId ?? ''),
+                                      employerId: (employeerId),
                                       status: status,
                                     );
 

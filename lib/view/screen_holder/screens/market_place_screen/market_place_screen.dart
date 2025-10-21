@@ -120,7 +120,6 @@ class _MarketPlaceView extends State<MarketPlaceView> {
           backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
-        // TODO: Navigate to login screen
       } else {
         setState(() => _isLoading = false);
         Get.snackbar(
@@ -217,91 +216,6 @@ class _MarketPlaceView extends State<MarketPlaceView> {
             Expanded(
               child: Column(
                 children: [
-                  // Top Tab Buttons
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 10,
-                  //     vertical: 8,
-                  //   ),
-                  //   child: Row(
-                  //     children: [
-                  //       Expanded(
-                  //         child: GestureDetector(
-                  //           onTap: () => setState(() => selectedTab = 0),
-                  //           child: Container(
-                  //             padding: EdgeInsets.symmetric(vertical: 12),
-                  //             decoration: BoxDecoration(
-                  //               color: selectedTab == 0
-                  //                   ? Colors.white
-                  //                   : Colors.transparent,
-                  //               borderRadius: BorderRadius.circular(12),
-                  //               border: Border.all(color: Colors.white),
-                  //             ),
-                  //             alignment: Alignment.center,
-                  //             child: Row(
-                  //               mainAxisAlignment: MainAxisAlignment.center,
-                  //               children: [
-                  //                 Icon(
-                  //                   Icons.sell,
-                  //                   color: selectedTab == 0
-                  //                       ? Colors.black
-                  //                       : Colors.white,
-                  //                 ),
-                  //                 SizedBox(width: 6),
-                  //                 Text(
-                  //                   "Sell",
-                  //                   style: TextStyle(
-                  //                     color: selectedTab == 0
-                  //                         ? Colors.black
-                  //                         : Colors.white,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       SizedBox(width: 12),
-                  //       Expanded(
-                  //         child: GestureDetector(
-                  //           onTap: () => setState(() => selectedTab = 1),
-                  //           child: Container(
-                  //             padding: EdgeInsets.symmetric(vertical: 12),
-                  //             decoration: BoxDecoration(
-                  //               color: selectedTab == 1
-                  //                   ? Colors.orange
-                  //                   : Colors.transparent,
-                  //               borderRadius: BorderRadius.circular(12),
-                  //               border: Border.all(color: Colors.orange),
-                  //             ),
-                  //             alignment: Alignment.center,
-                  //             child: Row(
-                  //               mainAxisAlignment: MainAxisAlignment.center,
-                  //               children: [
-                  //                 Icon(
-                  //                   Icons.category,
-                  //                   color: selectedTab == 1
-                  //                       ? Colors.white
-                  //                       : Colors.orange,
-                  //                 ),
-                  //                 SizedBox(width: 6),
-                  //                 Text(
-                  //                   "Categories",
-                  //                   style: TextStyle(
-                  //                     color: selectedTab == 1
-                  //                         ? Colors.white
-                  //                         : Colors.orange,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-
                   // Loading indicator or Grid View
                   Expanded(
                     child: _isLoading && items.isEmpty

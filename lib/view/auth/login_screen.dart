@@ -9,7 +9,6 @@ import 'package:gig/utils/utils.dart';
 import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/view_models/controller/auth/logout_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
@@ -37,7 +36,7 @@ class _LoginState extends State<Login> {
       if (result.success && result.user != null) {
         // Google sign-in successful
         Utils.snakBar('Success', 'Google Sign-in successful!');
-        Utils.writeSecureStorage('provider_name', 'google') ?? '';
+        Utils.writeSecureStorage('provider_name', 'google');
         String email = await Utils.readSecureData('email') ?? '';
         final user = result.user!;
         LoginVM.loginApiWithGoogle(
@@ -330,53 +329,6 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  /// ----------------- DRAWER -----------------
-  // Widget _buildDrawer(BuildContext context) {
-  //   final bool isTablet = Responsive.isTablet(context);
-
-  //   return Drawer(
-  //     width: isTablet ? Responsive.width(40, context) : null,
-  //     child: ListView(
-  //       padding: EdgeInsets.zero,
-  //       children: [
-  //         _buildDrawerHeader(context, isTablet),
-  //         _buildDrawerItem(
-  //           context,
-  //           icon: Icons.post_add,
-  //           text: "Create Adds",
-  //           route: RoutesName.createAddsScreen,
-  //         ),
-  //         _buildDrawerItem(
-  //           context,
-  //           icon: Icons.account_circle_outlined,
-  //           text: "Profile",
-  //           route: RoutesName.userProfileScreen,
-  //         ),
-  //         _buildDrawerItem(
-  //           context,
-  //           icon: LucideIcons.bellDot,
-  //           text: "Notification",
-  //           route: RoutesName.notificationScreen,
-  //         ),
-  //         _buildDrawerItem(
-  //           context,
-  //           icon: LucideIcons.building400,
-  //           text: "Employer",
-  //           route: RoutesName.employerScreen,
-  //         ),
-  //         _buildDrawerItem(
-  //           context,
-  //           icon: LucideIcons.building400,
-  //           text: "logout",
-  //           route: RoutesName.employerScreen,
-  //           onTap: () => LogoutnVM.logoutApi(),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildDrawerHeader(BuildContext context, bool isTablet) {
     return DrawerHeader(
       decoration: BoxDecoration(color: AppColor.primeColor),
@@ -410,27 +362,27 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildDrawerItem(
-    BuildContext context, {
-    required IconData icon,
-    required String text,
-    required String route,
-    void Function()? onTap,
-  }) {
-    return ListTile(
-      leading: Icon(icon, size: Responsive.fontSize(20, context)),
-      title: Text(
-        text,
-        style: TextStyle(fontSize: Responsive.fontSize(16, context)),
-      ),
-      onTap:
-          onTap ??
-          () {
-            Navigator.pop(context);
-            Get.toNamed(route);
-          },
-    );
-  }
+  // Widget _buildDrawerItem(
+  //   BuildContext context, {
+  //   required IconData icon,
+  //   required String text,
+  //   required String route,
+  //   void Function()? onTap,
+  // }) {
+  //   return ListTile(
+  //     leading: Icon(icon, size: Responsive.fontSize(20, context)),
+  //     title: Text(
+  //       text,
+  //       style: TextStyle(fontSize: Responsive.fontSize(16, context)),
+  //     ),
+  //     onTap:
+  //         onTap ??
+  //         () {
+  //           Navigator.pop(context);
+  //           Get.toNamed(route);
+  //         },
+  //   );
+  // }
 
   @override
   void dispose() {

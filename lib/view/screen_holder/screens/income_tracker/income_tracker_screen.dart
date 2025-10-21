@@ -31,7 +31,6 @@ class _IncomeTrackerState extends State<IncomeTracker> {
 
   @override
   void initState() {
-    // TODO: implement initState
     controller.fetchPaymentTitles();
     super.initState();
   }
