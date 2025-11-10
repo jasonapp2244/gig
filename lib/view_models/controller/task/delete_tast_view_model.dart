@@ -16,10 +16,9 @@ class DeleteTaskViewModel extends GetxController {
       dynamic response = await _deleteTaskRepository.deleteTaskAPI(taskId);
       print('📋 Delete response: $response');
 
-      if (response != null && response['status'] == true) {
-        Utils.snakBar('Success', 'Task deleted successfully!');
+      if (response != null && response['success'] == true) {
+        Utils.snakBar('Test', 'Task deleted successfully!');
 
-        // Update UI as you already do
         try {
           final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
           taskViewModel.tasks.removeWhere((task) {
@@ -32,15 +31,41 @@ class DeleteTaskViewModel extends GetxController {
             return false;
           });
 
-          await taskViewModel.refreshData();
+          // Notify listeners/UI immediately
+          taskViewModel.tasks.refresh();
 
+          // Update calendar silently
           final HomeViewModel homeController = Get.find<HomeViewModel>();
           await homeController.silentRefreshTasksForCalendar();
-          print('✅ Home calendar data refreshed after deleting task');
+
+          print('✅ Task removed and calendar refreshed');
         } catch (e) {
           print('⚠️ Could not update task list: $e');
         }
-      } else {
+      }
+      // if (response != null && response['status'] == true) {
+      //   Utils.snakBar('Success', 'Task deleted successfully!');
+      //   // Update UI as you already do
+      //   try {
+      //     final GetTaskViewModel taskViewModel = Get.find<GetTaskViewModel>();
+      //     taskViewModel.tasks.removeWhere((task) {
+      //       final taskIdFromList = task['id'];
+      //       if (taskIdFromList is String) {
+      //         return int.tryParse(taskIdFromList) == taskId;
+      //       } else if (taskIdFromList is int) {
+      //         return taskIdFromList == taskId;
+      //       }
+      //       return false;
+      //     });
+      //     await taskViewModel.refreshData();
+      //     final HomeViewModel homeController = Get.find<HomeViewModel>();
+      //     await homeController.silentRefreshTasksForCalendar();
+      //     print('✅ Home calendar data refreshed after deleting task');
+      //   } catch (e) {
+      //     print('⚠️ Could not update task list: $e');
+      //   }
+      // }
+      else {
         Utils.snakBar('Error', response?['message'] ?? 'Failed to delete task');
       }
     } catch (e) {

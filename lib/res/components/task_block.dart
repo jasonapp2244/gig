@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import 'bottom_sheet.dart';
 
 class TaskBlock extends StatelessWidget {
   final int? id;
@@ -131,61 +129,61 @@ class TaskBlock extends StatelessWidget {
               ],
             ),
 
-            if (status != 'Completed')
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Row(
-                  // Added spacing between icons
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      LucideIcons.squarePen400,
-                      color: Colors.green,
-                      size: 20,
-                    ),
+            // if (status != 'Completed')
+            //   Padding(
+            //     padding: const EdgeInsets.only(top: 15),
+            //     child: Row(
+            //       // Added spacing between icons
+            //       mainAxisAlignment: MainAxisAlignment.start,
+            //       children: [
+            //         Icon(
+            //           LucideIcons.squarePen400,
+            //           color: Colors.green,
+            //           size: 20,
+            //         ),
 
-                    const SizedBox(width: 20),
+            //         const SizedBox(width: 20),
 
-                    Obx(() {
-                      // Check if this task id is currently loading
-                      final isLoading = deleteTaskVM.loadingTasks.contains(id);
+            //         Obx(() {
+            //           // Check if this task id is currently loading
+            //           final isLoading = deleteTaskVM.loadingTasks.contains(id);
 
-                      return InkWell(
-                        onTap: isLoading
-                            ? null
-                            : () {
-                                customBottomSheet(
-                                  context,
-                                  title: 'Are you sure you want to delete?',
-                                  btnText1: 'Yes, Delete',
-                                  btnText2: 'Cancel',
-                                  onFirstTap: () async {
-                                    await deleteTaskVM.deleteTask(id ?? 0);
-                                    print('Deleted!');
-                                  },
-                                  onSecondTap: () {
-                                    print('Cancelled!');
-                                  },
-                                );
-                              },
-                        child: isLoading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.red,
-                                ),
-                              )
-                            : Icon(
-                                Icons.delete_outline_rounded,
-                                color: Colors.red,
-                              ),
-                      );
-                    }),
-                  ],
-                ),
-              ),
+            //           return InkWell(
+            //             onTap: isLoading
+            //                 ? null
+            //                 : () {
+            //                     customBottomSheet(
+            //                       context,
+            //                       title: 'Are you sure you want to delete?',
+            //                       btnText1: 'Yes, Delete',
+            //                       btnText2: 'Cancel',
+            //                       onFirstTap: () async {
+            //                         await deleteTaskVM.deleteTask(id ?? 0);
+            //                         print('Deleted!');
+            //                       },
+            //                       onSecondTap: () {
+            //                         print('Cancelled!');
+            //                       },
+            //                     );
+            //                   },
+            //             child: isLoading
+            //                 ? SizedBox(
+            //                     width: 20,
+            //                     height: 20,
+            //                     child: CircularProgressIndicator(
+            //                       strokeWidth: 2,
+            //                       color: Colors.red,
+            //                     ),
+            //                   )
+            //                 : Icon(
+            //                     Icons.delete_outline_rounded,
+            //                     color: Colors.red,
+            //                   ),
+            //           );
+            //         }),
+            //       ],
+            //     ),
+            //   ),
           ],
         ),
       ),

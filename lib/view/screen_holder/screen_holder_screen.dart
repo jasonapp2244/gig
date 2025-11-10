@@ -91,8 +91,8 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
             )
           : null,
 
-      drawer: isPortrait ? _buildDrawer(context) : null,
-      endDrawer: !isPortrait && isTablet ? _buildDrawer(context) : null,
+      // drawer: isPortrait ? _buildDrawer(context) : null,
+      // endDrawer: !isPortrait && isTablet ? _buildDrawer(context) : null,
     );
   }
 
@@ -151,7 +151,7 @@ class _ScreenHolderScreenState extends State<ScreenHolderScreen> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: AppColor.whiteColor),
+            decoration: BoxDecoration(color: AppColor.redColor),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

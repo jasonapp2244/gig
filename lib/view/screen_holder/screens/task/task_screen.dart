@@ -345,7 +345,6 @@ class _TaskScreenState extends State<TaskScreen>
 
             return TaskBlock(
               id: summaryData['id'],
-
               title: '${summaryData['employer_name'] ?? 'Unknown Employer'}',
               startDate: _formatDate(summaryData['from_date']),
               status: taskStatus,

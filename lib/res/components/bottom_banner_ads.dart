@@ -15,8 +15,8 @@ class _BottomBannerAdState extends State<BottomBannerAd> {
   bool _isAdLoaded = false;
 
   // Real ad unit ID
-  final String _adUnitId = 'ca-app-pub-8812386332155668/4027577863';
-
+  // final String _adUnitId = 'ca-app-pub-8812386332155668/4027577863';
+  final String _adUnitId = 'ca-app-pub-3940256099942544/6300978111';
   @override
   void initState() {
     super.initState();

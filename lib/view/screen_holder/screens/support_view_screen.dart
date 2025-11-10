@@ -130,7 +130,9 @@ class SupportView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
           icon: Icon(Icons.arrow_back, color: Colors.white),
         ),
         backgroundColor: AppColor.appBodyBG,
@@ -146,7 +148,7 @@ class SupportView extends StatelessWidget {
           ),
         ),
       ),
-      backgroundColor: AppColor.blackColor,
+      backgroundColor: AppColor.appBodyBG,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -178,7 +180,7 @@ class SupportView extends StatelessWidget {
                 CustomInputField(
                   controller: supportVM.subjectController.value,
                   fieldType: 'text',
-                  hintText: "",
+                  hintText: "Subject",
                   requiredField: true,
                   validator: (value) {
                     if (value == null || value.isEmpty)
@@ -193,7 +195,7 @@ class SupportView extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     iconColor: AppColor.textColor,
-            
+                    hintText: "Message",
                     hintStyle: const TextStyle(
                       color: Colors.white60,
                       fontFamily: AppFonts.appFont,

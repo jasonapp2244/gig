@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/components/bottom_sheet.dart';
+import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view/screen_holder/screens/task/edit_task_screen.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
 import 'package:gig/view_models/controller/task/edit_task_view_model.dart';
-import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class TaskSpecficBlock extends StatelessWidget {
+class TaskSpecficBlock extends StatefulWidget {
   int? id;
   final String title;
   final String startDate;
   final String endDate;
   final String profileImage;
-  var taskData;
   final String? employer; // Add employer field
   String employeerId;
 
@@ -36,6 +35,13 @@ class TaskSpecficBlock extends StatelessWidget {
     required this.status,
     required this.count,
   });
+
+  @override
+  State<TaskSpecficBlock> createState() => _TaskSpecficBlockState();
+}
+
+class _TaskSpecficBlockState extends State<TaskSpecficBlock> {
+  var taskData;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +70,7 @@ class TaskSpecficBlock extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        widget.title,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -74,16 +80,11 @@ class TaskSpecficBlock extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // CircleAvatar(
-                //   radius: 18,
-                //   backgroundImage: NetworkImage(profileImage),
-                // ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              employer ?? '',
+              widget.employer ?? '',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -100,7 +101,7 @@ class TaskSpecficBlock extends StatelessWidget {
                   size: 16,
                 ),
                 const SizedBox(width: 6),
-                Text(startDate, style: TextStyle(color: Colors.grey.shade400)),
+                Text(widget.startDate, style: TextStyle(color: Colors.grey.shade400)),
                 const SizedBox(width: 12),
                 Icon(
                   Icons.arrow_forward_ios,
@@ -110,13 +111,13 @@ class TaskSpecficBlock extends StatelessWidget {
                 const SizedBox(width: 12),
                 Icon(Icons.access_time, color: Colors.amber, size: 16),
                 const SizedBox(width: 6),
-                Text(endDate, style: const TextStyle(color: Colors.amber)),
+                Text(widget.endDate, style: const TextStyle(color: Colors.amber)),
               ],
             ),
             const SizedBox(height: 12),
 
             // Progress bar
-            if (status != 'Completed')
+            if (widget.status != 'Completed')
               Padding(
                 padding: const EdgeInsets.only(top: 15),
                 child: Row(
@@ -128,7 +129,7 @@ class TaskSpecficBlock extends StatelessWidget {
 
                         // 1. Fetch details
                         taskData = await editTaskVM.getTasksDetails(
-                          taskId: id.toString(),
+                          taskId: widget.id.toString(),
                         );
 
                         // 2. Set values into controllers
@@ -163,25 +164,20 @@ class TaskSpecficBlock extends StatelessWidget {
                     ),
 
                     Obx(() {
-                      final isLoading = deleteTaskVM.loadingTasks.contains(id);
+                      final isLoading = deleteTaskVM.loadingTasks.contains(widget.id);
                       return InkWell(
                         onTap: isLoading
                             ? null
                             : () {
-                                customBottomSheet(
+                              customBottomSheet(
                                   context,
                                   title: 'Are you sure you want to delete?',
                                   btnText1: 'Yes, Delete',
                                   btnText2: 'Cancel',
                                   onFirstTap: () async {
-                                    var model = Get.find<GetTaskViewModel>();
-
-                                    // await deleteTaskVM.deleteTask(id);
-                                    await model.fetchTasksByEmployer(
-                                      employerId: (employeerId),
-                                      status: status,
-                                    );
-
+                                    await deleteTaskVM.deleteTask(widget.id ?? 0);
+                                    // Navigator.of(context).pop();
+                                    Get.to(() => const ScreenHolderScreen());
                                     print('Deleted!');
                                   },
                                   onSecondTap: () {

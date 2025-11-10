@@ -207,98 +207,12 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
           controller: controller,
           hintText: label,
           validator: validator,
-
-          //maxLines: maxLines,
-          // keyboardType: keyboardType,
-          // style: TextStyle(color: AppColor.whiteColor),
-          // decoration: InputDecoration(
-          //   hintText: label,
-          //   hintStyle: const TextStyle(
-          //     color: Colors.white60,
-          //     fontFamily: AppFonts.appFont,
-          //   ),
-          //   filled: true,
-
-          //   fillColor: AppColor.grayColor,
-          //   contentPadding: const EdgeInsets.symmetric(
-          //     vertical: 15,
-          //     horizontal: 17,
-          //   ),
-          //   border: OutlineInputBorder(),
-          //   enabledBorder: OutlineInputBorder(
-          //     borderSide: BorderSide(color: Colors.white24, width: 1),
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          //   focusedBorder: OutlineInputBorder(
-          //     borderSide: BorderSide(color: Colors.white24, width: 1),
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          //   errorBorder: OutlineInputBorder(
-          //     borderSide: const BorderSide(color: Colors.red, width: 1),
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          //   focusedErrorBorder: OutlineInputBorder(
-          //     borderSide: const BorderSide(color: Colors.red, width: 1),
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          // ),
         ),
         SizedBox(height: 15),
       ],
     );
   }
 
-  // Widget buildDropdown(
-  //   String label,
-  //   List<String> items,
-  //   String? value,
-  //   Function(String?) onChanged,
-  // ) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       SizedBox(height: 5),
-  //       Container(
-  //         padding: EdgeInsets.symmetric(horizontal: 12),
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(10),
-  //           color: AppColor.grayColor,
-  //           border: Border.all(color: Colors.white24),
-  //         ),
-  //         child: DropdownButton<String>(
-
-  //           focusColor: AppColor.textColor,
-  //           isExpanded: true,
-  //           value: value,
-  //           hint: Text(
-  //             label,
-  //             style: TextStyle(
-  //               color: Colors.white60,
-  //               fontFamily: AppFonts.appFont,
-  //             ),
-  //           ),
-  //           items: items.map((String val) {
-  //             return DropdownMenuItem<String>(
-  //               value: val,
-  //               child: Text(
-  //                 val,
-  //                 style: TextStyle(
-  //                   color: Colors.white60,
-  //                   fontFamily: AppFonts.appFont,
-  //                 ),
-  //               ),
-  //             );
-  //           }).toList(),
-  //           onChanged: onChanged,
-
-  //           underline: SizedBox(),
-  //           dropdownColor: AppColor.grayColor,
-  //         ),
-  //       ),
-  //       SizedBox(height: 15),
-  //     ],
-  //   );
-  // }
   Widget buildDropdown(
     String label,
     List<String> items,
@@ -339,9 +253,8 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
               borderSide: const BorderSide(color: Colors.redAccent),
             ),
             hintText: label,
-            labelStyle: TextStyle(),
-            hintStyle: const TextStyle(
-              color: Colors.white,
+            hintStyle: TextStyle(
+              color: Colors.white60,
               fontFamily: AppFonts.appFont,
             ),
           ),
