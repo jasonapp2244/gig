@@ -1,8 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/custom_photo_widget.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/res/components/chip_input_field.dart';
 import 'package:gig/res/components/pdf_picker_widget.dart';

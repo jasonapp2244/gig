@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:gig/res/app_url/app_url.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/utils/utils.dart';
@@ -312,7 +311,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
       children: [
         const SizedBox(height: 5),
         DropdownButtonFormField<String>(
-          value: value,
+          initialValue: value,
 
           onChanged: onChanged,
           validator: validator, // 👈 validation added here
@@ -526,6 +525,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                           if (selectedCategory!.isEmpty) {
                             return 'Category is required';
                           }
+                          return null;
                         },
                       ),
                       buildDropdown(
@@ -537,6 +537,7 @@ class _CreaAAddScreen extends State<CreaAAddScreen> {
                           if (selectedCondition!.isEmpty) {
                             return 'Condition is required';
                           }
+                          return null;
                         },
                       ),
                       buildInputField(

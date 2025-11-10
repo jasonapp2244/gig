@@ -165,9 +165,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
-        color: AppColor.primeColor.withOpacity(0.1),
+        color: AppColor.primeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColor.primeColor.withOpacity(0.3)),
+        border: Border.all(color: AppColor.primeColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -281,12 +281,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColor.grayColor.withOpacity(0.9), // same fill color
+        color: AppColor.grayColor.withValues(alpha: 0.9), // same fill color
         borderRadius: BorderRadius.circular(12), // same radius
         border: Border.all(color: Colors.white24, width: 1), // same border
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -295,7 +295,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 17),
       child: DropdownButtonHideUnderline(
         child: Obx(() {
-          final selected = addTaskVM.selectedHour?.value ?? '';
+          final selected = addTaskVM.selectedHour.value;
           return DropdownButton<String>(
             isExpanded: true,
             value: selected.isEmpty ? null : selected,

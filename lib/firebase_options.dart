@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,20 +46,31 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBRsMWWj7eU7Iu9ApV9IHLe4GJLFFCrihs',
+    appId: '1:192206418049:web:87cb3b41717094164f9d80',
+    messagingSenderId: '192206418049',
+    projectId: 'gigapp-f7ebc',
+    authDomain: 'gigapp-f7ebc.firebaseapp.com',
+    storageBucket: 'gigapp-f7ebc.firebasestorage.app',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDYKpVWWQxGgZcfCQY327L8SP3902PU7lQ',
-    appId: '1:531010601160:android:da8ca5209e9b777fa025fd',
-    messagingSenderId: '531010601160',
-    projectId: 'gig-ctd-app-c4f0b',
-    storageBucket: 'gig-ctd-app-c4f0b.firebasestorage.app',
+    apiKey: 'AIzaSyDhX55xnBzIHI-jeerphUZOyBASJx1tb24',
+    appId: '1:192206418049:android:d8c363a61f13dac24f9d80',
+    messagingSenderId: '192206418049',
+    projectId: 'gigapp-f7ebc',
+    storageBucket: 'gigapp-f7ebc.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDy-3ZttimMztkPY-SQKHYuN0XJUpMagrA',
-    appId: '1:531010601160:ios:f155f451fccd5baba025fd',
-    messagingSenderId: '531010601160',
-    projectId: 'gig-ctd-app-c4f0b',
-    storageBucket: 'gig-ctd-app-c4f0b.firebasestorage.app',
-    iosBundleId: 'com.carfrttechs.gig',
+    apiKey: 'AIzaSyBEoDinbGyt5IyqXAFz-AlUHU9TGPlXL8k',
+    appId: '1:192206418049:ios:a72004829301a2e34f9d80',
+    messagingSenderId: '192206418049',
+    projectId: 'gigapp-f7ebc',
+    storageBucket: 'gigapp-f7ebc.firebasestorage.app',
+    androidClientId: '192206418049-ektbhkjlpi6v15bodljrlc03da2ge375.apps.googleusercontent.com',
+    iosClientId: '192206418049-3jphbal3ua8ha8qbgu2ho34jksvkpmdi.apps.googleusercontent.com',
+    iosBundleId: 'com.craftech.gig',
   );
 }

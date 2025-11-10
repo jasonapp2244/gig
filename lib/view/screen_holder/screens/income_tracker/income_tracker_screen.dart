@@ -183,7 +183,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:  0.1),
         border: Border.all(color: Colors.grey.shade600),
       ),
       child: DropdownButtonHideUnderline(
@@ -221,7 +221,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:  0.1),
         border: Border.all(color: Colors.grey.shade600),
       ),
       child: TextField(
@@ -250,14 +250,14 @@ class _IncomeTrackerState extends State<IncomeTracker> {
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 17),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha:  0.1),
         border: Border.all(color: Colors.grey.shade600),
       ),
       child: DropdownButtonHideUnderline(
         child: Obx(
           () => DropdownButton<String>(
             isExpanded: true,
-            value: controller.selectedStatus.value ?? 'pending',
+            value: controller.selectedStatus.value,
             dropdownColor: Colors.grey.shade900,
             style: TextStyle(color: Colors.white),
             iconEnabledColor: Colors.white,
@@ -299,7 +299,7 @@ class _IncomeTrackerState extends State<IncomeTracker> {
                 bottomRight: Radius.circular(12),
               ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha:  0.1),
                 width: 1,
               ),
             ),

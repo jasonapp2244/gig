@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "192206418049-ibngfkg3r2gfsg7pnd9gm2l0ctov54n9.apps.googleusercontent.com",
+          "client_id": "192206418049-mm9tv3qdnlvd03mv0ke3jkaek11mrho5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.craftech.gig",
-            "certificate_hash": "f1caa92faf6da2fbadb0e9e3332aae9d169d0340"
+            "certificate_hash": "1485a57e5cf4805701099ac9dc82815200ee07e5"
           }
         },
         {

@@ -107,10 +107,8 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart' show SvgPicture;
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
-import 'package:gig/res/components/button.dart';
 import 'package:gig/res/components/input.dart';
 import 'package:gig/res/components/round_button.dart';
 import 'package:gig/res/fonts/app_fonts.dart';

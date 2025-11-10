@@ -3,7 +3,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:gig/models/category_model.dart';
 import 'package:gig/res/app_url/app_url.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../res/colors/app_color.dart';
 

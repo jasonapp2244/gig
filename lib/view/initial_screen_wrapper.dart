@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gig/utils/utils.dart';
 import 'package:gig/view/auth/login_screen.dart';
-import 'package:gig/view/onboarding_screen/onboarding_screen.dart';
 import 'package:gig/view/screen_holder/screen_holder_screen.dart';
 import 'package:gig/view/splash_screen.dart';
 import 'package:gig/view_models/controller/splash/splash_controller.dart';

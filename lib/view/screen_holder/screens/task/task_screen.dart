@@ -296,7 +296,7 @@ class _TaskScreenState extends State<TaskScreen>
             Text(
               'Status: ${taskViewModel.statusLoading.value ? "Loading..." : "No data"}',
               style: GoogleFonts.poppins(
-                color: AppColor.whiteColor.withOpacity(0.7),
+                color: AppColor.whiteColor.withValues(alpha: 0.7),
               ),
             ),
             if (!taskViewModel.statusLoading.value)

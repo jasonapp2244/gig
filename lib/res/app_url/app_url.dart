@@ -1,5 +1,5 @@
 class AppUrl {
-  static const String baseUrl = 'https://gig.devonlinetestserver.com';
+  static const String baseUrl = 'https://portal.gigfmi.com';
 
   // AUTH API
   static const String loginApi = "$baseUrl/api/auth/login";
@@ -17,7 +17,7 @@ class AppUrl {
 
   // TASK API
   static const String addTaskAPI = "$baseUrl/api/tasks";
-  static const String editTaskAPI = "$baseUrl/api/api/editTaskAPI";
+  static const String editTaskAPI = "$baseUrl/api/editTaskAPI";
   static const String getPaymentTaskAPI = "$baseUrl/api/get_tasks";
 
   static const String deleteTaskAPI = "$baseUrl/api/tasks-delete/";

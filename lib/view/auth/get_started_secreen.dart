@@ -30,7 +30,7 @@ class _GetStartedSecreenState extends State<GetStartedSecreen> {
       if (result.success && result.user != null) {
         // Google sign-in successful
         Utils.snakBar('Success', 'Google Sign-in successful!');
-        Utils.writeSecureStorage('provider_name', 'google') ?? '';
+        Utils.writeSecureStorage('provider_name', 'google');
         final user = result.user!;
         loginVM.loginApiWithGoogle(
           providerId: user.uid,

@@ -3,9 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:gig/res/colors/app_color.dart';
 import 'package:gig/view_models/controller/splash/splash_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback? onSplashComplete; // callback for after splash

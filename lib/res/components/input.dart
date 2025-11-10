@@ -11,8 +11,8 @@ class CustomInputField extends StatefulWidget {
   final Icon? prefixIcon;
   final bool? requiredField;
   final String? Function(String?)? validator;
-  Function()? onTap;
-  bool? isEdit;
+  final Function()? onTap;
+  final bool? isEdit;
 
   CustomInputField({
     super.key,

@@ -11,7 +11,6 @@ import '../../../res/routes/routes_name.dart';
 import '../../../utils/utils.dart';
 import '../user_preference/user_preference_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../repository/auth_repository/login_repository.dart';
 
 class RegisterVewModel extends GetxController {
   final _api = RegisterRepository();

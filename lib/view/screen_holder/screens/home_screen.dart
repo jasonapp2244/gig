@@ -754,22 +754,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Format task date for display
-  String _formatTaskDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) return 'N/A';
-    try {
-      final date = DateTime.parse(dateString);
-      return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
-    } catch (e) {
-      return 'N/A';
-    }
-  }
+  // String _formatTaskDate(String? dateString) {
+  //   if (dateString == null || dateString.isEmpty) return 'N/A';
+  //   try {
+  //     final date = DateTime.parse(dateString);
+  //     return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
+  //   } catch (e) {
+  //     return 'N/A';
+  //   }
+  // }
 
   /// Map task status for display
-  String _mapTaskStatus(String? status, bool? hasEntry) {
-    if (hasEntry == true) return 'Completed';
-    if (status == 'ongoing') return 'Ongoing';
-    return status ?? 'Unknown';
-  }
+  // String _mapTaskStatus(String? status, bool? hasEntry) {
+  //   if (hasEntry == true) return 'Completed';
+  //   if (status == 'ongoing') return 'Ongoing';
+  //   return status ?? 'Unknown';
+  // }
 
   Widget _buildDrawer(BuildContext context) {
     final bool isTablet = Responsive.isTablet(context);

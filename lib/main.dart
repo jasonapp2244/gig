@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gig/firebase_options.dart';
 import 'package:gig/res/components/ads_mangager.dart';
 import 'package:gig/view/auth/auth_servies.dart';
 import 'package:gig/res/routes/routes.dart';
@@ -17,7 +18,9 @@ void main() async {
 
   try {
     if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     }
   } catch (e) {
     print('Firebase initialization error: $e');
@@ -29,9 +32,6 @@ void main() async {
   Utils.getAndPrintFCMToken();
 
   //Inilized Admod
-  MobileAds.instance.updateRequestConfiguration(
-    RequestConfiguration(testDeviceIds: ["BFADC99BDE11D3784C710529FD6E134D"]),
-  );
   try {
     await MobileAds.instance.initialize();
     print('✅ AdMob initialized successfully');
@@ -95,7 +95,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     return ScreenUtilInit(
       designSize: const Size(350, 767),
       minTextAdapt: true,

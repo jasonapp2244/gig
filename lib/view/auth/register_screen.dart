@@ -9,9 +9,6 @@ import 'package:gig/view_models/controller/auth/register_view_model.dart';
 import '../../res/colors/app_color.dart';
 import '../../res/components/input.dart';
 import '../../res/fonts/app_fonts.dart';
-import 'package:gig/repository/auth_repository/social_login_repository.dart';
-import 'package:gig/view/auth/auth_servies.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -36,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Utils.snakBar('Success', 'Google Sign-in successful!');
 
         final user = result.user!;
-        Utils.writeSecureStorage('provider_name', 'google') ?? '';
+        Utils.writeSecureStorage('provider_name', 'google');
         registerVM.registerApiWithGoogle(
           providerId: user.uid,
           email: user.email,

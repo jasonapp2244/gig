@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gig/view_models/controller/task/delete_tast_view_model.dart';
-import 'package:gig/view_models/controller/task/get_task_view_model.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'bottom_sheet.dart';
